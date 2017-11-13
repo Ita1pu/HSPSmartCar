@@ -1,0 +1,11 @@
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\bin\Debug\netcoreapp2.0\SmartCarApi.deps.json
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\bin\Debug\netcoreapp2.0\SmartCarApi.runtimeconfig.json
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\bin\Debug\netcoreapp2.0\SmartCarApi.runtimeconfig.dev.json
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\bin\Debug\netcoreapp2.0\SmartCarApi.dll
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\bin\Debug\netcoreapp2.0\SmartCarApi.pdb
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.csprojResolveAssemblyReference.cache
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.csproj.CoreCompileInputs.cache
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.AssemblyInfoInputs.cache
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.AssemblyInfo.cs
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.dll
+C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi\obj\Debug\netcoreapp2.0\SmartCarApi.pdb

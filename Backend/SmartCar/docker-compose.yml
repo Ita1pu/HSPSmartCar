@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  smartcarapi:
+    image: smartcarapi
+    build:
+      context: ./SmartCarApi
+      dockerfile: Dockerfile
+
+  smartcarui:
+    image: smartcarui
+    build:
+      context: ./SmartCarUi
+      dockerfile: Dockerfile

@@ -1,0 +1,15 @@
+networks:
+  default:
+    external:
+      name: bridge
+services:
+  smartcarapi:
+    build:
+      context: C:\Users\Andreas\OneDrive\Studium\Master\2. Semester\HSP\Backend\SmartCar\SmartCarApi
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    image: smartcarapi
+    ports:
+    - 80/tcp
+version: '3.0'

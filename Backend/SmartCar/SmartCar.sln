@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartCarApi", "SmartCarApi\SmartCarApi.csproj", "{9AB5ACD1-33D5-49D1-A22A-B56411893087}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartCarUi", "SmartCarUi\SmartCarUi.csproj", "{B925717A-3E4B-4122-BA9C-F7A8834A41DE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9AB5ACD1-33D5-49D1-A22A-B56411893087}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AB5ACD1-33D5-49D1-A22A-B56411893087}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AB5ACD1-33D5-49D1-A22A-B56411893087}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AB5ACD1-33D5-49D1-A22A-B56411893087}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B925717A-3E4B-4122-BA9C-F7A8834A41DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B925717A-3E4B-4122-BA9C-F7A8834A41DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B925717A-3E4B-4122-BA9C-F7A8834A41DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B925717A-3E4B-4122-BA9C-F7A8834A41DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACF9B634-197C-40A3-B972-17A29B872461}
+	EndGlobalSection
+EndGlobal

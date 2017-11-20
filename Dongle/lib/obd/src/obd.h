@@ -1,9 +1,10 @@
 #ifndef OBD_H
 #define OBD_H
 
+#include <vector>
+#include <utility.h>
 
 #include <types.h>
-
 
 namespace obd {
 
@@ -11,60 +12,31 @@ class ObdDevice
 {
     public:
         ObdDevice();
-        void initialize();
+        bool initialize();
 
-        void updateVeryFastPids();
-        void updateFastPids();
-        void updateNormalPids();
-        void updateSlowPids();
+        char* getValueOfPid(char pid, int& size); //todo: or i return a single struct element of pidData
 
-        ourTypes::smallPidVal getEngineCoolantTemp();
-        ourTypes::bigPidVal getEngineRpm();
-        ourTypes::smallPidVal getVehicleSpeed();
-        ourTypes::bigPidVal getRunTimeSinceEngineStart();
+        bool updateVeryFastPids();
+        bool updateFastPids();
+        bool updateNormalPids();
+        bool updateSlowPids();
 
-        ourTypes::bigPidVal getDistTraveledWithMalfuncIndicaLamp();
-        ourTypes::smallPidVal getFuelTankLvlInput();
-        ourTypes::smallPidVal getAbsBarometricPressure();
-
-
-        ourTypes::smallPidVal getAmbientAirTemp();
-        ourTypes::smallPidVal getFuelType();
-        ourTypes::smallPidVal getEthanolPercent();
-        ourTypes::smallPidVal getRelativAcceleratorPedalPos();
-        ourTypes::smallPidVal getEngineOilTemp();
-        ourTypes::bigPidVal getEngineFuelRate();
-        ourTypes::smallPidVal getDriverTorqueDemandEngine();
-        ourTypes::smallPidVal getActualTorqueEngine();
-        ourTypes::bigPidVal getEngineTorqueRef();
-
-        //todo:
-        //add missing
-        //type for 13byte....
-        //ourTypes::WTF getEngineRunTime();
+        std::vector<ourTypes::pidData> getVeryFastPids();
+        std::vector<ourTypes::pidData> getFastPids();
+        std::vector<ourTypes::pidData> getNormalPids();
+        std::vector<ourTypes::pidData> getSlowPids();
 
 
     private:
-        ourTypes::smallPidVal engineCoolantTemp;
-        ourTypes::bigPidVal engineRpm;
-        ourTypes::smallPidVal vehicleSpeed;
-        ourTypes::bigPidVal runTimeSinceEngineStart;
-        ourTypes::bigPidVal distTraveledWithMalfuncIndicaLamp;
-        ourTypes::smallPidVal fuelTankLvlInput;
-        ourTypes::smallPidVal absBarometricPressure;
-        ourTypes::smallPidVal ambientAirTemp;
-        ourTypes::smallPidVal fuelType;
-        ourTypes::smallPidVal ethanolPercent;
-        ourTypes::smallPidVal relativAcceleratorPedalPos;
-        ourTypes::smallPidVal engineOilTemp;
-        ourTypes::bigPidVal engineFuelRate;
-        ourTypes::smallPidVal driverTorqueDemandEngine;
-        ourTypes::smallPidVal actualTorqueEngine;
-        ourTypes::bigPidVal engineTorqueRef;
+        std::vector<ourTypes::pidData> veryFastPids;
+        std::vector<ourTypes::pidData> fastPids;
+        std::vector<ourTypes::pidData> normalPids;
+        std::vector<ourTypes::pidData> slowPids;
 
 
 
 };
-};
+
+};//end namespace obd
 
 #endif

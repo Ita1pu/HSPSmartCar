@@ -24,17 +24,17 @@
 
 2. Load Typings
 
-   `.\node_modules\.bin\typings install -g`
+   `./node_modules/.bin/typings install -g`
 
 # Compile
 
 1. Compile just once
 
-   `.\node_modules\.bin\gulp --cwd %cd% --gulpfile scripts/gulpfile.js Debug`
+   `./node_modules/.bin/gulp --cwd %cd% --gulpfile scripts/gulpfile.js Debug`
    
 2. Compile everytime a file has changed
 
-   `.\node_modules\.bin\gulp --cwd %cd% --gulpfile scripts/gulpfile.js Watch`
+   `./node_modules/.bin/gulp --cwd %cd% --gulpfile scripts/gulpfile.js Watch`
 
 # Debug
 
@@ -46,7 +46,7 @@
 
 # Release
 
-1.  <img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48"> `.\node_modules\.bin\gulp --cwd %cd% --gulpfile scripts/gulpfile.js Release`
+1.  <img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48"> `./node_modules/.bin/gulp --cwd %cd% --gulpfile scripts/gulpfile.js Release`
 
 2. `cordova build`
 

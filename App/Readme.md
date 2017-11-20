@@ -1,6 +1,20 @@
 # Pre Requirements
 
-Install [NodeJS](https://nodejs.org/en/) **v8.5.0** or higher
+1. Install [NodeJS](https://nodejs.org/en/) **v8.5.0** or later.
+
+2. Install [Java Development Kit (JDK) 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).
+
+3. Install [Android Studio](https://developer.android.com/studio/index.html). Detailed installation instructions are on Android's developer site.
+
+4. After installing the Android SDK, you must also install the packages for whatever API level you wish to target. It is recommended that you install the highest SDK version that your version of cordova-android supports.
+
+   Open the Android SDK Manager (run android or sdkmanager from the terminal) and make sure the following are installed:
+
+   + Android Platform SDK for your targeted version of Android
+   
+   + Android SDK build-tools version 19.1.0 or higher
+   
+   + Android Support Repository (found under "Extras")
 
 # Setup
 

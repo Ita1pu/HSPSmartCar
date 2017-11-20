@@ -19,11 +19,11 @@ class ObdDevice
         void updateSlowPids();
 
         ourTypes::smallPidVal getEngineCoolantTemp();
-        ourTypes::smallPidVal getEngineRpm();
+        ourTypes::bigPidVal getEngineRpm();
         ourTypes::smallPidVal getVehicleSpeed();
-        ourTypes::smallPidVal getRunTimeSineEngineStart();
+        ourTypes::bigPidVal getRunTimeSinceEngineStart();
 
-        ourTypes::smallPidVal getDistTraveledWithMalfuncIndicaLamp();
+        ourTypes::bigPidVal getDistTraveledWithMalfuncIndicaLamp();
         ourTypes::smallPidVal getFuelTankLvlInput();
         ourTypes::smallPidVal getAbsBarometricPressure();
 
@@ -33,14 +33,34 @@ class ObdDevice
         ourTypes::smallPidVal getEthanolPercent();
         ourTypes::smallPidVal getRelativAcceleratorPedalPos();
         ourTypes::smallPidVal getEngineOilTemp();
-        ourTypes::smallPidVal getEngineFuelRate();
+        ourTypes::bigPidVal getEngineFuelRate();
         ourTypes::smallPidVal getDriverTorqueDemandEngine();
         ourTypes::smallPidVal getActualTorqueEngine();
-        ourTypes::smallPidVal getEngineTorqueRef();
-        ourTypes::smallPidVal getEngineRunTime();
+        ourTypes::bigPidVal getEngineTorqueRef();
+
+        //todo:
+        //add missing
+        //type for 13byte....
+        //ourTypes::WTF getEngineRunTime();
 
 
     private:
+        ourTypes::smallPidVal engineCoolantTemp;
+        ourTypes::bigPidVal engineRpm;
+        ourTypes::smallPidVal vehicleSpeed;
+        ourTypes::bigPidVal runTimeSinceEngineStart;
+        ourTypes::bigPidVal distTraveledWithMalfuncIndicaLamp;
+        ourTypes::smallPidVal fuelTankLvlInput;
+        ourTypes::smallPidVal absBarometricPressure;
+        ourTypes::smallPidVal ambientAirTemp;
+        ourTypes::smallPidVal fuelType;
+        ourTypes::smallPidVal ethanolPercent;
+        ourTypes::smallPidVal relativAcceleratorPedalPos;
+        ourTypes::smallPidVal engineOilTemp;
+        ourTypes::bigPidVal engineFuelRate;
+        ourTypes::smallPidVal driverTorqueDemandEngine;
+        ourTypes::smallPidVal actualTorqueEngine;
+        ourTypes::bigPidVal engineTorqueRef;
 
 
 

@@ -1,0 +1,19 @@
+// Platzieren Sie Ihre Einstellungen in dieser Datei, um Standard- und Benutzereinstellungen zu überschreiben.
+{
+    "files.exclude": { 
+        "**/*.js": { "when": "$(basename).ts"},
+         "**/*tmp.js": { "when": "$(basename).js"},
+        "**/*.js.map": { "when": "$(basename)" },
+        "**/*.css": { "when": "$(basename).scss"},
+        "**/*.min.css": { "when": "$(basename).css"},
+        "node_modules": true,
+        "typings": true,
+        "TestNodeJS.njsproj": true,
+        ".gitignore": true,
+        "scripts": false,
+        "tmp": true,
+		"package-lock.json": true,
+		"Readme.md": true
+    },
+    "editor.fontSize": 12
+}

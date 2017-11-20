@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es3",
+        "sourceMap": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,        
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "alwaysStrict": true,
+        "noImplicitThis": true,
+        "noImplicitReturns": true,
+        "noImplicitAny": true
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

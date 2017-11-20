@@ -1,0 +1,14 @@
+/.vs
+/obj
+/bin
+/src/**/*.css
+/src/**/*.js
+/src/**/*.map
+**/*.log
+/node_modules
+/typings
+**/*.tmp
+/build
+/src/client/variables.scss
+/tmp
+/package-lock.json

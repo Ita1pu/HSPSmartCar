@@ -1,0 +1,44 @@
+{
+  "name": "test-node-js",
+  "version": "0.0.0",
+  "description": "TestNodeJS",
+  "main": "src/app.js",
+  "license": "UNLICENSED",
+  "private": true,
+  "author": {
+    "name": "Thomas"
+  },
+  "contributors": [
+    {
+      "name": "Thomas"
+    }
+  ],
+  "dependencies": {
+    "express": "^4.16.2",
+    "ws": "^2.3.1"
+  },
+  "devDependencies": {
+    "typings": "latest",
+    "typescript": "latest",
+    "node-sass": "latest",
+    "less": "latest",
+    "jquery": "1.12.4",
+    "requirejs": "latest",
+    "gulp": "latest",
+    "gulp-typescript": "latest",
+    "gulp-sourcemaps": "latest",
+    "gulp-sass": "latest",
+    "gulp-less": "latest",
+    "gulp-concat": "latest",
+    "gulp-add-src": "latest",
+    "gulp-uglifyjs": "latest",
+    "gulp-js-obfuscator": "latest",
+    "gulp-replace": "latest",
+    "gulp-insert": "latest",
+    "gulp-rename": "latest",
+    "gulp-gzip": "latest",
+    "gulp-clean": "latest",
+    "gulp-util": "latest",
+    "gulp-foreach": "latest"
+  }
+}

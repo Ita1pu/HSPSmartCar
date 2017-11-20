@@ -40,6 +40,7 @@ class Persistence{
     Persistence(const vid *current_vid, uint32_t current_time);
     bool create_logging_entry(uint8_t mapped_vehicle_id, uint32_t time,
                               uint16_t data_id, uint32_t data_value);
+    void init();
     /*Getter*/
     /*Setter*/
   protected:

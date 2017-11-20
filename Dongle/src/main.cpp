@@ -8,7 +8,7 @@
 #include <obd.h>
 #include <persistence.h>
 
-IFeature *p;
+Persistence *p;
 char str[100];
 char stat = 0;
 print(char *numstring, int number)
@@ -19,19 +19,12 @@ print(char *numstring, int number)
 }
 void setup()
 {
-    p = new Persitence();
+    p = new Persistence();
     Serial.begin(9600);
     print("SPI_MOSI_PIN: ", SPI_MOSI_PIN);
     print("SPI_MISO_PIN: ", SPI_MISO_PIN);
     print("SPI_SCK_PIN: ", SPI_SCK_PIN);
     print("SD_CHIP_SELECT_PIN: ", SD_CHIP_SELECT_PIN);
-    while(!stat)
-    {
-    stat = p->init();
-    sprintf(str, "Connecting status: %x", stat);
-    Serial.println(str);
-    delay(200);
-    }
     Serial.println("Success");
     // put your setup code here, to run once:
 }

@@ -46,5 +46,8 @@
 
 # Release
 
-Not available yet.
+1.  <img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48"> `.\node_modules\.bin\gulp --cwd %cd% --gulpfile scripts/gulpfile.js Release`
 
+2. `cordova build`
+
+3. `cordova emulate android`

@@ -46,7 +46,7 @@
 
 # Release
 
-1.  <img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48"> `./node_modules/.bin/gulp --cwd . --gulpfile scripts/gulpfile.js Release`
+1.  `./node_modules/.bin/gulp --cwd . --gulpfile scripts/gulpfile.js Release`
 
 2. `./node_modules/.bin/cordova build`
 

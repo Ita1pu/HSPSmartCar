@@ -52,38 +52,7 @@ gulp.task('Watch', ['Debug'], () => {
 });
 
 gulp.task('Release', (callback) => { 
-    var stream = gulp.src(['src/**/*.ts']);
-
-    var hasChanges = false;
-
-    stream = stream.pipe(foreach((stream, file) => {
-        try {
-            var tsStats = fs.statSync(file.path);
-            var jsStats = fs.statSync(file.path.substring(0, file.path.length - 2) + "js");
-            
-            if (tsStats.mtime > jsStats.mtime) {
-                gutil.log("File has been changed: " + file.path);
-                hasChanges = true;
-            }
-        }
-        catch(ex) {
-            gutil.log("File was not compiled: " + file.path);
-            hasChanges = true;
-        }
-
-        return stream;
-    }));
-    
-    stream.on("end", () => {
-        if (hasChanges) {
-            releaseClient(() => {
-                gutil.log("Successfully completed!");
-            });    
-        } 
-        else {
-            gutil.log("Nothing to do!");
-        }
-    });
-
-    return stream;
+	releaseClient(() => {
+		gutil.log("Successfully completed!");
+	});
 });

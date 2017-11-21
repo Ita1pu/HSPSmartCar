@@ -13,7 +13,8 @@
         "scripts": false,
         "tmp": true,
 		"package-lock.json": true,
-		"Readme.md": true
+        "Readme.md": true,
+        "www": true
     },
     "editor.fontSize": 12
 }

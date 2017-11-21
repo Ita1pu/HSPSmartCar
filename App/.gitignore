@@ -12,3 +12,5 @@
 /src/client/variables.scss
 /tmp
 /package-lock.json
+/www/script.js
+/www/style.css

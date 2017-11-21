@@ -51,8 +51,20 @@ gulp.task('Watch', ['Debug'], () => {
     });
 });
 
+gulp.task('ReleaseClient', (callback) => { 
+	releaseClient(() => {
+		gutil.log("Successfully completed!");
+	});
+});
+
 gulp.task('Release', (callback) => { 
 	releaseClient(() => {
+		gulp.src('./build/script.js')
+			.pipe(gulp.dest('./www/'));
+			
+		gulp.src('./build/style.css')
+			.pipe(gulp.dest('./www/'));
+		
 		gutil.log("Successfully completed!");
 	});
 });

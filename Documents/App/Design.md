@@ -70,6 +70,45 @@ Views in order from the left to the right.
 
 ### Live Data Views
 
+#### List of Live Data:
+
+**THIS IS ONLY A SUGGESTION - Pleased to review:**
++[@LacknerA](https://github.com/LacknerA)
++[@Itiapu](https://github.com/Itiapu)
++[@frawe](https://github.com/frawe)
++[@MSchleinkofer](https://github.com/MSchleinkofer)
++[@Monkler](https://github.com/Monkler)
+
+* Km/H or MpH
+* RPM
+* Tankstand
+* Kühlwassertemeratur
+* Temperatur
+* Uhrzeit
+* Gefahrene Kilometer
+* Durchschnittsgeschwindigkeit
+* Durchschnitt Verbrauch
+* Momentaner Verbrauch
+* Streckenzeit
+
+<img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
+
+#### Vertical (Portrait)
+
+##### Simple Cockpit digital
+
+<img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
+
+##### Simple Cockpit analog
+
+<img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
+
+##### etc...
+
+<img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
+
+#### Horizontal (Landscape)
+
 <img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
 
 ### Display and Delete Error Codes

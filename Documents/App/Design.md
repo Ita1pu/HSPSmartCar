@@ -36,7 +36,37 @@ Views in order from the left to the right.
 
 ### Configuration
 
-<img alt="In Progress" src="https://i.stack.imgur.com/W08Uq.png" width="48">
+* Download Data from Device *(Display 0-100% and Amount of Bytes downloaded e.g. 250 kB of 30.200kB)*
+
+  Afterward Question if the Upload to the Backend shell be done immediately or not yet.
+  
+  Error if max storage exceeded. *(Upload Data to Backend is needed before downloading more data.)*
+  
+* Upload Data to Backend *(Display 0-100% and Amount of Bytes uploaded e.g. 250 kB of 30.200kB)*
+
+  Show the amount of buffered Bytes (The not transfered Bytes) permanently.
+  
+  With bar showing current and maximal Storage (e.g. |#####__| 75% storage used)
+  
+* Clear Buffer *(Clear not transfered Data - With strict confirm dialog)*
+
+  All downloaded not transfered Data stored in the App will be deleted.
+  
+* MpH or KmH
+  
+* Enable / Disable [Swipe Help](#overview)
+
+* URL to Backend
+
+* Login Parameter *(User/Password/Token for Backend)*
+
+* Test Connection to Backend
+
+* Diconnect from Device - Clear Device Storage *(With strict confirm dialog)*
+
+  Disconnecting from Bluetooth.
+
+* Logout
 
 ### Live Data Views
 

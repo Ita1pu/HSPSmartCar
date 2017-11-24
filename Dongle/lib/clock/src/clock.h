@@ -2,9 +2,10 @@
 #define CLOCK_H
 
 #include <stdint.h>
+#include "FreematicsONE.h"
 
 #define CLOCK_RESOLUTION_MS 100
-
+#define GPS_INIT_CMD "Test"
 /**
  *  Timing Class;
  *  This class provides methods for operations which have to do sth with time.
@@ -17,13 +18,19 @@ public:
    * Initialization Method Should be done at startup
    * @return Wether the initialization was successfull
    */
-  bool Initialize();
+  bool Initialize(COBDSPI* coProc, unsigned long baud);
 
   /**
    * Receive the UTC time of day;
    * @return Time of day as integer in following Format: HHMMSSmmm
    */
   uint32_t GetTime();
+
+  /**
+   * Receive the UTC _date
+   * @return Date of the current day in following Format: DDMMYYYY
+   */
+  uint32_t GetDate();
 
   /**
    * Start a timer
@@ -57,10 +64,11 @@ public:
   void updateTime();
 protected:
 private:
-  uint32_t parseGPStoInt(int time);
+  COBDSPI* _coProc;
+  bool getGPStoInt();
   uint8_t* _flags;
-  uint16_t _timeCounter; /** This variable counts how many times the time is updated without GPS*/
   uint32_t _timeOfDay;
+  uint32_t _date;
 };
 
 #endif

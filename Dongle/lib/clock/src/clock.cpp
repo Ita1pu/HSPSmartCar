@@ -1,19 +1,15 @@
-#include "../../../src/globalConfig.h"
-
 #include "clock.h"
 #include "timer.h"
 #include "ClockUtil.h"
 
-bool Clock::Initialize(COBDSPI* coProc, unsigned long baud){
+Clock::Clock(COBDSPI* coProc){
+  Clock_Util::clVar = this;
+  _coProc = coProc;
+}
+
+bool Clock::Initialize(unsigned long baud, LocationService* locService){
   bool retVal = false;
-  if(coProc != NULL){
-    Clock_Util::clVar = this;
-    _coProc = coProc;
-#ifdef FREEMATICS_GPS
-    _coProc -> gpsInit(baud);
-#else
-    _coProc->gpsSendCommand(GPS_INIT_CMD);
-#endif
+  if(_coProc != NULL && locService->IsInitialized()){
     if(getGPStoInt()){
       retVal = SetTimer(2, CLOCK_RESOLUTION_MS, Clock_Util::timeReroute);
     }else{
@@ -73,7 +69,7 @@ bool Clock::getGPStoInt(){
   bool retVal = false;
   GPS_DATA gData;
   retVal = _coProc->gpsGetData(&gData);
-  _timeOfDay = gData.time;
+  _timeOfDay = gData.time*10;
   _date = gData.date;
   return retVal;
 }

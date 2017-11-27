@@ -4,34 +4,48 @@
 #include <vector>
 #include <utility.h>
 
+#include <FreematicsONE.h>
+
 #include <types.h>
+#include <signals.h>
 
 namespace obd {
 
 class ObdDevice
 {
     public:
-        ObdDevice();
+        ObdDevice(COBDSPI* baseLayer);
+        //functions from freematics only encapsulated here
         bool initialize();
+        void uninit();
+    	void reset();
+    	void end();
 
-        char* getValueOfPid(char pid, int& size); //todo: or i return a single struct element of pidData
+        int getValueOfPid(char pid, bool& successful);
 
         bool updateVeryFastPids();
         bool updateFastPids();
         bool updateNormalPids();
         bool updateSlowPids();
 
-        std::vector<ourTypes::pidData> getVeryFastPids();
-        std::vector<ourTypes::pidData> getFastPids();
-        std::vector<ourTypes::pidData> getNormalPids();
-        std::vector<ourTypes::pidData> getSlowPids();
+        //dont delete the vectors i will update them when i am called
+        std::vector<ourTypes::pidData>* getVeryFastPids();
+        std::vector<ourTypes::pidData>* getFastPids();
+        std::vector<ourTypes::pidData>* getNormalPids();
+        std::vector<ourTypes::pidData>* getSlowPids();
+
+        std::vector<ourTypes::dtcData>* getDiagnositcTroubleCodes();
+        void clearDiagnosticTroubleCodes();
+
+        char* getVehicleIdentificationNumber();
 
 
     private:
-        std::vector<ourTypes::pidData> veryFastPids;
-        std::vector<ourTypes::pidData> fastPids;
-        std::vector<ourTypes::pidData> normalPids;
-        std::vector<ourTypes::pidData> slowPids;
+        COBDSPI* baseLayer;
+        std::vector<ourTypes::pidData>* veryFastPids;
+        std::vector<ourTypes::pidData>* fastPids;
+        std::vector<ourTypes::pidData>* normalPids;
+        std::vector<ourTypes::pidData>* slowPids;
 
 
 

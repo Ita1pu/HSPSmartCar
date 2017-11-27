@@ -4,17 +4,20 @@
 
 namespace ourTypes
 {
-    typedef unsigned char byte;
+    const char MAXTROUBLECODES = 10;
+    const char lengthOfVehicleIdentificationNumber = 13;
+
+    //typedef unsigned char byte;
     typedef char smallPidVal;
     typedef int bigPidVal;
-
+    typedef uint16_t dtcData;//DiagnisticTroubleCode Data
 
     struct pidData
     {
         char pid;
-        char sizeOfData; //in utf8_byte
-        char* data;
+        int value;
     };
+
 }
 
 #endif

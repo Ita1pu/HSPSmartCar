@@ -2,16 +2,17 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using System.Linq;
+using System.Threading.Tasks;
 using IdentityModel;
 using IdentityServer4.Extensions;
 using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
-using System.Linq;
-using System.Threading.Tasks;
+using SmartCarIdentity.Models;
 
-namespace SmartCarIdentity.Controllers
+namespace SmartCarIdentity.Controllers.Account
 {
     public class AccountService
     {

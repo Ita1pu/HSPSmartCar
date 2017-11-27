@@ -4,7 +4,7 @@
 
 using System;
 
-namespace SmartCarIdentity.Controllers
+namespace SmartCarIdentity.Models
 {
     public class AccountOptions
     {

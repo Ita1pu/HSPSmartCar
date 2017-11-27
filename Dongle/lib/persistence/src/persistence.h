@@ -27,17 +27,22 @@
 #ifndef PERSISTENCE_H
 #define PERSISTENCE_H
 
+#include <stdint.h>
+
 #include <file_system_handler.h>
 #include <signals.h>
 #include <types.h>
+#include <vid_mapper.h>
 
 using namespace obd;
 using namespace ourTypes;
+using namespace vid_mapper;
 
+namespace persistence {
 class Persistence{
   public:
     //Constructor
-    Persistence(const vid *current_vid, uint32_t current_time);
+    Persistence(const vid *current_vid, uint32_t current_time, Vid_mapper *mapper);
     bool create_logging_entry(uint8_t mapped_vehicle_id, uint32_t time,
                               uint16_t data_id, uint32_t data_value);
     void init();
@@ -45,16 +50,19 @@ class Persistence{
     /*Setter*/
   protected:
   private:
-    uint8_t current_mvid = 0;
-    File open_file;
-    uint32_t open_file_date; //Has to change if logging passes 11:59 pm
-    File vid_map_table;
-
+    //Variables
+    uint8_t _current_mvid = 0;
+    uint32_t _open_file_date; //Has to change if logging passes 11:59 pm
+    File _open_file;
+    File _vid_map_table;
+    Vid_mapper *_vid_mapper;
+    //Functions
     bool update_file_name(uint32_t current_time);
     uint8_t get_mapped_vehicle_id(const vid *current_vid);
     File find_last_written_file(uint32_t current_time);
     File create_logging_file(uint32_t current_time);
     File open_logging_file(uint32_t logging_start_time);
-};
+};//End class Persitence
+};//End namespace persistence
 
 #endif

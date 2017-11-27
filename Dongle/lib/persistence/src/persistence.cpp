@@ -1,6 +1,7 @@
 #include <persistence.h>
+using namespace persistence;
 
-Persistence::Persistence(const vid *current_vid, uint32_t current_time){
+Persistence::Persistence(const vid *current_vid, uint32_t current_time, Vid_mapper *mapper){
   /** \brief The Constructor for the Logging Class
     * Here all initalization for the class is done..
     *
@@ -8,9 +9,10 @@ Persistence::Persistence(const vid *current_vid, uint32_t current_time){
     * \param current_time the time when the Logging starts
     *
   */
-  this->current_mvid = this->get_mapped_vehicle_id(current_vid);
-  this->open_file_date = current_time;
-  this->open_file = open_logging_file(current_time);
+  this->_vid_mapper = mapper;
+  this->_current_mvid = this->get_mapped_vehicle_id(current_vid);
+  this->_open_file_date = current_time;
+  this->_open_file = open_logging_file(current_time);
 }
 
 bool Persistence::create_logging_entry(uint8_t mapped_vehicle_id, uint32_t time,
@@ -38,7 +40,8 @@ File Persistence::find_last_written_file(uint32_t current_time){
     *
     *\return the last written File
   */
-  return nullptr_t;
+  File ret = File();
+  return ret;
 }
 
 File Persistence::create_logging_file(uint32_t current_time){
@@ -52,8 +55,8 @@ File Persistence::create_logging_file(uint32_t current_time){
     *
     * \return The created file
   */
-
-  return nullptr_t;
+  File ret = File();
+  return ret;
 }
 
 uint8_t Persistence::get_mapped_vehicle_id(const vid *current_vid){
@@ -64,7 +67,10 @@ uint8_t Persistence::get_mapped_vehicle_id(const vid *current_vid){
     *
     * \pram current_vid the VID of the car where the Dongle is used
   */
-  return 0;
+  uint8_t mvid;
+  this->_vid_mapper->get_map_value(&mvid);
+
+  return mvid;
 }
 
 File Persistence::open_logging_file(uint32_t logging_start_time){
@@ -75,7 +81,8 @@ File Persistence::open_logging_file(uint32_t logging_start_time){
     *
     * \param logging_start_time the time when the logging starts
   */
-  return nullptr_t;
+  File ret = File();
+  return ret;
 }
 
 bool Persistence::update_file_name(uint32_t current_time){

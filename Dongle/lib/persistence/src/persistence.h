@@ -33,35 +33,38 @@
 #include <signals.h>
 #include <types.h>
 #include <vid_mapper.h>
+#include <persistence_error_codes.h>
 
 using namespace obd;
 using namespace ourTypes;
 using namespace vid_mapper;
+using namespace persistence_error_codes;
 
 namespace persistence {
 class Persistence{
   public:
     //Constructor
     Persistence(const vid *current_vid, uint32_t current_time, Vid_mapper *mapper);
-    bool create_logging_entry(uint8_t mapped_vehicle_id, uint32_t time,
+    stdRetVal create_logging_entry(uint8_t mapped_vehicle_id, uint32_t time,
                               uint16_t data_id, uint32_t data_value);
-    void init();
+    stdRetVal init();
     /*Getter*/
     /*Setter*/
   protected:
   private:
     //Variables
+    stdRetVal _initStatus = 0x00;
     uint8_t _current_mvid = 0;
     uint32_t _open_file_date; //Has to change if logging passes 11:59 pm
     File _open_file;
     File _vid_map_table;
     Vid_mapper *_vid_mapper;
     //Functions
-    bool update_file_name(uint32_t current_time);
-    uint8_t get_mapped_vehicle_id(const vid *current_vid);
-    File find_last_written_file(uint32_t current_time);
-    File create_logging_file(uint32_t current_time);
-    File open_logging_file(uint32_t logging_start_time);
+    stdRetVal update_file_name( uint32_t current_time );
+    stdRetVal get_mapped_vehicle_id( uint8_t *mvid);
+    stdRetVal find_last_written_file(uint32_t current_time, File *ret_file);
+    stdRetVal create_logging_file(uint32_t current_time, File *ret_file);
+    stdRetVal open_logging_file(uint32_t logging_start_time, File *ret_file);
 };//End class Persitence
 };//End namespace persistence
 

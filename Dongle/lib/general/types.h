@@ -4,8 +4,6 @@
 
 namespace ourTypes
 {
-    typedef unsigned char stdRetVal;
-
     typedef unsigned char byte;
     typedef char smallPidVal;
     typedef int bigPidVal;

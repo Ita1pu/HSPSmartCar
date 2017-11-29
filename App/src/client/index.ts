@@ -17,6 +17,8 @@ $(() => {
     if (swipeHelp == null || Boolean(swipeHelp) == true)
         DisplayFeature.SwipeHelp.init($("<div>").appendTo($(document.body)));
 
+    DisplayFeature.ErrorPanel.init($("<div>").appendTo($(document.body))); 
+
     let selectedView: View.View = null;
     let selectedViewNum: number = Settings.defaultView;
 
@@ -33,6 +35,7 @@ $(() => {
     }
 
     selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
+    DisplayFeature.viewCircles.select(selectedViewNum);
 
     let xDown: any = null;                                                        
     let yDown: any = null;   
@@ -71,6 +74,7 @@ $(() => {
                     selectedView.destroy();
 
                     selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
+                    DisplayFeature.viewCircles.select(selectedViewNum);
                 }
             }
 

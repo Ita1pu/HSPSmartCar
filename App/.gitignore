@@ -14,3 +14,6 @@
 /package-lock.json
 /www/script.js
 /www/style.css
+/plugins
+!/plugins/android.json
+!/plugins/fetch.json

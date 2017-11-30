@@ -4,7 +4,7 @@
 
 using IdentityServer4.Models;
 
-namespace SmartCarIdentity.Controllers
+namespace SmartCarIdentity.Controllers.Home
 {
     public class ErrorViewModel
     {

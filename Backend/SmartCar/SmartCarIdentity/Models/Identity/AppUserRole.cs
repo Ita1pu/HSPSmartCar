@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using SmartCarIdentity.Identity;
 
-namespace SmartCarIdentity.Identity
+namespace SmartCarIdentity.Models.Identity
 {
     public class AppUserRole : IdentityRole
     {

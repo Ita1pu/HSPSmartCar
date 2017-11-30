@@ -19,8 +19,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SmartCarIdentity.Database;
 using SmartCarIdentity.Identity;
 using SmartCarIdentity.Models;
+using SmartCarIdentity.Models.Identity;
 
 namespace SmartCarIdentity.Controllers.Account
 {
@@ -32,10 +34,14 @@ namespace SmartCarIdentity.Controllers.Account
     [SecurityHeaders]
     public class AccountController : Controller
     {
-        private readonly TestUserStore _users;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IEventService _events;
         private readonly AccountService _account;
+
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+
+        private readonly ApplicationDbContext _dbContext;
 
         public AccountController(
             IIdentityServerInteractionService interaction,
@@ -44,13 +50,17 @@ namespace SmartCarIdentity.Controllers.Account
             IAuthenticationSchemeProvider schemeProvider,
             IEventService events,
             UserManager<AppUser> userManager,
-            TestUserStore users = null)
+            SignInManager<AppUser> signInManager,
+            ApplicationDbContext dbContext)
         {
-            // if the TestUserStore is not in DI, then we'll just use the global users collection
-            _users = users ?? new TestUserStore(TestUsers.Users);
             _interaction = interaction;
             _events = events;
             _account = new AccountService(interaction, httpContextAccessor, schemeProvider, clientStore);
+
+            _userManager = userManager;
+            _signInManager = signInManager;
+
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -61,13 +71,6 @@ namespace SmartCarIdentity.Controllers.Account
         {
             // build a model so we know what to show on the login page
             var vm = await _account.BuildLoginViewModelAsync(returnUrl);
-
-            if (vm.IsExternalLoginOnly)
-            {
-                // we only have one option for logging in and it's an external provider
-                return await ExternalLogin(vm.ExternalLoginScheme, returnUrl);
-            }
-
             return View(vm);
         }
 
@@ -92,50 +95,51 @@ namespace SmartCarIdentity.Controllers.Account
                     // we can trust model.ReturnUrl since GetAuthorizationContextAsync returned non-null
                     return Redirect(model.ReturnUrl);
                 }
-                else
-                {
-                    // since we don't have a valid context, then we just go back to the home page
-                    return Redirect("~/");
-                }
+
+                return Redirect("~/");
             }
 
             if (ModelState.IsValid)
             {
-                // validate username/password against in-memory store
-                if (_users.ValidateCredentials(model.Username, model.Password))
+                var user = _dbContext.Users.FirstOrDefault(u => u.UserName == model.Username);
+
+                if (user != null)
                 {
-                    var user = _users.FindByUsername(model.Username);
-                    await _events.RaiseAsync(new UserLoginSuccessEvent(user.Username, user.SubjectId, user.Username));
+                    var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberLogin, lockoutOnFailure: false);
 
-                    // only set explicit expiration here if user chooses "remember me". 
-                    // otherwise we rely upon expiration configured in cookie middleware.
-                    AuthenticationProperties props = null;
-                    if (AccountOptions.AllowRememberLogin && model.RememberLogin)
+                    if (result.Succeeded)
                     {
-                        props = new AuthenticationProperties
+                        await _events.RaiseAsync(new UserLoginSuccessEvent(user.UserName, user.Id, user.UserName));
+
+                        // only set explicit expiration here if user chooses "remember me". 
+                        // otherwise we rely upon expiration configured in cookie middleware.
+                        AuthenticationProperties props = null;
+                        if (AccountOptions.AllowRememberLogin && model.RememberLogin)
                         {
-                            IsPersistent = true,
-                            ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
-                        };
-                    };
-                    // issue authentication cookie with subject ID and username
-                    await HttpContext.SignInAsync(user.SubjectId, user.Username, props);
+                            props = new AuthenticationProperties
+                            {
+                                IsPersistent = true,
+                                ExpiresUtc = DateTimeOffset.UtcNow.Add(AccountOptions.RememberMeLoginDuration)
+                            };
+                        }
 
-                    // make sure the returnUrl is still valid, and if so redirect back to authorize endpoint or a local page
-                    if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
-                    {
-                        return Redirect(model.ReturnUrl);
+                        // issue authentication cookie with subject ID and username
+                        await HttpContext.SignInAsync(user.Id, user.UserName, props);
+
+                        // make sure the returnUrl is still valid, and if so redirect back to authorize endpoint or a local page
+                        if (_interaction.IsValidReturnUrl(model.ReturnUrl) || Url.IsLocalUrl(model.ReturnUrl))
+                        {
+                            return Redirect(model.ReturnUrl);
+                        }
+
+                        return Redirect("~/");
                     }
-
-                    return Redirect("~/");
                 }
 
                 await _events.RaiseAsync(new UserLoginFailureEvent(model.Username, "invalid credentials"));
-
                 ModelState.AddModelError("", AccountOptions.InvalidCredentialsErrorMessage);
             }
-
-            // something went wrong, show form with error
+            
             var vm = await _account.BuildLoginViewModelAsync(model);
             return View(vm);
         }
@@ -146,141 +150,24 @@ namespace SmartCarIdentity.Controllers.Account
             return View();
         }
 
-        /// <summary>
-        /// initiate roundtrip to external authentication provider
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> ExternalLogin(string provider, string returnUrl)
+        [HttpPost]
+        public async Task<IActionResult> Register(AccountRegisterModel model)
         {
-            returnUrl = Url.Action("ExternalLoginCallback", new { returnUrl = returnUrl });
-
-            // windows authentication needs special handling
-            // since they don't support the redirect uri, 
-            // so this URL is re-triggered when we call challenge
-            if (AccountOptions.WindowsAuthenticationSchemeName == provider)
+            if (ModelState.IsValid)
             {
-                // see if windows auth has already been requested and succeeded
-                var result = await HttpContext.AuthenticateAsync(AccountOptions.WindowsAuthenticationSchemeName);
-                if (result?.Principal is WindowsPrincipal wp)
+                var user = new AppUser { UserName = model.Username, Email = model.Email };
+                var result = await _userManager.CreateAsync(user, model.Password);
+                
+                if (result.Succeeded)
                 {
-                    var props = new AuthenticationProperties();
-                    props.Items.Add("scheme", AccountOptions.WindowsAuthenticationSchemeName);
-
-                    var id = new ClaimsIdentity(provider);
-                    id.AddClaim(new Claim(JwtClaimTypes.Subject, wp.Identity.Name));
-                    id.AddClaim(new Claim(JwtClaimTypes.Name, wp.Identity.Name));
-
-                    // add the groups as claims -- be careful if the number of groups is too large
-                    if (AccountOptions.IncludeWindowsGroups)
-                    {
-                        var wi = wp.Identity as WindowsIdentity;
-                        var groups = wi.Groups.Translate(typeof(NTAccount));
-                        var roles = groups.Select(x => new Claim(JwtClaimTypes.Role, x.Value));
-                        id.AddClaims(roles);
-                    }
-
-                    await HttpContext.SignInAsync(IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme, new ClaimsPrincipal(id), props);
-                    return Redirect(returnUrl);
+                    await _userManager.AddToRoleAsync(user, "Default");
+                    return RedirectToAction("Login");
                 }
-                else
-                {
-                    // challenge/trigger windows auth
-                    return new ChallengeResult(AccountOptions.WindowsAuthenticationSchemeName);
-                }
-            }
-            else
-            {
-                // start challenge and roundtrip the return URL
-                var props = new AuthenticationProperties
-                {
-                    RedirectUri = returnUrl,
-                    Items = { { "scheme", provider } }
-                };
-                return new ChallengeResult(provider, props);
-            }
-        }
 
-        /// <summary>
-        /// Post processing of external authentication
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl)
-        {
-            // read external identity from the temporary cookie
-            var result = await HttpContext.AuthenticateAsync(IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme);
-            if (result?.Succeeded != true)
-            {
-                throw new Exception("External authentication error");
+                AddErrors(result);
             }
 
-            // retrieve claims of the external user
-            var externalUser = result.Principal;
-            var claims = externalUser.Claims.ToList();
-
-            // try to determine the unique id of the external user (issued by the provider)
-            // the most common claim type for that are the sub claim and the NameIdentifier
-            // depending on the external provider, some other claim type might be used
-            var userIdClaim = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.Subject);
-            if (userIdClaim == null)
-            {
-                userIdClaim = claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            }
-            if (userIdClaim == null)
-            {
-                throw new Exception("Unknown userid");
-            }
-
-            // remove the user id claim from the claims collection and move to the userId property
-            // also set the name of the external authentication provider
-            claims.Remove(userIdClaim);
-            var provider = result.Properties.Items["scheme"];
-            var userId = userIdClaim.Value;
-
-            // this is where custom logic would most likely be needed to match your users from the
-            // external provider's authentication result, and provision the user as you see fit.
-            // 
-            // check if the external user is already provisioned
-            var user = _users.FindByExternalProvider(provider, userId);
-            if (user == null)
-            {
-                // this sample simply auto-provisions new external user
-                // another common approach is to start a registrations workflow first
-                user = _users.AutoProvisionUser(provider, userId, claims);
-            }
-
-            var additionalClaims = new List<Claim>();
-
-            // if the external system sent a session id claim, copy it over
-            // so we can use it for single sign-out
-            var sid = claims.FirstOrDefault(x => x.Type == JwtClaimTypes.SessionId);
-            if (sid != null)
-            {
-                additionalClaims.Add(new Claim(JwtClaimTypes.SessionId, sid.Value));
-            }
-
-            // if the external provider issued an id_token, we'll keep it for signout
-            AuthenticationProperties props = null;
-            var id_token = result.Properties.GetTokenValue("id_token");
-            if (id_token != null)
-            {
-                props = new AuthenticationProperties();
-                props.StoreTokens(new[] { new AuthenticationToken { Name = "id_token", Value = id_token } });
-            }
-
-            // issue authentication cookie for user
-            await _events.RaiseAsync(new UserLoginSuccessEvent(provider, userId, user.SubjectId, user.Username));
-            await HttpContext.SignInAsync(user.SubjectId, user.Username, provider, props, additionalClaims.ToArray());
-
-            // delete temporary cookie used during external authentication
-            await HttpContext.SignOutAsync(IdentityServer4.IdentityServerConstants.ExternalCookieAuthenticationScheme);
-
-            // validate return URL and redirect back to authorization endpoint or a local page
-            if (_interaction.IsValidReturnUrl(returnUrl) || Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-
-            return Redirect("~/");
+            return View(model);
         }
 
         /// <summary>
@@ -294,8 +181,6 @@ namespace SmartCarIdentity.Controllers.Account
 
             if (vm.ShowLogoutPrompt == false)
             {
-                // if the request for logout was properly authenticated from IdentityServer, then
-                // we don't need to show the prompt and can just log the user out directly.
                 return await Logout(vm);
             }
 
@@ -322,20 +207,15 @@ namespace SmartCarIdentity.Controllers.Account
                 await _events.RaiseAsync(new UserLogoutSuccessEvent(user.GetSubjectId(), user.GetName()));
             }
 
-            // check if we need to trigger sign-out at an upstream identity provider
-            if (vm.TriggerExternalSignout)
-            {
-                // build a return URL so the upstream provider will redirect back
-                // to us after the user has logged out. this allows us to then
-                // complete our single sign-out processing.
-                string url = Url.Action("Logout", new { logoutId = vm.LogoutId });
-
-                // this triggers a redirect to the external provider for sign-out
-                // hack: try/catch to handle social providers that throw
-                return SignOut(new AuthenticationProperties { RedirectUri = url }, vm.ExternalAuthenticationScheme);
-            }
-
             return View("LoggedOut", vm);
+        }
+
+        private void AddErrors(IdentityResult result)
+        {
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
         }
     }
 }

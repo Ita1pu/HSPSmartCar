@@ -10,6 +10,7 @@ using IdentityServer4.Services;
 using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using SmartCarIdentity.Models;
 
 namespace SmartCarIdentity.Controllers.Account

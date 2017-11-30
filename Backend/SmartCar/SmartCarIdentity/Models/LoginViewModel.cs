@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SmartCarIdentity.Controllers;
+using SmartCarIdentity.Controllers.Account;
 
 namespace SmartCarIdentity.Models
 {

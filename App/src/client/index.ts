@@ -14,8 +14,9 @@ $(() => {
     DisplayFeature.ViewCircles.init($("<div>").appendTo($(document.body))); 
 
     let swipeHelp = Store.get(Settings.Store.showSwipeHelp);
-    if (swipeHelp == null || Boolean(swipeHelp) == true)
+    if (swipeHelp == null || swipeHelp.toLocaleLowerCase() == "true") {
         DisplayFeature.SwipeHelp.init($("<div>").appendTo($(document.body)));
+    }
 
     DisplayFeature.ErrorPanel.init($("<div>").appendTo($(document.body))); 
 

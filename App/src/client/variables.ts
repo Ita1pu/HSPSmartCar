@@ -7,10 +7,17 @@ namespace Var {
                 selected: "view-circles-circle-selected"
             }
         },
-        swipeHelp: "swipe-help"
+        swipeHelp: "swipe-help",
+        errorPanel: "error-panel",
+        ErrorPanel: {
+            text: "error-panel-text",
+            image: "error-panel-image"
+        }
+
     }
 
     export const Images = {
-        swipeHelp: "images-swipe-help"
+        swipeHelp: "images-swipe-help",
+        error: "images-error"
     }
 }

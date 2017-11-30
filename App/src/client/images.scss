@@ -3,3 +3,7 @@ $img_dir: "src/client/resources/images/";
 .#{$img_swipeHelp} { 
     background-image: url(inline-image($img_dir + "swipe-help.gif"));
 }
+
+.#{$img_error} { 
+    background-image: url(inline-image($img_dir + "error.png"));
+}

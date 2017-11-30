@@ -69,7 +69,10 @@ $(() => {
                     if (newSelectedViewNum > 0)
                         newSelectedViewNum--;
                 } 
-                if (newSelectedViewNum != selectedViewNum) {   
+                if (newSelectedViewNum != selectedViewNum) { 
+                    if (DisplayFeature.swipeHelp != null)
+                        DisplayFeature.swipeHelp.hide();
+                    
                     selectedViewNum = newSelectedViewNum;                 
                     selectedView.destroy();
 

@@ -6,7 +6,12 @@ namespace DisplayFeature {
         private constructor(control: JQuery) {
             this.control = control;
 
-            control.text("swipeeeeeeee")
+            this.control.addClass(Var.Style.swipeHelp);
+            
+            // Hide Swipe Help after x seconds.
+            setTimeout(() => {
+                this.hide();
+            }, 3000);
         }
 
         public static init(control: JQuery): SwipeHelp {
@@ -14,6 +19,10 @@ namespace DisplayFeature {
                 DisplayFeature.swipeHelp = new SwipeHelp(control);
 
             return DisplayFeature.swipeHelp;
+        }
+
+        public hide() {
+            this.control.hide();
         }
     }
 }

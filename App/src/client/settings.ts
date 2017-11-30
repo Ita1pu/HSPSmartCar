@@ -3,7 +3,7 @@ const Settings = {
 
     isDebug: true,
 
-    defaultView: 0,
+    defaultView: 1,
 
     Store: {
         selectedView: "selectedView",

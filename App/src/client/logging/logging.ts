@@ -59,6 +59,10 @@ namespace Logging {
             }
         }
 
+        public getMessage(): string[] {
+            return this.msg;
+        }
+
         private escapeXml(string: string | null | undefined): string | null | undefined {
             // First, replace invalid XML 1.0 characters
             // then replace special XML characters.

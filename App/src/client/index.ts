@@ -79,6 +79,8 @@ $(() => {
 
                     selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
                     DisplayFeature.viewCircles.select(selectedViewNum);
+
+                    Store.set(Settings.Store.selectedView, selectedViewNum.toString());
                 }
             }
 

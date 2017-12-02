@@ -21,7 +21,7 @@ public:
    * Initialization Method Should be done at startup
    * @return Wether the initialization was successfull
    */
-  bool Initialize(unsigned long baud, LocationService* locService);
+  bool Initialize(LocationService* locService, uint8_t nr);
 
   /**
    * Receive the UTC time of day;

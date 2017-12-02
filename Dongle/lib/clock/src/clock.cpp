@@ -7,11 +7,11 @@ Clock::Clock(COBDSPI* coProc){
   _coProc = coProc;
 }
 
-bool Clock::Initialize(unsigned long baud, LocationService* locService){
+bool Clock::Initialize(LocationService* locService, uint8_t nr){
   bool retVal = false;
   if(_coProc != NULL && locService->IsInitialized()){
     if(getGPStoInt()){
-      retVal = SetTimer(2, CLOCK_RESOLUTION_MS, Clock_Util::timeReroute);
+      retVal = SetTimer(nr, CLOCK_RESOLUTION_MS, Clock_Util::timeReroute);
     }else{
       retVal = false;
     }

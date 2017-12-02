@@ -11,6 +11,7 @@ bool LocationService::Initialize(unsigned long baud){
   bool retVal = false;
 
   #ifdef FREEMATICS_GPS
+      Serial.println(baud);
       retVal = _coProc -> gpsInit(baud);
   #else
       _coProc->gpsSendCommand(GPS_INIT_CMD);

@@ -14,21 +14,21 @@ public:
    * Method to initialize
    * A positive return value means western longitude and a negative value means eastern longitude
    * @param the baud rate the uart communication to the gps module shall use
-   * @return longitude in the format °°.mmssss
+   * @return wether the initialization was successfull
    */
   bool Initialize(unsigned long baud);
-  //TODO: seek for the format of latitude and longitude
+
   /**
    * Method to get the longitude of the device's current position
    * A positive return value means western longitude and a negative value means eastern longitude
-   * @return longitude in the format ????
+   * @return longitude in the following format: Location in degree * 1000000; e.g. 48215559 => 48,215559°
    */
   int32_t GetLongitude();
 
   /**
    * Method to get the latitude of the device's current position
    * A positive return value means northern latitude and a negative value means southern latitude
-   * @return latitude in the format ????
+   * @return latitude in the following format: Location in degree * 1000000; e.g. 48215559 => 48,215559°
    */
   int32_t GetLatitude();
 

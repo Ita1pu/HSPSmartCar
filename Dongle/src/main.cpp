@@ -7,14 +7,59 @@
 #include <obd.h>
 #include <persistence.h>
 
+#define CLOCK_TIMER_NR 2
+#define FLAG_TIMER_NR 1
+#define SERIAL_BAUD_RATE 9600
+#define GPS_BAUD_RATE 115200L
 
+LocationService* locSrv = 0;
+Clock* clck = 0;
+COBDSPI coproc;
+uint8_t flags;
+
+void upDate(){
+  locSrv->RenewGPSData();
+}
 
 void setup()
 {
     // put your setup code here, to run once:
+    Serial.begin(SERIAL_BAUD_RATE);
+    coproc.begin();
+    locSrv = new LocationService(&coproc);
+    delay(500);
+    clck = new Clock(&coproc);
+
+    if(locSrv->Initialize(GPS_BAUD_RATE)){
+      Serial.println("Initialization done!\n");
+    }else{
+      Serial.println("Init failed!");
+    }
+    locSrv->RenewGPSData();
+    if(clck->Initialize(locSrv, CLOCK_TIMER_NR)){
+      Serial.println("Clock initialized!");
+    }
+    if(clck->SetTimer(FLAG_TIMER_NR, 1500, &flags)){
+      Serial.println("Flag timer set!");
+    }
+    Serial.println(clck->GetDate());
 }
 
 void loop()
 {
     // put your main code here, to run repeatedly:
+    if(flags){
+      flags = 0;
+      Serial.println("Tick");
+      Serial.print("Latitude: ");
+      Serial.println(locSrv->GetLatitude());
+      Serial.print("Longitude: ");
+      Serial.println(locSrv->GetLongitude());
+      Serial.print("Sat-Ctr: ");
+
+      Serial.println(locSrv->GetSat());
+      Serial.print("Time :");
+      Serial.println(clck->GetTime());
+    }
+    //delay(1000);
 }

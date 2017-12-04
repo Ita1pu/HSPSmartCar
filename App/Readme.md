@@ -52,6 +52,10 @@
 
 3. `./node_modules/.bin/cordova platform add windows`
 
+   > **Bugfix for Windows:**
+   > + in File: `App/platforms/windows/platform_www`
+   > + Remove Line 2081, 2083, 2084, 2092, 2093   
+
 4. `./node_modules/.bin/cordova build`
 
 5. `./node_modules/.bin/cordova emulate android`

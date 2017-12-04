@@ -6,10 +6,8 @@
 #include <persistence_error_codes.h>
 
 using namespace ourTypes;
-using namespace persistence_error_codes;
-namespace vid_mapper{
 
-
+namespace persistence{
   class Vid_mapper{
     private:
       //Variables
@@ -17,13 +15,13 @@ namespace vid_mapper{
       const vid *_current_vid;
       uint8_t _mvid;
       //Functions
-      stdRetVal search_for_current_vid();
-      stdRetVal create_new_map_entry();
+      persistence::stdRetVal search_for_current_vid();
+      persistence::stdRetVal create_new_map_entry();
       //Setter
       void set_map_file(File map_file);
     public:
       Vid_mapper(const vid *current_vid);
-      stdRetVal get_map_value(uint8_t *mvid_result);
+      persistence::stdRetVal get_map_value(uint8_t *mvid_result);
   };
 };
 #endif

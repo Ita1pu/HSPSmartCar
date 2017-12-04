@@ -69,44 +69,64 @@ int ObdDevice::getValueOfPid(char pid, bool& successful)
 
 bool ObdDevice::updateVeryFastPids()
 {
-    bool retVal = true;
-
-
-
-    return retVal;
+    return updatePidVector(veryFastPids);
 }
 
 bool ObdDevice::updateFastPids()
 {
-    bool retVal = true;
-
-
-
-    return retVal;
+    return updatePidVector(fastPids);
 }
 
 bool ObdDevice::updateNormalPids()
 {
-    bool retVal = true;
-
-
-
-    return retVal;
+    return updatePidVector(normalPids);
 }
 
 bool ObdDevice::updateSlowPids()
 {
-    bool retVal = true;
-
-
-
-    return retVal;
+    return updatePidVector(slowPids);
 }
 
+/*!
+This function trys to pair the pids from a vector in groups of 4 (if there are not enought to always
+get full groups, the last group is smaller) and than get their value from freematics lib.
+@return True if there was no error with freematics and all values are updated
+*/
+bool ObdDevice::updatePidVector(std::vector<ourTypes::pidData>* pidVector)
+{
+    bool retVal = true;
 
+    int pidAmount = pidVector->size();
+    byte pids[4];
+    int runner = 0;
+    byte currentPidCnt = 0;
 
+    while(runner < pidAmount)
+    {
+        pids[currentPidCnt] = (pidVector->at(runner)).pid;
+        currentPidCnt++;
+        runner++;
 
+        if ((currentPidCnt >= 3) || (runner >= pidAmount-1)) //maximum of pids that could be asked at one is 4 -> see frematicsOne.h || there are less than 4 pids left
+        {
+            int pidValues[4];
+            byte readPids = baseLayer->readPID(pids, currentPidCnt, pidValues);
+            if (readPids == currentPidCnt)//I read less then the expected amount of pids, so something went wrong
+            {
+                retVal = false;
+                break;
+            }
 
+            for (int i=0; i<currentPidCnt; ++i)//write the new values to the vector
+            {
+                (pidVector->at(runner)).value = pidValues[i];
+            }
+
+            currentPidCnt = 0;
+        }
+    }
+    return retVal;
+}
 
 
 std::vector<ourTypes::pidData>* ObdDevice::getVeryFastPids()

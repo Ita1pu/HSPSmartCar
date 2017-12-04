@@ -41,14 +41,13 @@ class ObdDevice
 
 
     private:
+        bool updatePidVector(std::vector<ourTypes::pidData>* pidVector);
+
         COBDSPI* baseLayer;
         std::vector<ourTypes::pidData>* veryFastPids;
         std::vector<ourTypes::pidData>* fastPids;
         std::vector<ourTypes::pidData>* normalPids;
         std::vector<ourTypes::pidData>* slowPids;
-
-
-
 };
 
 };//end namespace obd

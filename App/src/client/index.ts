@@ -41,88 +41,40 @@ $(() => {
         selectedViewNum = Settings.defaultView;
     }
 
+    if (selectedViewNum == 0)
+        DisplayFeature.noConnectionPanel.hide();
+
     selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
     DisplayFeature.viewCircles.select(selectedViewNum);
 
-    let xDown: any = null;                                                        
-    let yDown: any = null;   
+    View.handleSwipe((direction: number) => {
+        if (DisplayFeature.swipeHelp != null)
+            DisplayFeature.swipeHelp.hide();
+        
+        if (selectedViewNum + direction < View.viewList.length && 
+            selectedViewNum + direction >= 0) {
 
-    document.addEventListener(Settings.isMobile ? "touchstart" : "mousedown", (evt: any) => {  
-        if (Settings.isMobile) {           
-            xDown = evt.touches[0].clientX;                                      
-            yDown = evt.touches[0].clientY;   
-        }
-        else {
-            xDown = evt.clientX;
-            yDown = evt.clientY;
-        }  
-    });  
+            selectedViewNum += direction;                 
+            selectedView.destroy();
 
-    document.addEventListener(Settings.isMobile ? "touchmove" : "mousemove", (evt: any) => { 
-        if (!xDown || !yDown)
-            return;
-    
-        let xUp;                                  
-        let yUp;        
+            selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
+            DisplayFeature.viewCircles.select(selectedViewNum);
 
-        if (Settings.isMobile) {           
-            xUp = evt.touches[0].clientX;                                      
-            yUp = evt.touches[0].clientY;   
-        }
-        else {
-            xUp = evt.clientX;
-            yUp = evt.clientY;
-        } 
-    
-        let xDiff = xDown - xUp;
-        let yDiff = yDown - yUp;
-        if (Math.abs(xDiff) + Math.abs(yDiff) > 150) {
-            if (Math.abs(xDiff) > Math.abs(yDiff)) {
-                let newSelectedViewNum = selectedViewNum;
+            Store.set(Settings.Store.selectedView, selectedViewNum.toString());
 
-                if (xDiff > 0) {
-                    // Swipe to left
-
-                    if (newSelectedViewNum < View.viewList.length - 1)
-                        newSelectedViewNum++;
-                } else {
-                    // Swipe to right
-
-                    if (newSelectedViewNum > 0)
-                        newSelectedViewNum--;
-                } 
-                if (newSelectedViewNum != selectedViewNum) { 
-                    if (DisplayFeature.swipeHelp != null)
-                        DisplayFeature.swipeHelp.hide();
-                    
-                    selectedViewNum = newSelectedViewNum;                 
-                    selectedView.destroy();
-
-                    selectedView = new View.viewList[selectedViewNum]($("<div>").prependTo($(document.body)));
-                    DisplayFeature.viewCircles.select(selectedViewNum);
-
-                    Store.set(Settings.Store.selectedView, selectedViewNum.toString());
-
-                    if (selectedViewNum != 0) { // TODO AND no connection to dongle (bluetooth)
-                        DisplayFeature.noConnectionPanel.show();
-                    }
-                    else {
-                        DisplayFeature.noConnectionPanel.hide();
-                    }
-                }
+            if (selectedViewNum != 0) { // TODO AND no connection to dongle (bluetooth)
+                DisplayFeature.noConnectionPanel.show();
             }
-
-            xDown = null;
-            yDown = null;
+            else {
+                DisplayFeature.noConnectionPanel.hide();
+            }
         }
-    }, false);
+    });
 });
 
 /*
 
 TODO
-
-No connection dialog
 
 Dialog (z.B. für config nachfrage ob dannach gleich upload to backend)
 

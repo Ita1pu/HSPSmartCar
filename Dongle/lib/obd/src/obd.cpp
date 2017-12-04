@@ -19,22 +19,68 @@ bool ObdDevice::initialize()
         return false;
     }
 
-    veryFastPids->push_back(ourTypes::pidData {EngineCoolantTemp, 0});
-    veryFastPids->push_back(ourTypes::pidData {VehicleSpeed, 0});
-    veryFastPids->push_back(ourTypes::pidData {RelativAcceleratorPedalPos, 0});
-    veryFastPids->push_back(ourTypes::pidData {EngineFuelRate, 0});
-    veryFastPids->push_back(ourTypes::pidData {DriverTorqueDemandEngine, 0});
-    veryFastPids->push_back(ourTypes::pidData {ActualTorqueEngine, 0});
-    veryFastPids->push_back(ourTypes::pidData {EngineTorqueRef, 0});
+    //not the selected pid signals are (if supported from the current car) added to their classes
+    //>>>>>>>very fast pids<<<<<<<
+    if (baseLayer->isValidPID(EngineRpm))
+    {
+        veryFastPids->push_back(ourTypes::pidData {EngineRpm, 0});
+    }
+    if (baseLayer->isValidPID(VehicleSpeed))
+    {
+        veryFastPids->push_back(ourTypes::pidData {VehicleSpeed, 0});
+    }
+    if (baseLayer->isValidPID(RelativAcceleratorPedalPos))
+    {
+        veryFastPids->push_back(ourTypes::pidData {RelativAcceleratorPedalPos, 0});
+    }
+    if (baseLayer->isValidPID(EngineFuelRate))
+    {
+        veryFastPids->push_back(ourTypes::pidData {EngineFuelRate, 0});
+    }
+    if (baseLayer->isValidPID(DriverTorqueDemandEngine))
+    {
+        veryFastPids->push_back(ourTypes::pidData {DriverTorqueDemandEngine, 0});
+    }
+    if (baseLayer->isValidPID(ActualTorqueEngine))
+    {
+        veryFastPids->push_back(ourTypes::pidData {ActualTorqueEngine, 0});
+    }
+    if (baseLayer->isValidPID(EngineTorqueRef))
+    {
+        veryFastPids->push_back(ourTypes::pidData {EngineTorqueRef, 0});
+    }
 
-    normalPids->push_back(ourTypes::pidData {EngineCoolantTemp, 0});
-    normalPids->push_back(ourTypes::pidData {RunTimeSineEngineStart, 0});
-    normalPids->push_back(ourTypes::pidData {AbsBarometricPressure, 0});
-    normalPids->push_back(ourTypes::pidData {AmbientAirTemp, 0});
-    normalPids->push_back(ourTypes::pidData {EngineOilTemp, 0});
+    //>>>>>>>>normal pids<<<<<<<<<<<<
+    if (baseLayer->isValidPID(EngineCoolantTemp))
+    {
+        normalPids->push_back(ourTypes::pidData {EngineCoolantTemp, 0});
+    }
+    if (baseLayer->isValidPID(RunTimeSineEngineStart))
+    {
+        normalPids->push_back(ourTypes::pidData {RunTimeSineEngineStart, 0});
+    }
+    if (baseLayer->isValidPID(AbsBarometricPressure))
+    {
+        normalPids->push_back(ourTypes::pidData {AbsBarometricPressure, 0});
+    }
+    if (baseLayer->isValidPID(AmbientAirTemp))
+    {
+        normalPids->push_back(ourTypes::pidData {AmbientAirTemp, 0});
+    }
+    if (baseLayer->isValidPID(EngineOilTemp))
+    {
+        normalPids->push_back(ourTypes::pidData {EngineOilTemp, 0});
+    }
 
-    slowPids->push_back(ourTypes::pidData {DistTraveledWithMalfuncIndicaLamp, 0});
-    slowPids->push_back(ourTypes::pidData {FuelTankLvlInput, 0});
+    //>>>>>>>slow pids<<<<<<<<<<<
+    if (baseLayer->isValidPID(DistTraveledWithMalfuncIndicaLamp))
+    {
+        slowPids->push_back(ourTypes::pidData {DistTraveledWithMalfuncIndicaLamp, 0});
+    }
+    if (baseLayer->isValidPID(FuelTankLvlInput))
+    {
+        slowPids->push_back(ourTypes::pidData {FuelTankLvlInput, 0});
+    }
 
     return baseLayer->init();
 }

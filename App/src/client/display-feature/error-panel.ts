@@ -31,15 +31,12 @@ namespace DisplayFeature {
         public showError(msg: Logging.ErrorLogEntry | string) {
             let myError = ++this.lastErrorNum;
 
-            let entry: Logging.ErrorLogEntry;
+            Logging.push(msg);
+
             if (typeof msg == "string") {
-                Logging.errors.push(new Logging.ErrorLogEntry([ msg ]));
-            
                 this.textDiv.text(msg);
             }
             else {
-                Logging.errors.push(msg);
-
                 this.textDiv.text(msg.getMessage()[0]);
             } 
 

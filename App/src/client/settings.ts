@@ -3,6 +3,8 @@ const Settings = {
 
     isDebug: true,
 
+    isMobile: false,
+
     defaultView: 1,
 
     Store: {

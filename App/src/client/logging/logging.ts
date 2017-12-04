@@ -72,5 +72,17 @@ namespace Logging {
         }
     }
 
-    export let errors : ErrorLogEntry[] = [];
+    let errors : ErrorLogEntry[] = [];
+
+    export function push(error: ErrorLogEntry | string) {  
+        if (Settings.isDebug)  
+            console.log(error);   
+
+        if (typeof error == "string") {
+            errors.push(new Logging.ErrorLogEntry([ error ]));
+        }
+        else {
+            errors.push(error);
+        }
+    }
 }

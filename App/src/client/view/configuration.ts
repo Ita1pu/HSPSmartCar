@@ -13,9 +13,12 @@ App Settings
 - Enable / Disable Swipe Help
 
 Connection to Dongle
-(show if connected or not)
+(show if connected or not and show current mac address)
 - Browse Dongles
 - Diconnect from Device
+// if connect to new dongle abfrage to disconnect form old device
+// if disconnect form old divice and buffer not empty abfrage that all old data will be whiped
+//    if user dont want that he needs to upload the buffered data first
 
 Connetion to Backend
 (show if parameters are right or not)
@@ -35,6 +38,8 @@ namespace View {
             super(control);
 
             this.control.text("CONFIGURATION!!!!");
+
+            //DisplayFeature.errorPanel.showError("Hello Error!");
         }
     }
     

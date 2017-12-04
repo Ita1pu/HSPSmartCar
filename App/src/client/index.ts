@@ -24,7 +24,7 @@ $(() => {
         DisplayFeature.SwipeHelp.init($("<div>").appendTo($(document.body)));
     }
 
-    DisplayFeature.ErrorPanel.init($("<div>").appendTo($(document.body))); 
+    DisplayFeature.ErrorPanel.init($("<div>").appendTo($(document.body)));
 
     let selectedView: View.View = null;
     let selectedViewNum: number = Settings.defaultView;
@@ -102,6 +102,13 @@ $(() => {
                     DisplayFeature.viewCircles.select(selectedViewNum);
 
                     Store.set(Settings.Store.selectedView, selectedViewNum.toString());
+
+                    if (selectedViewNum != 0) { // TODO AND no connection to dongle (bluetooth)
+                        DisplayFeature.noConnectionPanel.show();
+                    }
+                    else {
+                        DisplayFeature.noConnectionPanel.hide();
+                    }
                 }
             }
 

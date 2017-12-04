@@ -7,3 +7,7 @@ $img_dir: "src/client/resources/images/";
 .#{$img_error} { 
     background-image: url(inline-image($img_dir + "error.png"));
 }
+
+.#{$img_disconnected} {
+    background-image: url(inline-image($img_dir + "disconnected.png"));
+}

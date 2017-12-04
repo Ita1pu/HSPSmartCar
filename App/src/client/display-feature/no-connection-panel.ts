@@ -6,10 +6,15 @@ namespace DisplayFeature {
         private constructor(control: JQuery) {
             this.control = control;
 
-            // if no connection to bluetooth and view != configuration
-            // noConnectionDiv in the middle of the content and in red (content disabled...)
-            // let noConnectionDiv = $("<div>").text("No connection to Dongle.").appendTo($(document.body)); 
+            this.control.addClass(Var.Style.noConnectionPanel);
 
+            let panel = $("<div>", { class: Var.Style.NoConnectionPanel.panel }).appendTo(this.control);
+            let imageDiv = $("<div>", { class: Var.Style.NoConnectionPanel.Panel.image }).appendTo(panel);
+            let textDiv = $("<div>", { class: Var.Style.NoConnectionPanel.Panel.text }).appendTo(panel);
+
+            textDiv.text(S(Strings.noConnectionPanel));
+
+            panel.css("top", "calc(50% - (" + imageDiv.height() + "px / 2))");
         }
 
         public static init(control: JQuery): NoConnectionPanel {
@@ -17,6 +22,14 @@ namespace DisplayFeature {
                 DisplayFeature.noConnectionPanel = new NoConnectionPanel(control);
 
             return DisplayFeature.noConnectionPanel;
+        }
+
+        public show() {
+            this.control.show();
+        }
+
+        public hide() {
+            this.control.hide();
         }
     }
 }

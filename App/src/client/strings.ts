@@ -1,4 +1,8 @@
 const Strings = {
+    ErrorPanel: {
+        defaultText: "See \"Configuration → Logging\" for more informations!"
+    },
+    noConnectionPanel: "No connection to dongle!"
 }
 
 let currentLanguage: string = null;

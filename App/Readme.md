@@ -65,3 +65,5 @@
 4. `./node_modules/.bin/cordova run windows`
 
 5. `./node_modules/.bin/cordova run android --device`
+
+   > Debug with: `chrome://inspect/#devices`

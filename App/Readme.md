@@ -58,8 +58,10 @@
 
 1.  `./node_modules/.bin/gulp --cwd . --gulpfile scripts/gulpfile.js Release` 
 
-2. `./node_modules/.bin/cordova build`
+2. `./node_modules/.bin/cordova build` *(optional)*
 
 3. `./node_modules/.bin/cordova emulate android`
 
 4. `./node_modules/.bin/cordova run windows`
+
+5. `./node_modules/.bin/cordova run android --device`

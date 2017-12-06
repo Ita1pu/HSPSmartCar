@@ -56,6 +56,7 @@ class Persistence{
     stdRetVal create_logging_entry( uint32_t time,
                               uint16_t data_id, uint32_t data_value);
     stdRetVal init();
+    stdRetVal update_file_name( uint32_t current_time );/// Checks if the time passes 23:59 and opens a new file 
     /*Getter*/
     stdRetVal GetInitStatus();
     /*Setter*/
@@ -85,12 +86,12 @@ class Persistence{
     /** This filed holds the class used for VID mapping*/
     Vid_mapper *_vid_mapper;
     //Functions
-    stdRetVal update_file_name( uint32_t current_time );/// Checks if the time passes 23:59 and opens a new file 
     stdRetVal set_mapped_vehicle_id(); /// Sets the field _current_mvid to the vars MVID
     stdRetVal find_last_written_file(uint32_t current_time, File *ret_file); /// Finds the last wirtten file
     stdRetVal create_logging_file(uint32_t current_time, File *ret_file);
-    stdRetVal open_logging_file(uint32_t logging_start_time, File *ret_file); /// Creates a logging file like: 18JAN018.log for 18th of January 2018
+    stdRetVal open_logging_file(uint32_t logging_start_time); /// Creates a logging file like: 18JAN018.log for 18th of January 2018
     void setOpenFileDate(char *file_name); /// Setter for the date
+    char* getMonthNumber(char *month); /// Retruns the number of the Monnth JAN --> 01
 };//End class Persitence
 };//End namespace persistence
 

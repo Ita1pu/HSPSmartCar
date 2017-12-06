@@ -14,7 +14,7 @@ using namespace persistence;
  * @param file_system The handler for the filesystem
  */
 Persistence::Persistence(const vid *current_vid, uint32_t current_time,
-                        Vid_mapper *mapper,File_System_Handler *file_system){
+                        Vid_mapper *mapper, File_System_Handler *file_system){
 
   this->_vid_mapper = mapper;
   this->_file_system = file_system;
@@ -67,7 +67,7 @@ stdRetVal Persistence::create_logging_file(uint32_t current_time,
   /** \brief create a new logfile
     *
     * Creates a new logfile in the fileystem according to the current time
-    * The file is named like the date it was created e.g. 01012017.log.
+    * The file is named like the date it was created e.g. 010117.log.
     * It is stored in folder named after the corresponding mapped vehicle ID
     *
     * \param current_time the current time
@@ -83,19 +83,20 @@ stdRetVal Persistence::create_logging_file(uint32_t current_time,
  * This function opens a file for the passed logging time. If no file is found then a new one will be created
  * 
  * @param logging_start_time The starting of the logging 
- * @param ret_file TODO Remove
  * @return stdRetVal 
  */
-stdRetVal Persistence::open_logging_file(uint32_t logging_start_time, File *ret_file){
+stdRetVal Persistence::open_logging_file(uint32_t logging_start_time){
   time_t logtime = logging_start_time;
-  char file_path[13] = {0};
-  char folder[4];
+  char file_path[15] = {0};
+  char folder[3];
+  char *month = "Jan";
   char chrtime[26];
   sprintf(folder, "%x/", this->_current_mvid);
   //asctime returns: Sat Jan 01 00:04:16 2000
   sprintf(chrtime,asctime(gmtime(&logtime)));
-  //Filename is for example: 18JAN118.log for 18th of January 2118
-  char file_name[10] = { chrtime[8], chrtime[9], chrtime[4], chrtime[5], chrtime[6], chrtime[21], chrtime[22], chrtime[23], '\0'};
+  month = this->getMonthNumber(&chrtime[4]);
+  //Filename is for example: 180118.log for 18th of January 2118
+  char file_name[7] = { chrtime[8], chrtime[9], month[0], month[1], chrtime[22], chrtime[23], '\0'};
   this->setOpenFileDate(file_name);
   strcat(file_path, folder);
   strcat(file_path, file_name);
@@ -143,4 +144,27 @@ void Persistence::setOpenFileDate(char *file_name){
     this->_open_file_date[i] = file_name[i];
   }
   this->_open_file_date[SIZE_OF_CURRENT_DATE - 1] = 0; //Terminator
+}
+
+/**
+ * @brief Writes the number of the month in char* month to char* month
+ * 
+ * @param month contains the month like "JAN" and will be set to "01"
+ */
+char* Persistence::getMonthNumber(char *month)
+{
+  char *ret = "00";
+  if (strncmp("Jan", month,3)) sprintf(ret,"01");
+  if (strncmp("Feb", month,3)) sprintf(ret,"02");
+  if (strncmp("Mar", month,3)) sprintf(ret,"03");
+  if (strncmp("Apr", month,3)) sprintf(ret,"04");
+  if (strncmp("May", month,3)) sprintf(ret,"05");
+  if (strncmp("Jun", month,3)) sprintf(ret,"06");
+  if (strncmp("Jul", month,3)) sprintf(ret,"07");
+  if (strncmp("Aug", month,3)) sprintf(ret,"08");
+  if (strncmp("Sep", month,3)) sprintf(ret,"09");
+  if (strncmp("Oct", month,3)) sprintf(ret,"10");
+  if (strncmp("Nov", month,3)) sprintf(ret,"11");
+  if (strncmp("Dec", month,3)) sprintf(ret,"12");
+  return ret;
 }

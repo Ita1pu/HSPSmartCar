@@ -26,9 +26,11 @@
 
    `./node_modules/.bin/typings install -g`
 
-3. `./node_modules/.bin/cordova platform add android`
+3. Add Platform
 
-4. `./node_modules/.bin/cordova platform add windows`
+   `./node_modules/.bin/cordova platform add android`
+
+   `./node_modules/.bin/cordova platform add windows`
 
    > **Bugfix for Windows:**
    > + in File: `App/platforms/windows/platform_www`

@@ -15,7 +15,7 @@
 #include "FreematicsONE.h"
 
 //#define XBEE_DEBUG
-//#define DEBUG Serial
+#define DEBUG Serial
 
 #ifdef ARDUINO_ARCH_AVR
 SIGNAL(WDT_vect) {

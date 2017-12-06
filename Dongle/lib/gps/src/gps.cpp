@@ -9,10 +9,12 @@ LocationService::LocationService(COBDSPI* coProc){
 
 bool LocationService::Initialize(unsigned long baud){
   bool retVal = false;
-
+  uint8_t tmpCtr = 0;
   #ifdef FREEMATICS_GPS
-      Serial.println(baud);
-      retVal = _coProc -> gpsInit(baud);
+    do{
+      retVal = _coProc->gpsInit(baud);
+      delay(100);
+    }while(retVal == false && tmpCtr < 5);
   #else
       _coProc->gpsSendCommand(GPS_INIT_CMD);
       retVal = true;
@@ -39,4 +41,11 @@ uint8_t LocationService::GetSat(){
 
 bool LocationService::RenewGPSData(){
   return _coProc->gpsGetData(&_gData);
+  //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
+  if(_gData.sat > 14 && _gData.sat < 4){
+    _gData.time = 0;
+    _gData.date = 0;
+    _gData.lat = 0;
+    _gData.lng = 0;
+  }
 }

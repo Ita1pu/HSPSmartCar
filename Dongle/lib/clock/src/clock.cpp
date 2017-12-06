@@ -45,18 +45,21 @@ bool Clock::SetTimer(uint8_t nr, uint16_t millis, uint8_t *flags){
 
 bool Clock::SetTimer(uint8_t nr, uint16_t millis, void (*callback)()){
   bool retVal = false;
+
   retVal = Timer::set(nr, millis, callback);
   if(retVal){
     Timer::start(nr);
   }
   return retVal;
+
 }
 
 void Clock::updateTime(){
   _timeOfDay += CLOCK_RESOLUTION_MS;
   //clean seconds
-  uint32_t tmpSecs = _timeOfDay % 100000;
-  if(tmpSecs >= 60000){
+  //get deviation to CLOCK_UPDATE_MS milliseconds
+  uint32_t tmpSecs = _timeOfDay % CLOCK_UPDATE_MS;
+  if(tmpSecs > (CLOCK_UPDATE_MS - CLOCK_RESOLUTION_MS) || tmpSecs < CLOCK_RESOLUTION_MS){
     getGPStoInt();
   }
 }
@@ -69,7 +72,10 @@ bool Clock::getGPStoInt(){
   bool retVal = false;
   GPS_DATA gData;
   retVal = _coProc->gpsGetData(&gData);
-  _timeOfDay = gData.time*10;
-  _date = gData.date;
+  //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
+  if(gData.sat <= 14 && gData.sat >= 4){
+    _timeOfDay = gData.time*10;
+    _date = gData.date;
+  }
   return retVal;
 }

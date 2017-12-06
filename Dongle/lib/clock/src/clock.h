@@ -6,6 +6,7 @@
 #include "gps.h"
 
 #define CLOCK_RESOLUTION_MS 100
+#define CLOCK_UPDATE_MS 10000
 
 /**
  *  Timing Class;

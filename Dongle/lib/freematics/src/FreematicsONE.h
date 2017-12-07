@@ -5,6 +5,9 @@
 * (C)2012-2017 Stanley Huang <support@freematics.com.au
 *************************************************************************/
 
+#ifndef FREEMATICSONE_H
+#define FREEMATICSONE_H
+
 #include "FreematicsBase.h"
 #include "FreematicsMEMS.h"
 #include "FreematicsDMP.h"
@@ -140,3 +143,5 @@ private:
 	bool m_newGPSData;
 #endif
 };
+
+#endif

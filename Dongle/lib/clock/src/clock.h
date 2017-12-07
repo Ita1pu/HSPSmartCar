@@ -3,9 +3,11 @@
 
 #include <stdint.h>
 #include "FreematicsONE.h"
+#include "gps.h"
 
 #define CLOCK_RESOLUTION_MS 100
-#define GPS_INIT_CMD "Test"
+#define CLOCK_UPDATE_MS 10000
+
 /**
  *  Timing Class;
  *  This class provides methods for operations which have to do sth with time.
@@ -14,11 +16,13 @@
  */
 class Clock{
 public:
+  Clock(COBDSPI* coProc);
+
   /**
    * Initialization Method Should be done at startup
    * @return Wether the initialization was successfull
    */
-  bool Initialize(COBDSPI* coProc, unsigned long baud);
+  bool Initialize(LocationService* locService, uint8_t nr);
 
   /**
    * Receive the UTC time of day;
@@ -28,7 +32,7 @@ public:
 
   /**
    * Receive the UTC _date
-   * @return Date of the current day in following Format: DDMMYYYY
+   * @return Date of the current day in following Format: DDMMYY
    */
   uint32_t GetDate();
 
@@ -43,7 +47,6 @@ public:
 
   /**
    * Start a timer
-   * Does not work in parallel with SetTimeTicker
    * @param nr the number of the timer to start
    * @param millis the number of milliseconds the timer should run
    * @param callback the pointer to the function which shall be executed after timer completion

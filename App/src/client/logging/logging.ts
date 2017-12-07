@@ -7,10 +7,10 @@ namespace Logging {
         private col: number | undefined;
         private error: Error | undefined;
 
-        private readonly invalidXmlCharsPattern = 
+        private static readonly invalidXmlCharsPattern = 
             /[\u0000-\u0008\u000b\u000c\u000e-\u001f\ufffe\uffff]/g;
 
-        private readonly entityMap: {
+        private static readonly entityMap: {
             [index: string]: string
         } = {
             "&": "&amp;",
@@ -67,8 +67,8 @@ namespace Logging {
             // First, replace invalid XML 1.0 characters
             // then replace special XML characters.
             return typeof string == "undefined" || string === null ? string
-                : string.replace(this.invalidXmlCharsPattern, " ")
-                    .replace(/[&<>"']/g, s => this.entityMap[s]);
+                : string.replace(ErrorLogEntry.invalidXmlCharsPattern, " ")
+                    .replace(/[&<>"']/g, s => ErrorLogEntry.entityMap[s]);
         }
     }
 

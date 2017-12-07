@@ -59,6 +59,16 @@
                 "android"
             ],
             "isShellCommand": true 
+        },
+        {
+			"taskName": "Run on Windows",
+			"showOutput": "always",
+            "command": "${workspaceRoot}/node_modules/.bin/cordova",
+            "args": [
+                "run",
+                "windows"
+            ],
+            "isShellCommand": true 
         }
     ],
     "command": "${workspaceRoot}/node_modules/.bin/gulp",

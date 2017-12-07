@@ -17,28 +17,28 @@ Clock* clck = 0;
 COBDSPI coproc;
 uint8_t flags;
 
-void upDate(){
-  locSrv->RenewGPSData();
-}
-
 void setup()
 {
     // put your setup code here, to run once:
     Serial.begin(SERIAL_BAUD_RATE);
     coproc.begin();
     locSrv = new LocationService(&coproc);
-    delay(500);
-    clck = new Clock(&coproc);
 
+    clck = new Clock(&coproc);
+    Serial.println("Init started!");
     if(locSrv->Initialize(GPS_BAUD_RATE)){
       Serial.println("Initialization done!\n");
     }else{
       Serial.println("Init failed!");
     }
-    locSrv->RenewGPSData();
-    if(clck->Initialize(locSrv, CLOCK_TIMER_NR)){
-      Serial.println("Clock initialized!");
-    }
+    do{
+      locSrv->RenewGPSData();
+      delay(500);
+      Serial.println("Clock waiting!");
+    }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
+
+    Serial.println("Clock initialized!");
+
     if(clck->SetTimer(FLAG_TIMER_NR, 1500, &flags)){
       Serial.println("Flag timer set!");
     }
@@ -50,6 +50,7 @@ void loop()
     // put your main code here, to run repeatedly:
     if(flags){
       flags = 0;
+      locSrv->RenewGPSData();
       Serial.println("Tick");
       Serial.print("Latitude: ");
       Serial.println(locSrv->GetLatitude());

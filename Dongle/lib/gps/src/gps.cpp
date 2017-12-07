@@ -10,15 +10,10 @@ LocationService::LocationService(COBDSPI* coProc){
 bool LocationService::Initialize(unsigned long baud){
   bool retVal = false;
   uint8_t tmpCtr = 0;
-  #ifdef FREEMATICS_GPS
-    do{
-      retVal = _coProc->gpsInit(baud);
-      delay(100);
-    }while(retVal == false && tmpCtr < 5);
-  #else
-      _coProc->gpsSendCommand(GPS_INIT_CMD);
-      retVal = true;
-  #endif
+  do{
+    retVal = _coProc->gpsInit(baud);
+    delay(100);
+  }while(retVal == false && tmpCtr < 5);
   _isInit = retVal;
   return retVal;
 }

@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "FreematicsONE.h"
 
-#define GPS_INIT_CMD "Test"
+#define GPS_TEST_CMD "Test"
 
 class LocationService{
 public:

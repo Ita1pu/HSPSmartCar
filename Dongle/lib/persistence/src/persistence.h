@@ -34,7 +34,7 @@
 #include <types.h>
 #include <vid_mapper.h>
 #include <persistence_error_codes.h>
-#include <SD.h>
+#include <FreematicsSD.h>
 
 using namespace obd;
 using namespace ourTypes;

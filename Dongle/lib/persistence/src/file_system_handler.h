@@ -2,7 +2,7 @@
 #define FILE_SYSTEM_HANDLER_H
 
 //#include <FreematicsBase.h>
-#include <SD.h>
+#include <FreematicsSD.h>
 #include <persistence_error_codes.h>
 #include <types.h>
 

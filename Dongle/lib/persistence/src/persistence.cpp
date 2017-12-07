@@ -19,7 +19,7 @@ Persistence::Persistence(const vid *current_vid, uint32_t current_time,
   this->_vid_mapper = mapper;
   this->_file_system = file_system;
   this->_initStatus |= this->set_mapped_vehicle_id();
-  this->_initStatus |= this->open_logging_file(current_time, &this->_open_file);
+  this->_initStatus |= this->open_logging_file(current_time);
 }
 
 /**
@@ -89,14 +89,15 @@ stdRetVal Persistence::open_logging_file(uint32_t logging_start_time){
   time_t logtime = logging_start_time;
   char file_path[15] = {0};
   char folder[3];
-  char *month = "Jan";
   char chrtime[26];
+  char month[3];
   sprintf(folder, "%x/", this->_current_mvid);
   //asctime returns: Sat Jan 01 00:04:16 2000
   sprintf(chrtime,asctime(gmtime(&logtime)));
-  month = this->getMonthNumber(&chrtime[4]);
+  Serial.println(chrtime);
+  sprintf(month,getMonthNumber(&chrtime[4]));
   //Filename is for example: 180118.log for 18th of January 2118
-  char file_name[7] = { chrtime[8], chrtime[9], month[0], month[1], chrtime[22], chrtime[23], '\0'};
+  char file_name[7] = { chrtime[22], chrtime[23], month[0], month[1], chrtime[8], chrtime[9], '\0'};
   this->setOpenFileDate(file_name);
   strcat(file_path, folder);
   strcat(file_path, file_name);
@@ -153,6 +154,8 @@ void Persistence::setOpenFileDate(char *file_name){
  */
 char* Persistence::getMonthNumber(char *month)
 {
+  Serial.print("Month");
+  Serial.println(month);
   char *ret = "00";
   if (strncmp("Jan", month,3)) sprintf(ret,"01");
   if (strncmp("Feb", month,3)) sprintf(ret,"02");

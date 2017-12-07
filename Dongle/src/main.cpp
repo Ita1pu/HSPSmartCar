@@ -9,7 +9,7 @@
 #include <persistence.h>
 #include <types.h>
 #include <vid_mapper.h>
-#include <SD.h>
+#include <FreematicsSD.h>
 
 persistence::Persistence *p;
 persistence::Vid_mapper *mapper;

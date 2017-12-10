@@ -1,0 +1,50 @@
+{
+    "version": "0.1.0",
+    "isShellCommand": true,
+    "tasks": [
+        {
+			"taskName": "Watch",
+			"isBuildCommand": true,
+			"showOutput": "always",
+            "problemMatcher": "$tsc"
+        },
+        {
+			"taskName": "Clean",
+			"showOutput": "always"
+        },
+        {
+			"taskName": "Debug",
+			"showOutput": "always"
+        },
+        {
+			"taskName": "Release",
+			"showOutput": "always"
+        },
+        {
+			"taskName": "Load Modules",
+			"showOutput": "always",
+            "command": "npm",
+            "args": [
+                "update",
+                "--verbose"
+            ],
+            "isShellCommand": true 
+        },
+        {
+			"taskName": "Load Typings",
+			"showOutput": "always",
+            "command": "${workspaceRoot}/node_modules/.bin/typings",
+            "args": [
+                "install"
+            ],
+            "isShellCommand": true 
+        }
+    ],
+    "command": "${workspaceRoot}/node_modules/.bin/gulp",
+    "args": [
+        "--cwd",
+        "${workspaceRoot}",
+        "--gulpfile",
+        "scripts/gulpfile.js"
+    ]
+}

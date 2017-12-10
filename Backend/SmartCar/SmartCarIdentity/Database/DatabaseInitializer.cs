@@ -4,6 +4,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using SmartCarIdentity.Identity;
 using SmartCarIdentity.Models.Identity;
 
@@ -11,9 +14,13 @@ namespace SmartCarIdentity.Database
 {
     public static class DatabaseInitializer
     {
-        public static async void Initialize(ApplicationDbContext context, UserManager<AppUser> userManager, RoleManager<AppUserRole> roleManager)
+        public static async void Initialize(IServiceProvider services)
         {
-            context.Database.EnsureCreated();
+            var context = services.GetRequiredService<ApplicationDbContext>();
+            var userManager = services.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<AppUserRole>>();
+
+            await context.Database.EnsureCreatedAsync();
 
             //Databse was already seeded
             if (context.Users.Any()) return;

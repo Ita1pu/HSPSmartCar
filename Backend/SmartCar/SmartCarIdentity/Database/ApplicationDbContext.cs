@@ -14,11 +14,13 @@ namespace SmartCarIdentity.Database
     public class ApplicationDbContext : DbContext
     {
         public DbSet<AppUser> Users { get; set; }
-        public DbSet<AppUserRole> Roles { get; set; }
-
         public DbSet<IdentityUserClaim<string>> IdentityUserClaims { get; set; }
-        public DbSet<IdentityUserRole<string>>  IdentityUserRoles { get; set; }
 
+        public DbSet<IdentityUserRole<string>> IdentityUserRoles { get; set; }
+
+        public DbSet<AppUserRole> Roles { get; set; }
+        public DbSet<IdentityRoleClaim<string>> IdentityRoleClaims { get; set; }
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -40,6 +42,10 @@ namespace SmartCarIdentity.Database
             });
             builder.Entity<IdentityUserClaim<string>>(i => {
                 i.ToTable("UserClaims");
+                i.HasKey(x => x.Id);
+            });
+            builder.Entity<IdentityRoleClaim<string>>(i => {
+                i.ToTable("RoleClaims");
                 i.HasKey(x => x.Id);
             });
         }

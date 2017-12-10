@@ -16,9 +16,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "5000:80"
+
 networks:
-  default:
-    external:
-      name: nat
-
-
+  net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/16

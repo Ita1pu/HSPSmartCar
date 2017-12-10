@@ -23,25 +23,22 @@ namespace SmartCarIdentity
 
             //Initialize the web host so it's ready for operation
             InitializeHost(host);
-           
+
             host.Run();
         }
+
         public static void InitializeHost(IWebHost host)
         {
             var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
-
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            
             try
             {
-                var context = services.GetRequiredService<ApplicationDbContext>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<AppUserRole>>();
-
-                DatabaseInitializer.Initialize(context, userManager, roleManager);
+                DatabaseInitializer.Initialize(services);
             }
             catch (Exception ex)
             {
-                var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred while seeding the database.");
             }
         }

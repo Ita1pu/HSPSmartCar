@@ -7,6 +7,8 @@ const Settings = {
 
     defaultView: 1,
 
+    swipeDistance: 100,
+
     Store: {
         selectedView: "selectedView",
         showSwipeHelp: "showSwipeHelp",

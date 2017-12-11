@@ -46,7 +46,7 @@ namespace View {
         
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
-            if (Math.abs(xDiff) + Math.abs(yDiff) > 150) {
+            if (Math.abs(xDiff) + Math.abs(yDiff) > 100) {
                 if (Math.abs(xDiff) > Math.abs(yDiff)) {
                     if (xDiff > 0) {
                         // Swipe to left

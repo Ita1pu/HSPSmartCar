@@ -35,10 +35,11 @@
 #include <vid_mapper.h>
 #include <persistence_error_codes.h>
 #include <FreematicsSD.h>
+#include <clock.h>
 
 using namespace obd;
 using namespace ourTypes;
-#define SIZE_OF_CURRENT_DATE          5
+#define SIZE_OF_CURRENT_DATE          8
 namespace persistence {
 class Persistence{
   public:
@@ -51,12 +52,12 @@ class Persistence{
      * @param mapper The Mapp handler for VID-->MVID
      * @param file_system The handler for the filesystem
      */
-    Persistence(const vid *current_vid, uint32_t current_time, Vid_mapper *mapper,
+    Persistence(const vid *current_vid, Clock *clk, Vid_mapper *mapper,
                 File_System_Handler *file_system);
-    stdRetVal create_logging_entry( uint32_t time,
+    stdRetVal create_logging_entry( uint64_t time,
                               uint16_t data_id, uint32_t data_value);
     stdRetVal init();
-    stdRetVal update_file_name( uint32_t current_time );/// Checks if the time passes 23:59 and opens a new file 
+    stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file 
     /*Getter*/
     stdRetVal GetInitStatus();
     /*Setter*/
@@ -85,11 +86,13 @@ class Persistence{
     /// The class handling the mapping of the VIDs
     /** This filed holds the class used for VID mapping*/
     Vid_mapper *_vid_mapper;
+    /// The clock getting the time from GPS
+    Clock *_clk;
     //Functions
     stdRetVal set_mapped_vehicle_id(); /// Sets the field _current_mvid to the vars MVID
-    stdRetVal find_last_written_file(uint32_t current_time, File *ret_file); /// Finds the last wirtten file
-    stdRetVal create_logging_file(uint32_t current_time, File *ret_file);
-    stdRetVal open_logging_file(uint32_t logging_start_time); /// Creates a logging file like: 18JAN018.log for 18th of January 2018
+    stdRetVal find_last_written_file(File *ret_file); /// Finds the last wirtten file
+    stdRetVal create_logging_file(File *ret_file);
+    stdRetVal open_logging_file(); /// Creates a logging file like: 18JAN018.log for 18th of January 2018
     void setOpenFileDate(char *file_name); /// Setter for the date
     char* getMonthNumber(char *month); /// Retruns the number of the Monnth JAN --> 01
 };//End class Persitence

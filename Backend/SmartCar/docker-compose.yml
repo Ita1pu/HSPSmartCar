@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  smartcarapi:
+    image: smartcarapi
+    container_name: smartcar_api
+    build:
+      context: ./SmartCarApi
+      dockerfile: Dockerfile
+    networks:
+      net:
+        ipv4_address: 172.19.0.2
+
+  smartcarui:
+    image: smartcarui
+    container_name: smartcar_ui
+    build:
+      context: ./SmartCarUi
+      dockerfile: Dockerfile
+    networks:
+      net:
+        ipv4_address: 172.19.0.3
+
+  smartcaridentity:
+    image: smartcaridentity
+    container_name: smartcar_identity    
+    build:
+      context: ./SmartCarIdentity
+      dockerfile: Dockerfile
+    networks:
+      net:
+        ipv4_address: 172.19.0.4
+    depends_on:
+      - smartcardb
+
+  smartcardb:
+    image: "alackner/smartcardb"
+    container_name: smartcar_db
+    hostname: dbhost
+    networks:
+      net:
+        ipv4_address: 172.19.0.5
+    ports:
+      - "3306:3306"

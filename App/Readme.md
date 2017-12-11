@@ -26,6 +26,16 @@
 
    `./node_modules/.bin/typings install -g`
 
+3. Add Platform
+
+   `./node_modules/.bin/cordova platform add android`
+
+   `./node_modules/.bin/cordova platform add windows`
+
+   > **Bugfix for Windows:**
+   > + in File: `App/platforms/windows/platform_www`
+   > + Remove Line 2081, 2083, 2084, 2092, 2093  
+
 # Compile
 
 1. Compile just once
@@ -46,18 +56,14 @@
 
 # Release
 
-1.  `./node_modules/.bin/gulp --cwd . --gulpfile scripts/gulpfile.js Release`
+1.  `./node_modules/.bin/gulp --cwd . --gulpfile scripts/gulpfile.js Release` 
 
-2. `./node_modules/.bin/cordova platform add android`
+2. `./node_modules/.bin/cordova build` *(optional)*
 
-3. `./node_modules/.bin/cordova platform add windows`
+3. `./node_modules/.bin/cordova emulate android`
 
-   > **Bugfix for Windows:**
-   > + in File: `App/platforms/windows/platform_www`
-   > + Remove Line 2081, 2083, 2084, 2092, 2093   
+4. `./node_modules/.bin/cordova run windows`
 
-4. `./node_modules/.bin/cordova build`
+5. `./node_modules/.bin/cordova run android --device`
 
-5. `./node_modules/.bin/cordova emulate android`
-
-6. `./node_modules/.bin/cordova run windows`
+   > Debug with: `chrome://inspect/#devices`

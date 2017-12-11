@@ -21,14 +21,16 @@
 }
 
 .#{$view_configuration_header} {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
 
     background-color: $color_bg_header;
 
     color: black;
 
     text-align: center;
+
+    font-size: 16px
 }
 
 .#{$view_configuration_button} {

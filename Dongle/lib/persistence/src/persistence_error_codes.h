@@ -15,5 +15,8 @@ namespace persistence
   #define MAPFILE_FULL                    0xFE
   #define UNDEFINED_ERROR                 0xFF
 
+  //Logfile Error Codes
+  #define NEW_LOGGING_FILE_CREATED            0x02
+
 };
 #endif

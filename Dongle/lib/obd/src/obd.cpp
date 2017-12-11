@@ -8,7 +8,93 @@ ObdDevice::ObdDevice(COBDSPI* baseLayer) : baseLayer(baseLayer)
 
 }
 
+ObdDevice::~ObdDevice()
+{
+    delete veryFastPids;
+    delete fastPids;
+    delete normalPids;
+    delete slowPids;
+}
+
 bool ObdDevice::initialize()
+{
+    if (wasAlreadyInitialiesed == true)
+    {
+        baseLayer->uninit();
+        Serial.println("Base was already initialiezed, uninit will be called");
+        if (baseLayer->init(lastUsedProtocol) == true)
+        {
+            Clamp15 = true;
+            Serial.println("initialies with the lased used one worked");
+            return true;
+        }
+        else
+        {
+            Clamp15 = false;
+            Serial.println("initialies with the lased used one failed");
+            return false;
+        }
+    }
+
+    //check all possible protokolls
+    if (baseLayer->init(PROTO_AUTO) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_AUTO");
+        lastUsedProtocol = PROTO_AUTO;
+    }
+    else if (baseLayer->init(PROTO_ISO_9141_2) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_ISO_9141_2");
+        lastUsedProtocol = PROTO_ISO_9141_2;
+    }
+    else if (baseLayer->init(PROTO_KWP2000_5KBPS) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_KWP2000_5KBPS");
+        lastUsedProtocol = PROTO_KWP2000_5KBPS;
+    }
+    else if (baseLayer->init(PROTO_KWP2000_FAST) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_KWP2000_FAST");
+        lastUsedProtocol = PROTO_KWP2000_FAST;
+    }
+    else if (baseLayer->init(PROTO_CAN_11B_500K) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_CAN_11B_500K");
+        lastUsedProtocol = PROTO_CAN_11B_500K;
+    }
+    else if (baseLayer->init(PROTO_CAN_29B_500K) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_CAN_29B_500K");
+        lastUsedProtocol = PROTO_CAN_29B_500K;
+    }
+    else if (baseLayer->init(PROTO_CAN_29B_250K) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_CAN_29B_250K");
+        lastUsedProtocol = PROTO_CAN_29B_250K;
+    }
+    else if (baseLayer->init(PROTO_CAN_11B_250K) == true)
+    {
+        Clamp15 = true;
+        Serial.println("base initialized protocol is PROTO_CAN_11B_250K");
+        lastUsedProtocol = PROTO_CAN_11B_250K;
+    }
+
+    if (Clamp15 == false)
+    {
+        return false;
+    }
+
+    return fillPidVectors();
+}
+
+bool ObdDevice::fillPidVectors()
 {
     veryFastPids = new std::vector<ourTypes::pidData>;
     fastPids = new std::vector<ourTypes::pidData>;
@@ -21,69 +107,74 @@ bool ObdDevice::initialize()
 
     //not the selected pid signals are (if supported from the current car) added to their classes
     //>>>>>>>very fast pids<<<<<<<
-    if (baseLayer->isValidPID(EngineRpm))
+    if (baseLayer->isValidPID(obd::EngineRpm))
     {
-        veryFastPids->push_back(ourTypes::pidData {EngineRpm, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::EngineRpm, 0});
     }
-    if (baseLayer->isValidPID(VehicleSpeed))
+    if (baseLayer->isValidPID(obd::VehicleSpeed))
     {
-        veryFastPids->push_back(ourTypes::pidData {VehicleSpeed, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::VehicleSpeed, 0});
     }
-    if (baseLayer->isValidPID(RelativAcceleratorPedalPos))
+    if (baseLayer->isValidPID(obd::RelativAcceleratorPedalPos))
     {
-        veryFastPids->push_back(ourTypes::pidData {RelativAcceleratorPedalPos, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::RelativAcceleratorPedalPos, 0});
     }
-    if (baseLayer->isValidPID(EngineFuelRate))
+    if (baseLayer->isValidPID(obd::EngineFuelRate))
     {
-        veryFastPids->push_back(ourTypes::pidData {EngineFuelRate, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::EngineFuelRate, 0});
     }
-    if (baseLayer->isValidPID(DriverTorqueDemandEngine))
+    if (baseLayer->isValidPID(obd::DriverTorqueDemandEngine))
     {
-        veryFastPids->push_back(ourTypes::pidData {DriverTorqueDemandEngine, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::DriverTorqueDemandEngine, 0});
     }
-    if (baseLayer->isValidPID(ActualTorqueEngine))
+    if (baseLayer->isValidPID(obd::ActualTorqueEngine))
     {
-        veryFastPids->push_back(ourTypes::pidData {ActualTorqueEngine, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::ActualTorqueEngine, 0});
     }
-    if (baseLayer->isValidPID(EngineTorqueRef))
+    if (baseLayer->isValidPID(obd::EngineTorqueRef))
     {
-        veryFastPids->push_back(ourTypes::pidData {EngineTorqueRef, 0});
+        veryFastPids->push_back(ourTypes::pidData {obd::EngineTorqueRef, 0});
     }
 
     //>>>>>>>>normal pids<<<<<<<<<<<<
-    if (baseLayer->isValidPID(EngineCoolantTemp))
+    if (baseLayer->isValidPID(obd::EngineCoolantTemp))
     {
-        normalPids->push_back(ourTypes::pidData {EngineCoolantTemp, 0});
+        normalPids->push_back(ourTypes::pidData {obd::EngineCoolantTemp, 0});
     }
-    if (baseLayer->isValidPID(RunTimeSineEngineStart))
+    if (baseLayer->isValidPID(obd::RunTimeSineEngineStart))
     {
-        normalPids->push_back(ourTypes::pidData {RunTimeSineEngineStart, 0});
+        normalPids->push_back(ourTypes::pidData {obd::RunTimeSineEngineStart, 0});
     }
-    if (baseLayer->isValidPID(AbsBarometricPressure))
+    if (baseLayer->isValidPID(obd::AbsBarometricPressure))
     {
-        normalPids->push_back(ourTypes::pidData {AbsBarometricPressure, 0});
+        normalPids->push_back(ourTypes::pidData {obd::AbsBarometricPressure, 0});
     }
-    if (baseLayer->isValidPID(AmbientAirTemp))
+    if (baseLayer->isValidPID(obd::AmbientAirTemp))
     {
-        normalPids->push_back(ourTypes::pidData {AmbientAirTemp, 0});
+        normalPids->push_back(ourTypes::pidData {obd::AmbientAirTemp, 0});
     }
-    if (baseLayer->isValidPID(EngineOilTemp))
+    if (baseLayer->isValidPID(obd::EngineOilTemp))
     {
-        normalPids->push_back(ourTypes::pidData {EngineOilTemp, 0});
+        normalPids->push_back(ourTypes::pidData {obd::EngineOilTemp, 0});
     }
 
     //>>>>>>>slow pids<<<<<<<<<<<
-    if (baseLayer->isValidPID(DistTraveledWithMalfuncIndicaLamp))
+    if (baseLayer->isValidPID(obd::DistTraveledWithMalfuncIndicaLamp))
     {
-        slowPids->push_back(ourTypes::pidData {DistTraveledWithMalfuncIndicaLamp, 0});
+        slowPids->push_back(ourTypes::pidData {obd::DistTraveledWithMalfuncIndicaLamp, 0});
     }
-    if (baseLayer->isValidPID(FuelTankLvlInput))
+    if (baseLayer->isValidPID(obd::FuelTankLvlInput))
     {
-        slowPids->push_back(ourTypes::pidData {FuelTankLvlInput, 0});
+        slowPids->push_back(ourTypes::pidData {obd::FuelTankLvlInput, 0});
     }
 
-    return baseLayer->init();
+    Serial.print("Supported very fast: "); Serial.println(veryFastPids->size());
+    Serial.print("Supported fast: "); Serial.println(fastPids->size());
+    Serial.print("Supported normal: "); Serial.println(normalPids->size());
+    Serial.print("Supported slow: "); Serial.println(slowPids->size());
+    return true;
 }
+
 
 void ObdDevice::uninit()
 {
@@ -102,12 +193,27 @@ void ObdDevice::end()
 
 int ObdDevice::getValueOfPid(char pid, bool& successful)
 {
-    successful = false;
-
-    int value = 0;
-    if (baseLayer->readPID(pid, value) == true)
+    if (baseLayer->isValidPID(pid) == false)
     {
-        successful = true;
+        successful = false;
+        return 0;
+    }
+
+    successful = false;
+    int value = 0;
+
+    for (int i=0; i<ourTypes::maxRetries; ++i)
+    {
+        if (baseLayer->readPID(pid, value) == true)
+        {
+            successful = true;
+            break;
+        }
+    }
+
+    if(successful == false)
+    {
+        Clamp15 = false;
     }
 
     return value;
@@ -134,41 +240,20 @@ bool ObdDevice::updateSlowPids()
 }
 
 /*!
-This function trys to pair the pids from a vector in groups of 4 (if there are not enought to always
-get full groups, the last group is smaller) and than get their value from freematics lib.
+This function updates the values from pids in a given vector.
 @return True if there was no error with freematics and all values are updated
 */
 bool ObdDevice::updatePidVector(std::vector<ourTypes::pidData>* pidVector)
 {
     bool retVal = true;
-
-    int pidAmount = pidVector->size();
-    byte pids[4];
-    int runner = 0;
-    byte currentPidCnt = 0;
-
-    while(runner < pidAmount)
+    bool temp = false;
+    for(unsigned int i=0; i<pidVector->size(); ++i)
     {
-        pids[currentPidCnt] = (pidVector->at(runner)).pid;
-        currentPidCnt++;
-        runner++;
-
-        if ((currentPidCnt >= 3) || (runner >= pidAmount-1)) //maximum of pids that could be asked at one is 4 -> see frematicsOne.h || there are less than 4 pids left
+        (pidVector->at(i)).value = getValueOfPid((pidVector->at(i)).pid, temp);
+        if (temp == false)
         {
-            int pidValues[4];
-            byte readPids = baseLayer->readPID(pids, currentPidCnt, pidValues);
-            if (readPids == currentPidCnt)//I read less then the expected amount of pids, so something went wrong
-            {
-                retVal = false;
-                break;
-            }
-
-            for (int i=0; i<currentPidCnt; ++i)//write the new values to the vector
-            {
-                (pidVector->at(runner)).value = pidValues[i];
-            }
-
-            currentPidCnt = 0;
+            retVal = false;
+            delay(5); //wait short time or the odb is to much triggered
         }
     }
     return retVal;
@@ -204,6 +289,8 @@ With freematic library only the digits are available. The category letter is not
 */
 std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
 {
+    //todo: eventuell auch hier dafür sorgen, dass der vector zerstört wird wenn man dieses objekt zerstört
+    //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
     uint16_t* readCodes = new uint16_t[ourTypes::MAXTROUBLECODES];
     std::vector<ourTypes::dtcData>* dtcVector = new std::vector<ourTypes::dtcData>;
 
@@ -213,7 +300,7 @@ std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
     }
 
     char readTroubleCodesCount = baseLayer->readDTC(readCodes, ourTypes::MAXTROUBLECODES);
-
+    Serial.print("I read #"), Serial.print(readTroubleCodesCount), Serial.println(" many trouble codes");
     if (readTroubleCodesCount == 0)
     {
         return nullptr;
@@ -233,15 +320,21 @@ std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
 
 void ObdDevice::clearDiagnosticTroubleCodes()
 {
+    //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
     baseLayer->clearDTC();
 }
 
 /**
-@return An char[] containing the 13 bits of the vehicle identification numbers.
+@return An char[] containing the 13 bytes of the vehicle identification numbers.
 */
 char* ObdDevice::getVehicleIdentificationNumber()
 {
+    //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
     char* buffer = new char[ourTypes::lengthOfVehicleIdentificationNumber];
+    if (buffer == nullptr)
+    {
+        return nullptr;
+    }
 
     bool status = baseLayer->getVIN(buffer, ourTypes::lengthOfVehicleIdentificationNumber);
 
@@ -257,7 +350,10 @@ char* ObdDevice::getVehicleIdentificationNumber()
 }
 
 
-
+bool ObdDevice::getClamp15State()
+{
+    return Clamp15;
+}
 
 
 

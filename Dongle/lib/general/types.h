@@ -5,7 +5,8 @@
 namespace ourTypes
 {
     const char MAXTROUBLECODES = 10;
-    const char lengthOfVehicleIdentificationNumber = 13;
+    const char lengthOfVehicleIdentificationNumber = 100; //freematics whant this to be >=OBD_RECV_BUF_SIZE which is 80 in their example
+    const char maxRetries = 10;
 
     //typedef unsigned char byte;
     typedef char smallPidVal;

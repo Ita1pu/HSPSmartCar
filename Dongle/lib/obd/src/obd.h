@@ -15,6 +15,7 @@ class ObdDevice
 {
     public:
         ObdDevice(COBDSPI* baseLayer);
+        ~ObdDevice();
         //functions from freematics only encapsulated here
         bool initialize();
         void uninit();
@@ -39,11 +40,17 @@ class ObdDevice
 
         char* getVehicleIdentificationNumber();
 
+        bool getClamp15State();
+
 
     private:
         bool updatePidVector(std::vector<ourTypes::pidData>* pidVector);
+        bool fillPidVectors();
 
+        bool Clamp15 = false;
+        bool wasAlreadyInitialiesed = false;
         COBDSPI* baseLayer;
+        OBD_PROTOCOLS lastUsedProtocol;
         std::vector<ourTypes::pidData>* veryFastPids;
         std::vector<ourTypes::pidData>* fastPids;
         std::vector<ourTypes::pidData>* normalPids;

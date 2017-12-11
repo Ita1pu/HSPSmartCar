@@ -2,7 +2,39 @@ const Strings = {
     ErrorPanel: {
         defaultText: "See \"Configuration → Logging\" for more informations!"
     },
-    noConnectionPanel: "No connection to dongle!"
+    noConnectionPanel: "No connection to dongle!",
+    View: {
+        Configuration: {
+            Header: {
+                dataTransfer: "Data Transfer",
+                connectionToDongle: "Connection to Dongle",
+                connectionToBackground: "Connection to Backend",
+                appSettings: "App Settings",
+                logging: "Logging"
+            },
+            Button: {
+                DataTransfer: {
+                    download: "Download",
+                    upload: "Upload",
+                    clearBuffer: "Clear Buffer"
+                },
+                connect: "Connect",
+                test: "Test",
+                disconnect: "Disconnect",
+                load: "Load"
+            },
+            Switch: {
+                VelocityUnit: {
+                    MpH: "Mp/H",
+                    KmH: "Km/H"
+                },
+                SwipeHelp: {
+                    enable: "Enable Swipe Help",
+                    disbale: "Disable Swipe Help"
+                }
+            }
+        }
+    }
 }
 
 let currentLanguage: string = null;

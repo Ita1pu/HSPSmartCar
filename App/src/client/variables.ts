@@ -21,6 +21,25 @@ namespace Var {
                 image: "no-connection-panel-panel-image"
             }
         },
+        View: {
+            configuration: "view-configuration",
+            Configuration: {
+                header: "view-configuration-header",
+                button: "view-configuration-button",
+                Button: {
+                    test: "view-configuration-button-test",
+                    Test: {
+                        good: "view-configuration-button-test-good",
+                        bad: "view-configuration-button-test-bad"
+                    }
+                },
+                switch: "view-configuration-switch",
+                Switch: {
+                    enabled: "view-configuration-switch-enabled"
+                },
+                logging: "view-configuration-logging"
+            }
+        },
     }
 
     export const Images = {

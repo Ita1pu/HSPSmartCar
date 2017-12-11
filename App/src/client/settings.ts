@@ -9,6 +9,15 @@ const Settings = {
 
     Store: {
         selectedView: "selectedView",
-        showSwipeHelp: "showSwipeHelp"
+        showSwipeHelp: "showSwipeHelp",
+        ShowSwipeHelp: {
+            true: "true",
+            false: "false"
+        },
+        velocityUnit: "velocityUnit",
+        VelocityUnit: {
+            MpH: "MpH",
+            KmH: "KmH"
+        }
     }
 };

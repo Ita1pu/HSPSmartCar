@@ -85,4 +85,8 @@ namespace Logging {
             errors.push(error);
         }
     }
+
+    export function getErrors(): ErrorLogEntry[] {
+        return errors;
+    }
 }

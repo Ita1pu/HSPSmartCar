@@ -107,7 +107,7 @@ File File_System_Handler::getCurrentFile()
 }
 // stdRetVal
 
-bool File_System_Handler::exists( char *dir_path)
+bool File_System_Handler::exists( char *path)
 {
-  return this->card->exists(dir_path);
+  return this->card->exists(path);
 }

@@ -53,22 +53,20 @@ namespace SmartCarIdentity
                         IdentityServerConstants.StandardScopes.Profile,
                         "smartcar_backend"
                     },
-                }
-            };
-        }
-
-        public static List<TestUser> GetUsers()
-        {
-            return new List<TestUser>
-            {
-                new TestUser
+                },
+                new Client
                 {
-                    SubjectId = "1",
-                    Username = "user",
-                    Password = "user",
-                    Claims = new List<Claim>
+                    ClientId = "smartcar_app",
+                    ClientName = "Smartcar App",
+                    ClientSecrets = { new Secret("tZop4xbZ9wV".Sha256()) },
+
+                    AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
+                    
+                    AllowedScopes =
                     {
-                        new Claim("name", "default user")
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile,
+                        "smartcar_app"
                     }
                 }
             };

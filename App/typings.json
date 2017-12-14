@@ -1,0 +1,11 @@
+{
+  "globalDependencies": { 
+    "node": "registry:dt/node",
+    "jquery": "registry:dt/jquery"  
+  },
+  "dependencies": {
+    "express": "registry:npm/express",
+    "express-serve-static-core": "registry:dt/express-serve-static-core",
+    "ws": "registry:dt/ws"
+  }
+}

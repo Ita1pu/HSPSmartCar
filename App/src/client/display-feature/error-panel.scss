@@ -1,0 +1,34 @@
+.#{$errorPanel} {
+    display: none;
+
+    position: absolute;
+
+    width: calc(100% - 10px);
+    
+    margin: 5px;
+
+    top: 0px;
+    left: 0px;
+    right: 0px;
+
+    background-color: $color_bg_blue;
+
+    /* transparent */
+}
+
+.#{$errorPanel_image} {
+    @extend .#{$img_error};
+
+    float: left;
+
+    width: 50px;
+    height: 50px;
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 75% auto;
+}
+
+.#{$errorPanel_text} {
+    padding: 5px;    
+}

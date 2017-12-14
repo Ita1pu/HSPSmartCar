@@ -20,7 +20,7 @@ $(() => {
     DisplayFeature.ViewCircles.init($("<div>").appendTo($(document.body))); 
 
     let swipeHelp = Store.get(Settings.Store.showSwipeHelp);
-    if (swipeHelp == null || swipeHelp.toLocaleLowerCase() == "true") {
+    if (swipeHelp == null || swipeHelp == Settings.Store.ShowSwipeHelp.true) {
         DisplayFeature.SwipeHelp.init($("<div>").appendTo($(document.body)));
     }
 
@@ -62,7 +62,8 @@ $(() => {
 
             Store.set(Settings.Store.selectedView, selectedViewNum.toString());
 
-            if (selectedViewNum != 0) { // TODO AND no connection to dongle (bluetooth)
+            if (selectedViewNum != 0 && 
+                (Dongle.bluetooth == null || Dongle.bluetooth.IsConnected() == false)) {
                 DisplayFeature.noConnectionPanel.show();
             }
             else {
@@ -70,13 +71,63 @@ $(() => {
             }
         }
     });
-});
+
+    document.addEventListener("deviceready", () => {
+        Logging.push("Device is ready!");
+
+        Dongle.Bluetooth.init();
+    }, false);
+    
+    
+    let params = $.param({
+        username: "admin", 
+        password: "admin",
+        scope: "openid",
+        grant_type: "password",
+        client_id: "smartcar_app",
+        client_secret: "tZop4xbZ9wV"
+    });
+
 
 /*
-
-TODO
-
-Dialog (z.B. für config nachfrage ob dannach gleich upload to backend)
-
-
+    let params = $.param({
+        username: "james", 
+        password: "password",
+        scope: "fiver_auth_api",
+        grant_type: "password",
+        client_id: "fiver_auth_client_ro",
+        client_secret: "secret"
+    });
 */
+
+    console.log(params);
+
+
+
+    $.ajax({
+        url: "http://localhost:5000/connect/token",
+        method: "POST",
+        dataType: "json",
+        jsonp: false,
+        contentType: "application/x-www-form-urlencoded",
+        data: params,
+        processData: false,
+        timeout: 5000,
+        success: function (response) {
+            console.log("Success: ", response)
+        },
+        error: (request: JQueryXHR, status: string, error: string) => {
+            console.log("Error: ", request , status)
+        }
+    });
+
+    
+
+
+
+
+
+
+
+
+});

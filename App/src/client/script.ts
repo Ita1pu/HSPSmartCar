@@ -19,6 +19,8 @@ let files: string[] = [
     "view/configuration",
     "view/simple-list",
 
+    "dongle/bluetooth",
+
     "index"
     
 ];    

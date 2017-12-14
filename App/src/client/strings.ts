@@ -14,8 +14,8 @@ const Strings = {
             },
             Button: {
                 DataTransfer: {
-                    download: "Download",
-                    upload: "Upload",
+                    download: "Download from Dongle",
+                    upload: "Upload to Backend",
                     clearBuffer: "Clear Buffer"
                 },
                 connect: "Connect",

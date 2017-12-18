@@ -9,6 +9,7 @@ LocationService::LocationService(COBDSPI* coProc){
 
 bool LocationService::Initialize(unsigned long baud){
   bool retVal = false;
+  //Configure the additional use of EGNOS (to improve the GPS precision)
   uint8_t cmd[] = {0xB5, 0x62, 0x06, 0x16, 0x00, 0x08, 0x03, 0x07, 0x00, 0x00, 0x00, 0x00, 0x51, 0x7F, 0xEE };
   uint8_t cmdLen = 15;
   uint8_t tmpCtr = 0;
@@ -17,6 +18,7 @@ bool LocationService::Initialize(unsigned long baud){
     delay(100);
     ++tmpCtr;
   }while(retVal == false && tmpCtr < 5);
+  //send config command
   _coProc->setTarget(TARGET_GPS);
   _coProc->write(cmd, cmdLen);
   _isInit = retVal;

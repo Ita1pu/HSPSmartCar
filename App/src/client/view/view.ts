@@ -28,7 +28,7 @@ namespace View {
             }  
         });  
 
-        if (Settings.isMobile) {
+        if (Settings.isMobile == false) {
             document.addEventListener("mouseup", (evt: any) => {
                 xDown = null;
                 yDown = null;

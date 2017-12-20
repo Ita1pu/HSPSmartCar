@@ -1,12 +1,7 @@
 .#{$viewCircles} {
     position: absolute;
 
-    bottom: 0px;
-
-    padding-top: 5px;
-    padding-bottom: 10px;
-
-    background-color: $color_bg_dark;
+    bottom: 10px;
 }
 
 $viewCircles_circle_size: 12px;

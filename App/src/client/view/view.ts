@@ -27,6 +27,11 @@ namespace View {
                 yDown = evt.clientY;
             }  
         });  
+
+        document.addEventListener("mouseup", (evt: any) => {
+            xDown = null;
+            yDown = null;
+        });
     
         document.addEventListener(Settings.isMobile ? "touchmove" : "mousemove", (evt: any) => { 
             if (!xDown || !yDown)

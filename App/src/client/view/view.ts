@@ -28,10 +28,12 @@ namespace View {
             }  
         });  
 
-        document.addEventListener("mouseup", (evt: any) => {
-            xDown = null;
-            yDown = null;
-        });
+        if (Settings.isMobile) {
+            document.addEventListener("mouseup", (evt: any) => {
+                xDown = null;
+                yDown = null;
+            });
+        }
     
         document.addEventListener(Settings.isMobile ? "touchmove" : "mousemove", (evt: any) => { 
             if (!xDown || !yDown)

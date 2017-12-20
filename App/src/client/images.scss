@@ -13,5 +13,5 @@ $img_dir: "src/client/resources/images/";
 }
 
 .#{$img_loading} {
-    background-image: url(inline-image($img_dir + "loading.gif"));
+    background-image: url(inline-image($img_dir + "loading.svg"));
 }

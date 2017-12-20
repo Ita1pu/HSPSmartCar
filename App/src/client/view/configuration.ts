@@ -175,7 +175,7 @@ namespace View {
             test.click(() => {
                 Logging.push("Background -> Test was clicked!");
 
-                test.addClass(Var.Style.View.Configuration.Button.Test.bad);
+                test.addClass(Var.Style.View.Configuration.Button.Test.progress);
             });
 
             disconnect.click(() => {

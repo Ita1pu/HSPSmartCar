@@ -30,7 +30,8 @@ namespace Var {
                     test: "view-configuration-button-test",
                     Test: {
                         good: "view-configuration-button-test-good",
-                        bad: "view-configuration-button-test-bad"
+                        bad: "view-configuration-button-test-bad",
+                        progress: "view-configuration-button-test-progress"
                     }
                 },
                 switch: "view-configuration-switch",
@@ -45,6 +46,7 @@ namespace Var {
     export const Images = {
         swipeHelp: "images-swipe-help",
         error: "images-error",
-        disconnected: "images-disconnected"
+        disconnected: "images-disconnected",
+        loading: "images-loading"
     }
 }

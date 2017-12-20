@@ -85,6 +85,14 @@
     background-color: $color_bg_disabled;
 }   
 
+.#{$view_configuration_button_test_progress} > div {
+    @extend .#{$img_loading};
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% auto;
+}
+
 .#{$view_configuration_switch} {
     margin: 5px;
     margin-left: 20px;

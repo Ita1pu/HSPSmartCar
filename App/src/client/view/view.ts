@@ -13,6 +13,16 @@ namespace View {
         };
     }    
 
+    let isSwipeEnabled = true;
+
+    export function enableSwipe() {
+        isSwipeEnabled = true;
+    }
+
+    export function disableSwipe() {
+        isSwipeEnabled = false;
+    }
+
     export function handleSwipe(callback: (direction: number) => void) {
         let xDown: any = null;                                                        
         let yDown: any = null;   
@@ -36,7 +46,7 @@ namespace View {
         }
     
         document.addEventListener(Settings.isMobile ? "touchmove" : "mousemove", (evt: any) => { 
-            if (!xDown || !yDown)
+            if (!xDown || !yDown || !isSwipeEnabled)
                 return;
         
             let xUp;                                  

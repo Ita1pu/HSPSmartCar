@@ -26,7 +26,10 @@ namespace Var {
             body: "dialog-body",
             buttonDiv: "dialog-buttonDiv",
             closeButton: "dialog-closeButton",
-            background: "dialog-background"
+            background: "dialog-background",
+            Button: {
+                dangerous: "dialog-button-dangerous"
+            }
         },
         View: {
             configuration: "view-configuration",

@@ -1,88 +1,3 @@
-
-/*
-
-Configuration
-
-Data Trasfer
-- Download 
-- Upload
-- Clear Buffer
-
-App Settings
-- MpH or KmH
-- Enable / Disable Swipe Help
-
-Connection to Dongle
-(show if connected or not and show current mac address)
-- Browse Dongles
-- Diconnect from Device
-// if connect to new dongle abfrage to disconnect form old device
-// if disconnect form old divice and buffer not empty abfrage that all old data will be whiped
-//    if user dont want that he needs to upload the buffered data first
-
-Connetion to Backend
-(show if parameters are right or not)
-- Test Connection to Backend
-- URL to Backend
-- Login Parameter (User/Password/Token for Backend)
-- Disconnect / Logout form Backend
-
-Logging (Default eingeklappt)
-- einfache Textbox mit lognachrichten
-
-
-+-----------------------------------+
-|          Data Transfer            |
-+------+------------------+---------+
-       |     Download     |
-       +------------------+
-       |      Upload      |
-       +------------------+
-       |   Clear Buffer   |
-+------+------------------+---------+
-|       Connection to Dongle        |
-+------+------------------+---------+
-       |     Connect      |                Nach connect auf click OK, test ausführe
-       +------------------+
-       |  °   Test        |                Grüner / Roter Punkt ob erfolgreich oder nicht
-       +------------------+
-       |    Disconnect    |
-+------+------------------+---------+
-|      Connection to Backend        |
-+------+------------------+---------+
-       |     Connect      |                Nach connect auf click OK, test ausführen
-       +------------------+
-       |  °   Test        |                Grüner / Roter Punkt ob erfolgreich oder nicht
-       +------------------+
-       |    Disconnect    |
-+------+------------------+---------+
-|          App Settings             |
-+------+------------------+---------+
-       |    MpH or KmH    |                Kein Button sondern On/Off Switch
-       +------------------+
-       | Enable / Disable |                Kein Button sondern On/Off Switch
-       |    Swipe Help    |
-+------+------------------+---------+
-|            Logging                |
-+------+------------------+---------+
-       |       ...        |
-       |       ...        |
-       |       ...        |
-       |       ...        |
-       |       ...        |
-       +------------------+
-
-*/
-
-/*
-
-TODO
-
-Dialog (z.B. für config nachfrage ob dannach gleich upload to backend)
-oder für Connect to backend dialog (da kommen alle parameter und am schluss kann man ok oder abbrechen)
-
-*/
-
 namespace View {
     export class Configuration extends View {         
         public constructor(control: JQuery) {
@@ -120,6 +35,8 @@ namespace View {
 
             clearBuffer.click(() => {
                 Logging.push("Clear Buffer was clicked!");
+
+                // Neben button clearbuffer noch die größe des Buffers anzeigen |###---------| 43MB
             });
         }
 
@@ -140,6 +57,9 @@ namespace View {
 
             connect.click(() => {
                 Logging.push("Dongle -> Connect was clicked!");
+
+                // wenn mit anderen verbinden wollen und buffer not empty
+                // -> Please upload or clear buffer before connecting to another Dongle
             });
 
             test.click(() => {
@@ -150,6 +70,20 @@ namespace View {
 
             disconnect.click(() => {
                 Logging.push("Dongle -> Disconnect was clicked!");
+
+                let dialog = new Dialog.Dialog(
+                    [ "Disconnect from Dongle and clear all Bluetooth settings?" ],
+                    [ new Dialog.Button("Delete", () => { 
+
+                        // TODO if buffer not empty
+                        // -> cancel with error = Please upload or clear buffer before disconnecting from Dongle
+
+                        // TODO disconnect from dongle
+
+                        // TODO clear bluetooth settings
+
+                    }, true), new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 
+                    () => { dialog.destroy(); });
             });
         }
 
@@ -180,6 +114,15 @@ namespace View {
 
             disconnect.click(() => {
                 Logging.push("Background -> Disconnect was clicked!");
+
+                let dialog = new Dialog.Dialog(
+                    [ "Delete all connection parameters for the Backend?" ],
+                    [ new Dialog.Button("Delete", () => { 
+
+                        // TODO delete all connection parameters for the backend.
+
+                    }, true), new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 
+                    () => { dialog.destroy(); });
             });
         }
 

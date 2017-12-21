@@ -1,8 +1,10 @@
 .#{$dialog} {
     position: absolute;
 
-    min-width: 500px;
-    min-height: 200px;
+    width: calc(100% - 24px);
+
+    min-height: 50px;
+    max-height: calc(100% - 20px);
 
     background-color: $color_bg_light;
     color: black;
@@ -17,6 +19,8 @@
     -webkit-box-shadow: 10px 10px 50px -10px ;
     -moz-box-shadow: 10px 10px 50px -10px black;
     box-shadow: 10px 10px 50px -10px black;
+
+    font-size: 14px;
 }
 
 .#{$dialog_background} {
@@ -61,10 +65,44 @@
     @extend .#{$img_close_red};
 }
 
-.#{$dialog_buttonDiv} {
-    
+.#{$dialog_body} {
+    margin: 10px;
+    margin-bottom: 5px;
+
+    padding: 10px;
 }
 
-.#{$dialog_body} {
+.#{$dialog_buttonDiv} {
+    text-align: center;
+}
+
+.#{$dialog_buttonDiv} > div {
+    display: inline-block;
+
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-bottom: 10px;
+
     padding: 10px;
+
+    background-color: $color_bg_blue;
+    color: white;
+
+    border-style: solid;
+    border-width: 2px 2px 2px 2px;
+    border-color: $color_bg_blue;
+
+    cursor: pointer;
+}
+
+.#{$dialog_buttonDiv} > div:active {
+    background-color: $color_bg_blue_light;
+    
+    border-color: $color_bg_light !important;
+}
+
+.#{$dialog_button_dangerous} {
+    background-color: $color_bg_dangerous !important;
+
+    border-color: $color_bg_dangerous !important;
 }

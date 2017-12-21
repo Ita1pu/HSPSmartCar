@@ -15,6 +15,8 @@ let files: string[] = [
     "display-feature/swipe-help",
     "display-feature/view-circles",
 
+    "dialog/dialog",
+
     "view/view",
     "view/configuration",
     "view/simple-list",

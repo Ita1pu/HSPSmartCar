@@ -21,6 +21,13 @@ namespace Var {
                 image: "no-connection-panel-panel-image"
             }
         },
+        dialog: "dialog",
+        Dialog: {
+            body: "dialog-body",
+            buttonDiv: "dialog-buttonDiv",
+            closeButton: "dialog-closeButton",
+            background: "dialog-background"
+        },
         View: {
             configuration: "view-configuration",
             Configuration: {
@@ -47,6 +54,10 @@ namespace Var {
         swipeHelp: "images-swipe-help",
         error: "images-error",
         disconnected: "images-disconnected",
-        loading: "images-loading"
+        loading: "images-loading",
+        Close: {
+            black: "images-close-black",
+            red: "images-close-red"
+        }
     }
 }

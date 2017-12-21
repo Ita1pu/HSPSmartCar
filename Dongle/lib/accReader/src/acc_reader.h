@@ -19,9 +19,15 @@ public:
   /**
    * Getter for the acceleration data of one of the 3 axes
    * @param  ct The number (0, 1 or 2) of the axis which is wanted
-   * @return The measured Data of the axis
+   * @return The measured Data of the axis in m/s²
    */
-  float GetAcceleration(uint8_t ct);
+  float GetAccelerationAxis(uint8_t ct);
+
+  /**
+   * Getter for the total acceleration
+   * @return The magnitude of the acceleration vector in m/s²
+   */
+   float GetAccelerationMag();
 
   /**
    * Getter for the gyroscope data of one of the 3 axes
@@ -30,23 +36,6 @@ public:
    */
   float GetAngle(uint8_t ct);
 
-  /**
-   * Getter for the collective Sensordata as a quarternion
-   * @param pointer to the float-array where to store the data;
-   * The Array must be at least 9 elements big. The size will not be checked.
-   * @return Boolean value if the operation was successfull and
-   * the quarternion is stored as following:
-   * quart[0] = Accel. x-Axis
-   * quart[1] = Accel. y-Axis
-   * quart[2] = Accel. z-Axis
-   * quart[3] = Gyro. x-Axis
-   * quart[4] = Gyro. y-Axis
-   * quart[5] = Gyro. z-Axis
-   * quart[6] = Magnet. x-Axis
-   * quart[7] = Magnet. y-Axis
-   * quart[8] = Magnet. z-Axis
-   */
-  bool GetQuarternion(float* qart);
 private:
   bool _isFirst;
   bool _isInit;

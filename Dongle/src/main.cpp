@@ -13,9 +13,10 @@
 
 #define CLOCK_TIMER_NR 2
 #define FLAG_TIMER_NR 1
-#define SERIAL_BAUD_RATE 9600
+#define SERIAL_BAUD_RATE 115200L
 #define GPS_BAUD_RATE 115200L
 
+AccReader* accSensor;
 LocationService* locSrv = 0;
 Clock* clck = 0;
 COBDSPI coproc;
@@ -31,54 +32,14 @@ bool success = false;
 void setup()
 {
     Serial.begin(SERIAL_BAUD_RATE);
-    SDLib::SDClass *SD = new SDClass();
-    file_system = new persistence::File_System_Handler(SD);
-    mapper = new persistence::Vid_mapper(&current_vid);
-    p = new persistence::Persistence(&current_vid, current_time, mapper, file_system);
-    // SD->begin(SD_CS_PIN);
-    // SD->mkdir("Hallo");
-    // File TestFile = SD->open("Hallo/test.txt", FILE_WRITE);
-
-    // if (TestFile)
-    // {
-    //     TestFile.println("Test");
-    //     TestFile.close();
-    //   Serial.println("Sucess");
-    // }
-    // else
-    // {
-    //     Serial.println("Fail");
-    // }
-
-    coproc.begin();
-    locSrv = new LocationService(&coproc);
-
-    clck = new Clock(&coproc);
-    Serial.println("Init started!");
-    if(locSrv->Initialize(GPS_BAUD_RATE)){
-      Serial.println("Initialization done!\n");
-    }else{
+    accSensor = new AccReader();
+    success = accSensor->Initialize();
+    if(!success){
       Serial.println("Init failed!");
     }
-    int ctr = 0;
-    do{
-      locSrv->RenewGPSData();
-      ++ctr;
-      delay(500);
-      Serial.println("Clock waiting!");
-    }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
-
-    Serial.print("Clock initialized after ");
-    Serial.print(ctr);
-    Serial.println(" tries!");
-
-    if(clck->SetTimer(FLAG_TIMER_NR, 1500, &flags)){
-      Serial.println("Flag timer set!");
-    }
-    Serial.println(clck->GetDate());
 }
 
-void loop()
+/*void loop()
 {
     // put your main code here, to run repeatedly:
     if(flags){
@@ -96,4 +57,64 @@ void loop()
       Serial.println((uint32_t)clck->GetEpochMs());
     }
     //delay(1000);
+}
+*/
+
+
+long int cpt=0;
+// Main loop, read and display data
+void loop()
+{
+
+  // _______________
+  // ::: Counter :::
+
+  // Display data counter
+  Serial.print (cpt++,DEC);
+  Serial.print ("\t");
+
+
+
+  // ____________________________________
+  // :::  accelerometer and gyroscope :::
+
+  // Read accelerometer and gyroscope
+
+
+  // Create 16 bits values from 8 bits data
+
+  // Accelerometer
+  float ax=accSensor->GetAccelerationAxis(0);
+  float ay=accSensor->GetAccelerationAxis(1);
+  float az=accSensor->GetAccelerationAxis(2);
+
+  // Gyroscope
+  float gx=accSensor->GetAngle(0);
+  float gy=accSensor->GetAngle(1);
+  float gz=accSensor->GetAngle(2);
+
+    // Display values
+
+  // Accelerometer
+  Serial.print("ax: ");
+  Serial.print (ax);
+  Serial.print ("\tay: ");
+  Serial.print (ay);
+  Serial.print ("\taz: ");
+  Serial.print (az);
+  Serial.print ("\tgx: ");
+
+  // Gyroscope
+  Serial.print (gx);
+  Serial.print ("\tgy: ");
+  Serial.print (gy);
+  Serial.print ("\tgz: ");
+  Serial.print (gz);
+  Serial.print ("\t");
+
+
+
+  // End of line
+  Serial.println("");
+  delay(2000);
 }

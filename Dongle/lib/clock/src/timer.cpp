@@ -5,16 +5,12 @@
 void (*Timer::func1)();
 void (*Timer::func2)();
 uint16_t Timer::msecs1;
-uint16_t Timer::msecs2; //32bit counter is used because timer 2 runs twice as fast as timer 1
+uint16_t Timer::msecs2;
 volatile uint16_t Timer::tcnt1;
 volatile uint16_t Timer::tcnt2;
 
-//only even milliseconds are allowed
 bool Timer::set(uint8_t timerNr, uint16_t ms, void (*f)()){
   if(f == 0x0){
-    return false;
-  }
-  if(ms%2){
     return false;
   }
 

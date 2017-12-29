@@ -2,6 +2,8 @@
 #include "timer.h"
 #include "ClockUtil.h"
 
+#include <time.h>
+
 Clock::Clock(COBDSPI* coProc){
   Clock_Util::clVar = this;
   _coProc = coProc;
@@ -25,6 +27,10 @@ uint32_t Clock::GetTime(){
 
 uint32_t Clock::GetDate(){
   return _date;
+}
+
+uint64_t Clock::GetEpochMs(){
+  return _epoch;
 }
 
 bool Clock::SetTimer(uint8_t nr, uint16_t millis, uint8_t *flags){
@@ -56,6 +62,7 @@ bool Clock::SetTimer(uint8_t nr, uint16_t millis, void (*callback)()){
 
 void Clock::updateTime(){
   _timeOfDay += CLOCK_RESOLUTION_MS;
+  _epoch += CLOCK_RESOLUTION_MS;
   //clean seconds
   //get deviation to CLOCK_UPDATE_MS milliseconds
   uint32_t tmpSecs = _timeOfDay % CLOCK_UPDATE_MS;
@@ -73,9 +80,25 @@ bool Clock::getGPStoInt(){
   GPS_DATA gData;
   retVal = _coProc->gpsGetData(&gData);
   //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
-  if(gData.sat <= 14 && gData.sat >= 4){
+
+  if(retVal && gData.sat <= 14 && gData.sat >= 4){
     _timeOfDay = gData.time*10;
     _date = gData.date;
+    setEpoch(gData);
   }
   return retVal;
+}
+
+void Clock::setEpoch(GPS_DATA gData){
+  struct tm timeStruct;
+  timeStruct.tm_year = 100 + (gData.date%100); //Years since 1900
+  timeStruct.tm_mon = ((gData.date/100)%100) - 1; //The Month; January is 0, thus offset of 1;
+  timeStruct.tm_mday = (gData.date/10000)%100; //The day;
+  timeStruct.tm_hour = gData.time/1000000; //The hour of the day;
+  timeStruct.tm_min = (gData.time/10000)%100; //The minutes after the hour
+  timeStruct.tm_sec = (gData.time/100)%100; //The seconds after the minute
+  timeStruct.tm_isdst = 0; //no Daylight Saving Time since UTC is unsigned
+
+  _epoch = mktime(&timeStruct) + gData.time%100;
+  _epoch *= 10;
 }

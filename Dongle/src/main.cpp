@@ -60,13 +60,17 @@ void setup()
     }else{
       Serial.println("Init failed!");
     }
+    int ctr = 0;
     do{
       locSrv->RenewGPSData();
+      ++ctr;
       delay(500);
       Serial.println("Clock waiting!");
     }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
 
-    Serial.println("Clock initialized!");
+    Serial.print("Clock initialized after ");
+    Serial.print(ctr);
+    Serial.println(" tries!");
 
     if(clck->SetTimer(FLAG_TIMER_NR, 1500, &flags)){
       Serial.println("Flag timer set!");
@@ -89,7 +93,7 @@ void loop()
 
       Serial.println(locSrv->GetSat());
       Serial.print("Time :");
-      Serial.println(clck->GetTime());
+      Serial.println((uint32_t)clck->GetEpochMs());
     }
     //delay(1000);
 }

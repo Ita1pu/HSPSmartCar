@@ -5,8 +5,8 @@
 #include "FreematicsONE.h"
 #include "gps.h"
 
-#define CLOCK_RESOLUTION_MS 100
-#define CLOCK_UPDATE_MS 10000
+#define CLOCK_RESOLUTION_MS 1
+#define CLOCK_UPDATE_MS 5000
 
 /**
  *  Timing Class;
@@ -35,6 +35,12 @@ public:
    * @return Date of the current day in following Format: DDMMYY
    */
   uint32_t GetDate();
+
+  /**
+   * Receive the UTC time in ms since 1.1.1970
+   * @return milliseconds since 1.1.1970
+   */
+  uint64_t GetEpochMs();
 
   /**
    * Start a timer
@@ -67,11 +73,13 @@ public:
   void updateTime();
 protected:
 private:
-  COBDSPI* _coProc;
   bool getGPStoInt();
+  void setEpoch(GPS_DATA gData);
+  COBDSPI* _coProc;
   uint8_t* _flags;
   uint32_t _timeOfDay;
   uint32_t _date;
+  uint64_t _epoch;
 };
 
 #endif

@@ -19,27 +19,27 @@ public:
   /**
    * Getter for the acceleration data of one of the 3 axes
    * @param  ct The number (0, 1 or 2) of the axis which is wanted
-   * @return The measured Data of the axis in m/s²
+   * @return The measured Data of the axis in g
    */
   float GetAccelerationAxis(uint8_t ct);
 
   /**
    * Getter for the total acceleration
-   * @return The magnitude of the acceleration vector in m/s²
+   * @return The magnitude of the acceleration vector in g
    */
    float GetAccelerationMag();
 
   /**
    * Getter for the gyroscope data of one of the 3 axes
    * @param ct The number (0, 1 or 2) of the axis which is wanted
-   * @return The measured Data of the gyroscope-axis
+   * @return The measured Data of the gyroscope-axis im degree per second
    */
   float GetAngle(uint8_t ct);
 
   /**
    * Getter for the magnetometer data of one of the 3 axes
    * @param ct The number (0, 1 or 2) of the axis which is wanted
-   * @return The measured Data of the magnetometer-axis
+   * @return The measured Data of the magnetometer-axis in µTesla
    */
   float GetMagnet(uint8_t ct);
 private:

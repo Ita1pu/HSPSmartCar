@@ -78,10 +78,7 @@ void loop()
   // ____________________________________
   // :::  accelerometer and gyroscope :::
 
-  // Read accelerometer and gyroscope
-
-
-  // Create 16 bits values from 8 bits data
+  // Read accelerometer, gyroscope and magnetometer
 
   // Accelerometer
   float ax=accSensor->GetAccelerationAxis(0);
@@ -93,6 +90,10 @@ void loop()
   float gy=accSensor->GetAngle(1);
   float gz=accSensor->GetAngle(2);
 
+  //Magnetometer
+  float mx=accSensor->GetMagnet(0);
+  float my=accSensor->GetMagnet(1);
+  float mz=accSensor->GetMagnet(2);
     // Display values
 
   // Accelerometer
@@ -112,7 +113,13 @@ void loop()
   Serial.print (gz);
   Serial.print ("\t");
 
-
+  //magnetometer
+  Serial.print("mx: ");
+  Serial.print(mx);
+  Serial.print("\tmy: ");
+  Serial.print(my);
+  Serial.print("\tmz: ");
+  Serial.print(mz);
 
   // End of line
   Serial.println("");

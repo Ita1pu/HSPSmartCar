@@ -1,7 +1,7 @@
 #ifndef ACC_READER_H
 #define ACC_READER_H
 
-#include <FreematicsMEMS.h>
+#include "memsSensor.h"
 
 /**
  *  Intermediate Class for the Acceleration Sensor;
@@ -36,11 +36,16 @@ public:
    */
   float GetAngle(uint8_t ct);
 
+  /**
+   * Getter for the magnetometer data of one of the 3 axes
+   * @param ct The number (0, 1 or 2) of the axis which is wanted
+   * @return The measured Data of the magnetometer-axis
+   */
+  float GetMagnet(uint8_t ct);
 private:
   bool _isFirst;
   bool _isInit;
-  int8_t accCorrFactor;
-  MPU9250_9DOF _sensor;
+  MemsSensor _sensor;
 };
 
 #endif

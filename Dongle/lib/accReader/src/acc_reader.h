@@ -18,6 +18,7 @@ public:
 
   /**
    * Getter for the acceleration data of one of the 3 axes
+   * Measured average time: 301 µseconds
    * @param  ct The number (0, 1 or 2) of the axis which is wanted
    * @return The measured Data of the axis in g
    */
@@ -25,12 +26,14 @@ public:
 
   /**
    * Getter for the total acceleration
+   * Measured average time: 301 µseconds
    * @return The magnitude of the acceleration vector in g
    */
    float GetAccelerationMag();
 
   /**
    * Getter for the gyroscope data of one of the 3 axes
+   * Measured average time: 301 µseconds
    * @param ct The number (0, 1 or 2) of the axis which is wanted
    * @return The measured Data of the gyroscope-axis im degree per second
    */
@@ -38,6 +41,7 @@ public:
 
   /**
    * Getter for the magnetometer data of one of the 3 axes
+   * Measured average time: 143 µseconds
    * @param ct The number (0, 1 or 2) of the axis which is wanted
    * @return The measured Data of the magnetometer-axis in µTesla
    */

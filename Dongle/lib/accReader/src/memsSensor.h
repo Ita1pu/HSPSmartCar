@@ -173,6 +173,13 @@ public:
    * @return always true
    */
   bool memsRead(float* accelValues, float* gyroValues, float* magValues);
+
+  /**
+   * Set offset Values in gyroscope
+   * The values must be given in degrees per second. The size of the array will not be checked.
+   * @param offsetVals The pointer to a float array with 3 elements in order [x-Axis, y-Axis, z-Axis]
+   */
+  void offsetGyro(float* offsetVals);
 protected:
 private:
   /**

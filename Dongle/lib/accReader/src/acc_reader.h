@@ -46,10 +46,19 @@ public:
    * @return The measured Data of the magnetometer-axis in µTesla
    */
   float GetMagnet(uint8_t ct);
+
+  /**
+   * Issue the calibration of the Sensor
+   * Measured average time: 1536 µseconds
+   * @param accel Wether the current acceleration values should be set as offset
+   * @param accel Wether the current gyroscope values should be set as offset
+   */
+   void Calibrate(bool accel, bool gyro);
 private:
   bool _isFirst;
   bool _isInit;
   MemsSensor _sensor;
+  float accOffset[3];
 };
 
 #endif

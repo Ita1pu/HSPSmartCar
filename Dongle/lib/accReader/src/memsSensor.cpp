@@ -155,6 +155,33 @@ void MemsSensor::deinitMPU9250(){
   delay(10);
 }
 
+void MemsSensor::offsetGyro(float *offsetVals){
+  uint32_t gyrCtr[3];
+  uint8_t data[6];
+
+//conversion of dps input Value to sensor value according to Register Description Manual of MPU9250
+  gyrCtr[0] = offsetVals[0]*32768/250;
+  gyrCtr[1] = offsetVals[1]*32768/250;
+  gyrCtr[2] = offsetVals[2]*32768/250;
+  gyrCtr[0] /= 4;
+  gyrCtr[1] /= 4;
+  gyrCtr[2] /= 4;
+
+  data[0] = (uint8_t)(gyrCtr[0] >> 8) & 0xFF;
+  data[1] = (uint8_t)gyrCtr[0]     & 0xFF;
+  data[2] = (uint8_t)(gyrCtr[1] >> 8) & 0xFF;
+  data[3] = (uint8_t)gyrCtr[1]      & 0xFF;
+  data[4] = (uint8_t)(gyrCtr[2] >> 8) & 0xFF;
+  data[5] = (uint8_t)gyrCtr[2]      & 0xFF;
+
+  writeByte(XG_OFFSET_H, data[0]);
+  writeByte(XG_OFFSET_L, data[1]);
+  writeByte(YG_OFFSET_H, data[2]);
+  writeByte(YG_OFFSET_L, data[3]);
+  writeByte(ZG_OFFSET_H, data[4]);
+  writeByte(ZG_OFFSET_L, data[5]);
+}
+
 void MemsSensor::writeByte(uint8_t subAddress, uint8_t data){
   Wire.beginTransmission(MPU9250_ADDRESS);  // Initialize the Tx buffer
   Wire.write(subAddress);           // Put slave register address in Tx buffer

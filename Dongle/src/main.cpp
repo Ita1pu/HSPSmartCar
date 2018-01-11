@@ -32,96 +32,88 @@ bool success = false;
 void setup()
 {
     Serial.begin(SERIAL_BAUD_RATE);
+    coproc.begin();
+    locSrv = new LocationService(&coproc);
+    clck = new Clock(&coproc);
     accSensor = new AccReader();
+
+    flags = 0;
+    Serial.println("Init start!");
     success = accSensor->Initialize();
+    /*success = locSrv->Initialize(GPS_BAUD_RATE);
+    if(success){
+      int ctr = 0;
+      do{
+        locSrv->RenewGPSData();
+        ++ctr;
+        delay(500);
+        Serial.print(locSrv->GetSat());
+        Serial.println(" Clock waiting");
+      }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
+    }
+    //success = clck->SetTimer(FLAG_TIMER_NR, 2000, &flags);*/
     if(!success){
       Serial.println("Init failed!");
+    }else{
+      accSensor->Calibrate(true, true);
     }
 }
 
-/*void loop()
-{
-    // put your main code here, to run repeatedly:
-    if(flags){
-      flags = 0;
-      locSrv->RenewGPSData();
-      Serial.println("Tick");
-      Serial.print("Latitude: ");
-      Serial.println(locSrv->GetLatitude());
-      Serial.print("Longitude: ");
-      Serial.println(locSrv->GetLongitude());
-      Serial.print("Sat-Ctr: ");
-
-      Serial.println(locSrv->GetSat());
-      Serial.print("Time :");
-      Serial.println((uint32_t)clck->GetEpochMs());
-    }
-    //delay(1000);
-}
-*/
-
-
-long int cpt=0;
-// Main loop, read and display data
+float acc[3];
+float gyr[3];
+float mag[3];
+long int cpt = 0;
 void loop()
 {
-
-  // _______________
-  // ::: Counter :::
-
-  // Display data counter
+  for(int i = 0; i < 3; ++i){
+    acc[i] = accSensor->GetAccelerationAxis(i);
+    gyr[i] = accSensor->GetAngle(i);
+    mag[i] = accSensor->GetMagnet(i);
+  }
   Serial.print (cpt++,DEC);
   Serial.print ("\t");
-
-
-
-  // ____________________________________
-  // :::  accelerometer and gyroscope :::
-
-  // Read accelerometer, gyroscope and magnetometer
-
   // Accelerometer
-  float ax=accSensor->GetAccelerationAxis(0);
-  float ay=accSensor->GetAccelerationAxis(1);
-  float az=accSensor->GetAccelerationAxis(2);
-
-  // Gyroscope
-  float gx=accSensor->GetAngle(0);
-  float gy=accSensor->GetAngle(1);
-  float gz=accSensor->GetAngle(2);
-
-  //Magnetometer
-  float mx=accSensor->GetMagnet(0);
-  float my=accSensor->GetMagnet(1);
-  float mz=accSensor->GetMagnet(2);
-    // Display values
-
-  // Accelerometer
-  Serial.print("ax: ");
-  Serial.print (ax);
-  Serial.print ("\tay: ");
-  Serial.print (ay);
-  Serial.print ("\taz: ");
-  Serial.print (az);
-  Serial.print ("\tgx: ");
-
-  // Gyroscope
-  Serial.print (gx);
-  Serial.print ("\tgy: ");
-  Serial.print (gy);
-  Serial.print ("\tgz: ");
-  Serial.print (gz);
+  Serial.print (acc[0],DEC);
+  Serial.print ("\t");
+  Serial.print (acc[1],DEC);
+  Serial.print ("\t");
+  Serial.print (acc[2],DEC);
   Serial.print ("\t");
 
-  //magnetometer
-  Serial.print("mx: ");
-  Serial.print(mx);
-  Serial.print("\tmy: ");
-  Serial.print(my);
-  Serial.print("\tmz: ");
-  Serial.print(mz);
+  // Gyroscope
+  Serial.print (gyr[0],DEC);
+  Serial.print ("\t");
+  Serial.print (gyr[1],DEC);
+  Serial.print ("\t");
+  Serial.print (gyr[2],DEC);
+  Serial.print ("\t");
 
-  // End of line
-  Serial.println("");
-  delay(2000);
+  //Magnetometer
+  Serial.print (mag[0],DEC);
+  Serial.print ("\t");
+  Serial.print (mag[1],DEC);
+  Serial.print ("\t");
+  Serial.print (mag[2],DEC);
+  Serial.println ("\t");
+
+    /*unsigned long start;
+    unsigned long stop;
+    unsigned long total;
+    // put your main code here, to run repeatedly:
+    //if(flags){
+//int32_t tmp;
+      //flags = 0;
+      start = millis();
+        for(int i = 0; i < 1000; ++i){
+          //tmp = locSrv->GetLatitude();
+          accSensor->Calibrate(true,true);
+        }
+      stop = millis();
+      total = stop-start;
+      //Serial.print(tmp);
+      Serial.print(" Time: ");
+      Serial.println(total);
+    //}*/
+    delay(100);
+
 }

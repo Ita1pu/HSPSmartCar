@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SmartCarUi</title>
+    <title>SmartCarUi</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" type="text/css">
@@ -31,7 +31,7 @@
                 </a>
             </li>
             <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Upload">
-                <a class="nav-link" href="#">
+                <a class="nav-link" asp-controller="Upload" asp-action="Index">
                     <i class="fa fa-fw fa-car"></i>
                     <span class="nav-link-text">Upload Data</span>
                 </a>
@@ -43,13 +43,13 @@
                 </a>
                 <ul class="sidenav-second-level collapse" id="collapseStatistic">
                     <li>
-                        <a href="login.html">Overview</a>
+                        <a href="#">Overview</a>
                     </li>
                     <li>
-                        <a href="register.html">Heat Map</a>
+                        <a href="#">Heat Map</a>
                     </li>
                     <li>
-                        <a href="forgot-password.html">Fuel Consumption</a>
+                        <a href="#">Fuel Consumption</a>
                     </li>
                 </ul>
             </li>

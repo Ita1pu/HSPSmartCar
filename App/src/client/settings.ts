@@ -20,6 +20,7 @@ const Settings = {
         VelocityUnit: {
             MpH: "MpH",
             KmH: "KmH"
-        }
+        },
+        address_or_uuid: "address_or_uuid"
     }
 };

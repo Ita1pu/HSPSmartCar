@@ -62,12 +62,17 @@ $(() => {
 
             Store.set(Settings.Store.selectedView, selectedViewNum.toString());
 
-            if (selectedViewNum != 0 && 
-                (Dongle.bluetooth == null || Dongle.bluetooth.IsConnected() == false)) {
-                DisplayFeature.noConnectionPanel.show();
+            if (selectedViewNum == 0) {
+                DisplayFeature.noConnectionPanel.hide();   
+            } else if (Dongle.bluetooth == null) {
+                DisplayFeature.noConnectionPanel.show();           
             }
-            else {
-                DisplayFeature.noConnectionPanel.hide();
+            else { 
+                Dongle.bluetooth.IsConnected(() => {
+                    DisplayFeature.noConnectionPanel.hide();
+                }, () => {
+                    DisplayFeature.noConnectionPanel.show();
+                }); 
             }
         }
     });

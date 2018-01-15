@@ -15,6 +15,14 @@ namespace DisplayFeature {
             textDiv.text(S(Strings.noConnectionPanel));
 
             panel.css("top", "calc(50% - (" + imageDiv.height() + "px / 2))");
+
+            this.control.click(() => {
+                Dongle.bluetooth.IsConnected(() => {}, () => {
+                    Logging.push("Click on 'NoConnectionPanel', connecting to bluetooth...");
+
+                    Dongle.bluetooth.connect();
+                });                
+            })
         }
 
         public static init(control: JQuery): NoConnectionPanel {

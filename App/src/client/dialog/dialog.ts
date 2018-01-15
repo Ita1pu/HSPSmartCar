@@ -27,6 +27,9 @@ namespace Dialog {
         private background: JQuery = null;
         private control: JQuery = null;
 
+        private body: JQuery = null;
+        private buttonDiv: JQuery = null;
+
         private texts: string[] = null;
         private buttons: Button[] = null;
 
@@ -41,8 +44,8 @@ namespace Dialog {
 
             this.control = $("<div>", { class: Var.Style.dialog }).appendTo(this.background);
             
-            let body = $("<div>", { class: Var.Style.Dialog.body }).appendTo(this.control);
-            let buttonDiv = $("<div>", { class: Var.Style.Dialog.buttonDiv }).appendTo(this.control);
+            this.body = $("<div>", { class: Var.Style.Dialog.body }).appendTo(this.control);
+            this.buttonDiv = $("<div>", { class: Var.Style.Dialog.buttonDiv }).appendTo(this.control);
 
             if (this.closeCallback != null) {
                 let closeButton = $("<div>", { class: Var.Style.Dialog.closeButton }).appendTo(this.control);
@@ -51,12 +54,12 @@ namespace Dialog {
             }
             
             for (let text of texts) {
-                $("<div>").text(text).appendTo(body);
+                $("<div>").text(text).appendTo(this.body);
             }
 
             if (buttons != null) {
                 for (let button of buttons) {
-                    button.draw(buttonDiv);
+                    button.draw(this.buttonDiv);
                 }
             }
 
@@ -65,15 +68,31 @@ namespace Dialog {
             View.disableSwipe();
         }
 
+        public centerScreen() {
+            this.control.css("left", "calc(50% - (" + this.control.width() + "px / 2) - 2px)");
+            this.control.css("top", "calc(50% - (" + this.control.height() + "px / 2))");
+        } 
+
+        public getControl() {
+            return this.control;
+        }
+
+        public getBackground() {
+            return this.background;
+        }
+
+        public getBody() {
+            return this.body;
+        }
+
+        public getButtonDiv() {
+            return this.buttonDiv;
+        }
+
         public destroy() {
             this.background.remove();
 
             View.enableSwipe();
-        }
-
-        private centerScreen() {
-            this.control.css("left", "calc(50% - (" + this.control.width() + "px / 2) - 2px)");
-            this.control.css("top", "calc(50% - (" + this.control.height() + "px / 2))");
-        }  
+        } 
     }
 }

@@ -18,7 +18,12 @@ let files: string[] = [
     "dialog/dialog",
 
     "view/view",
-    "view/configuration",
+    "view/configuration/configuration-appSettings",
+    "view/configuration/configuration-backend",
+    "view/configuration/configuration-data",
+    "view/configuration/configuration-dongle",
+    "view/configuration/configuration-logging",
+    "view/configuration/configuration",
     "view/simple-list",
 
     "dongle/bluetooth",

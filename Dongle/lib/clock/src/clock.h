@@ -68,6 +68,7 @@ public:
 
   /**
    * Update the _timeOfDay
+   * Might block the Programm for 50 Msecs as GPS data is collected
    * This method should not be called by other methods or Functions.
    */
   void updateTime();

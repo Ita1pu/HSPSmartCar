@@ -13,9 +13,10 @@
 
 #define CLOCK_TIMER_NR 2
 #define FLAG_TIMER_NR 1
-#define SERIAL_BAUD_RATE 9600
+#define SERIAL_BAUD_RATE 115200L
 #define GPS_BAUD_RATE 115200L
 
+AccReader* accSensor;
 LocationService* locSrv = 0;
 Clock* clck = 0;
 COBDSPI coproc;
@@ -31,69 +32,88 @@ bool success = false;
 void setup()
 {
     Serial.begin(SERIAL_BAUD_RATE);
-    SDLib::SDClass *SD = new SDClass();
-    file_system = new persistence::File_System_Handler(SD);
-    mapper = new persistence::Vid_mapper(&current_vid);
-    p = new persistence::Persistence(&current_vid, current_time, mapper, file_system);
-    // SD->begin(SD_CS_PIN);
-    // SD->mkdir("Hallo");
-    // File TestFile = SD->open("Hallo/test.txt", FILE_WRITE);
-
-    // if (TestFile)
-    // {
-    //     TestFile.println("Test");
-    //     TestFile.close();
-    //   Serial.println("Sucess");
-    // }
-    // else
-    // {
-    //     Serial.println("Fail");
-    // }
-
     coproc.begin();
     locSrv = new LocationService(&coproc);
-
     clck = new Clock(&coproc);
-    Serial.println("Init started!");
-    if(locSrv->Initialize(GPS_BAUD_RATE)){
-      Serial.println("Initialization done!\n");
-    }else{
+    accSensor = new AccReader();
+
+    flags = 0;
+    Serial.println("Init start!");
+    success = accSensor->Initialize();
+    /*success = locSrv->Initialize(GPS_BAUD_RATE);
+    if(success){
+      int ctr = 0;
+      do{
+        locSrv->RenewGPSData();
+        ++ctr;
+        delay(500);
+        Serial.print(locSrv->GetSat());
+        Serial.println(" Clock waiting");
+      }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
+    }
+    //success = clck->SetTimer(FLAG_TIMER_NR, 2000, &flags);*/
+    if(!success){
       Serial.println("Init failed!");
+    }else{
+      accSensor->Calibrate(true, true);
     }
-    int ctr = 0;
-    do{
-      locSrv->RenewGPSData();
-      ++ctr;
-      delay(500);
-      Serial.println("Clock waiting!");
-    }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
-
-    Serial.print("Clock initialized after ");
-    Serial.print(ctr);
-    Serial.println(" tries!");
-
-    if(clck->SetTimer(FLAG_TIMER_NR, 1500, &flags)){
-      Serial.println("Flag timer set!");
-    }
-    Serial.println(clck->GetDate());
 }
 
+float acc[3];
+float gyr[3];
+float mag[3];
+long int cpt = 0;
 void loop()
 {
-    // put your main code here, to run repeatedly:
-    if(flags){
-      flags = 0;
-      locSrv->RenewGPSData();
-      Serial.println("Tick");
-      Serial.print("Latitude: ");
-      Serial.println(locSrv->GetLatitude());
-      Serial.print("Longitude: ");
-      Serial.println(locSrv->GetLongitude());
-      Serial.print("Sat-Ctr: ");
+  for(int i = 0; i < 3; ++i){
+    acc[i] = accSensor->GetAccelerationAxis(i);
+    gyr[i] = accSensor->GetAngle(i);
+    mag[i] = accSensor->GetMagnet(i);
+  }
+  Serial.print (cpt++,DEC);
+  Serial.print ("\t");
+  // Accelerometer
+  Serial.print (acc[0],DEC);
+  Serial.print ("\t");
+  Serial.print (acc[1],DEC);
+  Serial.print ("\t");
+  Serial.print (acc[2],DEC);
+  Serial.print ("\t");
 
-      Serial.println(locSrv->GetSat());
-      Serial.print("Time :");
-      Serial.println((uint32_t)clck->GetEpochMs());
-    }
-    //delay(1000);
+  // Gyroscope
+  Serial.print (gyr[0],DEC);
+  Serial.print ("\t");
+  Serial.print (gyr[1],DEC);
+  Serial.print ("\t");
+  Serial.print (gyr[2],DEC);
+  Serial.print ("\t");
+
+  //Magnetometer
+  Serial.print (mag[0],DEC);
+  Serial.print ("\t");
+  Serial.print (mag[1],DEC);
+  Serial.print ("\t");
+  Serial.print (mag[2],DEC);
+  Serial.println ("\t");
+
+    /*unsigned long start;
+    unsigned long stop;
+    unsigned long total;
+    // put your main code here, to run repeatedly:
+    //if(flags){
+//int32_t tmp;
+      //flags = 0;
+      start = millis();
+        for(int i = 0; i < 1000; ++i){
+          //tmp = locSrv->GetLatitude();
+          accSensor->Calibrate(true,true);
+        }
+      stop = millis();
+      total = stop-start;
+      //Serial.print(tmp);
+      Serial.print(" Time: ");
+      Serial.println(total);
+    //}*/
+    delay(100);
+
 }

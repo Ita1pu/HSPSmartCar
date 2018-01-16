@@ -42,7 +42,7 @@ uint8_t LocationService::GetSat(){
 }
 
 bool LocationService::RenewGPSData(){
-  return _coProc->gpsGetData(&_gData);
+  bool retVal = _coProc->gpsGetData(&_gData);
   //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
   if(_gData.sat > 14 && _gData.sat < 4){
     _gData.time = 0;
@@ -50,4 +50,5 @@ bool LocationService::RenewGPSData(){
     _gData.lat = 0;
     _gData.lng = 0;
   }
+  return retVal;
 }

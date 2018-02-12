@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <stdio.h>
 
+#include <mainHelpers.h>
 #include <acc_reader.h>
 #include <bluetooth.h>
 #include <clock.h>
@@ -13,6 +14,7 @@
 
 #define CLOCK_TIMER_NR 2
 #define FLAG_TIMER_NR 1
+#define LOOP_DURATION 100
 #define SERIAL_BAUD_RATE 115200L
 #define GPS_BAUD_RATE 115200L
 
@@ -21,99 +23,113 @@ LocationService* locSrv = 0;
 Clock* clck = 0;
 COBDSPI coproc;
 uint8_t flags;
+
+SDLib::SDClass *SD;
 persistence::Persistence *p;
 persistence::Vid_mapper *mapper;
 persistence::File_System_Handler *file_system;
 const ourTypes::vid current_vid = {'A','1','B','2','C','3','D','4','E','5','F','6',
                              'G','7','H','8','I',};
-uint32_t current_time = 0xDEADBEEF;
 
-bool success = false;
+persistence::stdRetVal success = 0;
+ProgrammMode currentMode;
+
+//function to upload Data to smartphone
+void uploadBT();
+bool carRunning();
+
 void setup()
 {
+  //Instantiate Objects
     Serial.begin(SERIAL_BAUD_RATE);
     coproc.begin();
     locSrv = new LocationService(&coproc);
     clck = new Clock(&coproc);
     accSensor = new AccReader();
-
+  //Initialize global variables
     flags = 0;
+    currentMode.bluetooth = false;
+    currentMode.mode = LOGGING;
+    currentMode.currentLoopCount = 0;
     Serial.println("Init start!");
+    //Init Acceleration Sensor
     success = accSensor->Initialize();
-    /*success = locSrv->Initialize(GPS_BAUD_RATE);
-    if(success){
+    if(success != 0x00){
+      accSensor->Calibrate(false,true);
+    }
+    //Initialize GPS Receiver
+    success = locSrv->Initialize(GPS_BAUD_RATE);
+    if(success != 0x00){
       int ctr = 0;
       do{
         locSrv->RenewGPSData();
         ++ctr;
         delay(500);
-        Serial.print(locSrv->GetSat());
         Serial.println(" Clock waiting");
+      //wait for GPS signal to initialize clock
       }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
     }
-    //success = clck->SetTimer(FLAG_TIMER_NR, 2000, &flags);*/
-    if(!success){
+    //initialize flag timer for Main loop
+    success = clck->SetTimer(FLAG_TIMER_NR, LOOP_DURATION, &flags);
+    //initialize OBD reader
+
+    //initialize persistence
+    SD = new SDClass();
+    file_system = new persistence::File_System_Handler(SD);
+    mapper = new persistence::Vid_mapper(&current_vid);
+    p = new persistence::Persistence(&current_vid, clck, mapper, file_system);
+    success = p->GetInitStatus();
+    //initialize Persistence Layer
+    if(success == 0x00){
       Serial.println("Init failed!");
-    }else{
-      accSensor->Calibrate(true, true);
+      //Maybe sleep mode
     }
 }
 
-float acc[3];
-float gyr[3];
-float mag[3];
-long int cpt = 0;
 void loop()
 {
-  for(int i = 0; i < 3; ++i){
-    acc[i] = accSensor->GetAccelerationAxis(i);
-    gyr[i] = accSensor->GetAngle(i);
-    mag[i] = accSensor->GetMagnet(i);
+  //TODO: Check if bluetooth is connected and check for mode
+  if(currentMode.mode == UPLOAD){
+    uploadBT();
+    delay(200);
+    //when finished uploading
+    currentMode.mode == LOGGING;
+  }else{
+    //check if timer has reached its limit
+    if(flags){
+      //reset flags
+      flags = 0;
+      int32_t currLat = locSrv->GetLatitude();
+      int32_t currLon = locSrv->GetLongitude();
+      int64_t currEpo = clck->GetEpochMs();
+      int32_t currTim = clck->GetTime();
+      int32_t currDat = clck->GetDate();
+      //TODO:logFastest
+
+      //TODO: logSecond
+      switch (currentMode.currentLoopCount) {
+        case 0:
+        break;
+        case 1:
+        break;
+        case 2:
+        break;
+      }
+
+      //TODO: logSlowest
+      if(currentMode.currentLoopCount%10 == 0){
+
+      }
+      p->create_logging_entry(currEpo, ,);
+
+      //TODO: check BT for LOGGING
+      if(currentMode.bluetooth == true){
+        //write to bluetooth
+      }
+      if(!carRunning()){
+        //go to sleep
+      }
+    }
   }
-  Serial.print (cpt++,DEC);
-  Serial.print ("\t");
-  // Accelerometer
-  Serial.print (acc[0],DEC);
-  Serial.print ("\t");
-  Serial.print (acc[1],DEC);
-  Serial.print ("\t");
-  Serial.print (acc[2],DEC);
-  Serial.print ("\t");
-
-  // Gyroscope
-  Serial.print (gyr[0],DEC);
-  Serial.print ("\t");
-  Serial.print (gyr[1],DEC);
-  Serial.print ("\t");
-  Serial.print (gyr[2],DEC);
-  Serial.print ("\t");
-
-  //Magnetometer
-  Serial.print (mag[0],DEC);
-  Serial.print ("\t");
-  Serial.print (mag[1],DEC);
-  Serial.print ("\t");
-  Serial.print (mag[2],DEC);
-  Serial.println ("\t");
-
-    /*unsigned long start;
-    unsigned long stop;
-    unsigned long total;
-    // put your main code here, to run repeatedly:
-    //if(flags){
-//int32_t tmp;
-      //flags = 0;
-      start = millis();
-        for(int i = 0; i < 1000; ++i){
-          //tmp = locSrv->GetLatitude();
-          accSensor->Calibrate(true,true);
-        }
-      stop = millis();
-      total = stop-start;
-      //Serial.print(tmp);
-      Serial.print(" Time: ");
-      Serial.println(total);
-    //}*/
-    delay(100);
 
 }

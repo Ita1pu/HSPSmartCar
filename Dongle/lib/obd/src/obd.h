@@ -52,10 +52,11 @@ class ObdDevice
         bool wasAlreadyInitialiesed = false;
         COBDSPI* baseLayer;
         OBD_PROTOCOLS lastUsedProtocol;
-        std::vector<ourTypes::pidData>* veryFastPids;
-        std::vector<ourTypes::pidData>* fastPids;
-        std::vector<ourTypes::pidData>* normalPids;
-        std::vector<ourTypes::pidData>* slowPids;
+        std::vector<ourTypes::pidData>* veryFastPids = nullptr;
+        std::vector<ourTypes::pidData>* fastPids = nullptr;
+        std::vector<ourTypes::pidData>* normalPids = nullptr;
+        std::vector<ourTypes::pidData>* slowPids = nullptr;
+        std::vector<ourTypes::dtcData>* dtcVector = nullptr;//diagnostic trouble codes vector
 };
 
 };//end namespace obd

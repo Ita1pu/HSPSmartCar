@@ -23,7 +23,7 @@ void testCaseF ();
 
 COBDSPI* baseLayer;
 obd::ObdDevice* obdDev;
-char testCase = 'b';
+char testCase = 'a';
 
 void setup()
 {
@@ -133,14 +133,14 @@ void testCaseA ()
 void testCaseB ()
 {
     Serial.println("supported Pids:");
-    for (unsigned char i=0; i<=255; ++i)
+    for (unsigned char i=1; i<=0x7F; ++i)
     {
         if (obdDev->isPidValid(i) == true)
         {
             Serial.println(i);
         }
     }
-    delay(2000);
+    delay(10000);
 }
 
 void testCaseC ()
@@ -216,7 +216,7 @@ void testCaseE ()
     //    Serial.println("read trouble codes");
     std::vector<ourTypes::dtcData>* dtcs = obdDev->getDiagnositcTroubleCodes();
 
-    if (dtcs->size() != 0)
+    if (dtcs != nullptr && dtcs->size() != 0)
     {
         Serial.print("got #"), Serial.println(dtcs->size());
         for (unsigned int i=0; i<dtcs->size(); ++i)

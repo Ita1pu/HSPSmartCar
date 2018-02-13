@@ -26,8 +26,10 @@ ObdDevice::~ObdDevice()
     {
         delete slowPids;
     }
-
-
+    if (dtcVector != nullptr)
+    {
+        delete dtcVector;
+    }
 }
 
 bool ObdDevice::initialize()
@@ -309,10 +311,13 @@ With freematic library only the digits are available. The category letter is not
 */
 std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
 {
-    //todo: eventuell auch hier dafür sorgen, dass der VECTOR zerstört wird wenn man dieses objekt zerstört
     //hier ist eine maximale Anzahl an Versuchen nicht sinvoll, weil wenn kein Fehler vorliegt 0 zurück gegeben wird, ebenso wenn steuergerät nicht verfügbar ist
     uint16_t* readCodes = new uint16_t[ourTypes::MAXTROUBLECODES];
-    std::vector<ourTypes::dtcData>* dtcVector = new std::vector<ourTypes::dtcData>;
+    if (dtcVector != nullptr)
+    {
+        delete dtcVector;
+    }
+    dtcVector = new std::vector<ourTypes::dtcData>;
 
     if (readCodes == nullptr || dtcVector == nullptr)
     {
@@ -320,14 +325,19 @@ std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
     }
 
     std::vector<ourTypes::dtcData>* returnVal = nullptr;
-    char readTroubleCodesCount = baseLayer->readDTC(readCodes, ourTypes::MAXTROUBLECODES);
-    Serial.print("I read #"), Serial.print(readTroubleCodesCount+10), Serial.println(" many trouble codes");
+
+    unsigned char readTroubleCodesCount = baseLayer->readDTC(readCodes, ourTypes::MAXTROUBLECODES);
+    Serial.print("I read #"), Serial.print(readTroubleCodesCount, HEX), Serial.println("# codes");
     if (readTroubleCodesCount == 0)
     {
+        Serial.println("noDTC");
+        delete dtcVector;
+        dtcVector = nullptr;
         returnVal = nullptr;
     }
     else
     {
+        Serial.println("DTCs");
         for (int i=0; i<readTroubleCodesCount; ++i)
         {
             if (readCodes[i] != 0)
@@ -353,6 +363,7 @@ void ObdDevice::clearDiagnosticTroubleCodes()
 char* ObdDevice::getVehicleIdentificationNumber()
 {
     //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
+    //todo: klären wie wir es jetzt machen zwecks abprüfen (alte vs. neue vin)
     char* buffer = new char[ourTypes::bufferForGettingVIN];
 
     if (buffer == nullptr)

@@ -10,10 +10,24 @@ ObdDevice::ObdDevice(COBDSPI* baseLayer) : baseLayer(baseLayer)
 
 ObdDevice::~ObdDevice()
 {
-    delete veryFastPids;
-    delete fastPids;
-    delete normalPids;
-    delete slowPids;
+    if (veryFastPids != nullptr)
+    {
+        delete veryFastPids;
+    }
+    if (fastPids != nullptr)
+    {
+            delete fastPids;
+    }
+    if (normalPids != nullptr)
+    {
+        delete normalPids;
+    }
+    if (slowPids != nullptr)
+    {
+        delete slowPids;
+    }
+
+
 }
 
 bool ObdDevice::initialize()
@@ -21,17 +35,17 @@ bool ObdDevice::initialize()
     if (wasAlreadyInitialiesed == true)
     {
         baseLayer->uninit();
-        Serial.println("Base was already initialiezed, uninit will be called");
+//        Serial.println("Base was already initialiezed, uninit will be called");
         if (baseLayer->init(lastUsedProtocol) == true)
         {
             Clamp15 = true;
-            Serial.println("initialies with the lased used one worked");
+//            Serial.println("initialies with the lased used one worked");
             return true;
         }
         else
         {
             Clamp15 = false;
-            Serial.println("initialies with the lased used one failed");
+//            Serial.println("initialies with the lased used one failed");
             return false;
         }
     }
@@ -40,55 +54,61 @@ bool ObdDevice::initialize()
     if (baseLayer->init(PROTO_AUTO) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_AUTO");
+//        Serial.println("base initialized protocol is PROTO_AUTO");
         lastUsedProtocol = PROTO_AUTO;
     }
     else if (baseLayer->init(PROTO_ISO_9141_2) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_ISO_9141_2");
+//        Serial.println("base initialized protocol is PROTO_ISO_9141_2");
         lastUsedProtocol = PROTO_ISO_9141_2;
     }
     else if (baseLayer->init(PROTO_KWP2000_5KBPS) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_KWP2000_5KBPS");
+//        Serial.println("base initialized protocol is PROTO_KWP2000_5KBPS");
         lastUsedProtocol = PROTO_KWP2000_5KBPS;
     }
     else if (baseLayer->init(PROTO_KWP2000_FAST) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_KWP2000_FAST");
+//        Serial.println("base initialized protocol is PROTO_KWP2000_FAST");
         lastUsedProtocol = PROTO_KWP2000_FAST;
     }
     else if (baseLayer->init(PROTO_CAN_11B_500K) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_CAN_11B_500K");
+//        Serial.println("base initialized protocol is PROTO_CAN_11B_500K");
         lastUsedProtocol = PROTO_CAN_11B_500K;
     }
     else if (baseLayer->init(PROTO_CAN_29B_500K) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_CAN_29B_500K");
+//        Serial.println("base initialized protocol is PROTO_CAN_29B_500K");
         lastUsedProtocol = PROTO_CAN_29B_500K;
     }
     else if (baseLayer->init(PROTO_CAN_29B_250K) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_CAN_29B_250K");
+//        Serial.println("base initialized protocol is PROTO_CAN_29B_250K");
         lastUsedProtocol = PROTO_CAN_29B_250K;
     }
     else if (baseLayer->init(PROTO_CAN_11B_250K) == true)
     {
         Clamp15 = true;
-        Serial.println("base initialized protocol is PROTO_CAN_11B_250K");
+//        Serial.println("base initialized protocol is PROTO_CAN_11B_250K");
         lastUsedProtocol = PROTO_CAN_11B_250K;
     }
 
     if (Clamp15 == false)
     {
         return false;
+//        Serial.println("not initialiesed");
+    }
+    else
+    {
+        wasAlreadyInitialiesed = true;
+//        Serial.println("now initialiesed first time");
     }
 
     return fillPidVectors();
@@ -168,10 +188,10 @@ bool ObdDevice::fillPidVectors()
         slowPids->push_back(ourTypes::pidData {obd::FuelTankLvlInput, 0});
     }
 
-    Serial.print("Supported very fast: "); Serial.println(veryFastPids->size());
-    Serial.print("Supported fast: "); Serial.println(fastPids->size());
-    Serial.print("Supported normal: "); Serial.println(normalPids->size());
-    Serial.print("Supported slow: "); Serial.println(slowPids->size());
+//    Serial.print("Supported very fast: "); Serial.println(veryFastPids->size());
+//    Serial.print("Supported fast: "); Serial.println(fastPids->size());
+//    Serial.print("Supported normal: "); Serial.println(normalPids->size());
+//    Serial.print("Supported slow: "); Serial.println(slowPids->size());
     return true;
 }
 
@@ -289,8 +309,8 @@ With freematic library only the digits are available. The category letter is not
 */
 std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
 {
-    //todo: eventuell auch hier dafür sorgen, dass der vector zerstört wird wenn man dieses objekt zerstört
-    //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
+    //todo: eventuell auch hier dafür sorgen, dass der VECTOR zerstört wird wenn man dieses objekt zerstört
+    //hier ist eine maximale Anzahl an Versuchen nicht sinvoll, weil wenn kein Fehler vorliegt 0 zurück gegeben wird, ebenso wenn steuergerät nicht verfügbar ist
     uint16_t* readCodes = new uint16_t[ourTypes::MAXTROUBLECODES];
     std::vector<ourTypes::dtcData>* dtcVector = new std::vector<ourTypes::dtcData>;
 
@@ -299,11 +319,12 @@ std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
         return nullptr;
     }
 
+    std::vector<ourTypes::dtcData>* returnVal = nullptr;
     char readTroubleCodesCount = baseLayer->readDTC(readCodes, ourTypes::MAXTROUBLECODES);
-    Serial.print("I read #"), Serial.print(readTroubleCodesCount), Serial.println(" many trouble codes");
+    Serial.print("I read #"), Serial.print(readTroubleCodesCount+10), Serial.println(" many trouble codes");
     if (readTroubleCodesCount == 0)
     {
-        return nullptr;
+        returnVal = nullptr;
     }
     else
     {
@@ -314,13 +335,15 @@ std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
                 dtcVector->push_back(readCodes[i]);
             }
         }
-        return dtcVector;
+        returnVal = dtcVector;
     }
+    delete[] readCodes;
+    return returnVal;
 }
 
 void ObdDevice::clearDiagnosticTroubleCodes()
 {
-    //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
+    //hier geht maximale anzahl an versuche auch nicht, weil freematics einfach lösch befehl sendet und es keine rückmeldung über status gibt
     baseLayer->clearDTC();
 }
 
@@ -330,17 +353,30 @@ void ObdDevice::clearDiagnosticTroubleCodes()
 char* ObdDevice::getVehicleIdentificationNumber()
 {
     //todo: auch hier maximale anzahl an versuchen einfügen und wenn diese überschritten wird clamp 15 auf falsch setzen
-    char* buffer = new char[ourTypes::lengthOfVehicleIdentificationNumber];
+    char* buffer = new char[ourTypes::bufferForGettingVIN];
+
     if (buffer == nullptr)
     {
         return nullptr;
     }
 
-    bool status = baseLayer->getVIN(buffer, ourTypes::lengthOfVehicleIdentificationNumber);
+    bool status = baseLayer->getVIN(buffer, ourTypes::bufferForGettingVIN);
 
     if (status == true)
     {
-        return buffer;
+        char* VIN = new char[ourTypes::lengthOfVehicleIdentificationNumber];
+        if (VIN == nullptr)
+        {
+            return nullptr;
+        }
+
+        for (int i=0; i<ourTypes::lengthOfVehicleIdentificationNumber; ++i)
+        {
+            VIN[i] = buffer[i];
+        }
+
+        delete[] buffer;
+        return VIN;
         //todo: clean this mess up after it is used
     }
     else

@@ -15,6 +15,7 @@
 
 
 void testCaseA ();
+void testCaseB ();
 void testCaseC ();
 void testCaseE ();
 void testCaseF ();
@@ -22,7 +23,7 @@ void testCaseF ();
 
 COBDSPI* baseLayer;
 obd::ObdDevice* obdDev;
-char testCase = 'A';
+char testCase = 'b';
 
 void setup()
 {
@@ -41,16 +42,6 @@ void setup()
 
     baseLayer->begin();
 //    Serial.println("base layer begun");
-
-    /*
-    bool baseState = false;
-    while(baseState == false)
-    {
-        baseState = baseLayer->init(odbType);
-        Serial.println("base initiializing");
-    }
-    Serial.println("base layer initialiezed");
-    */
 
     delay(1000);
     if (obdDev->initialize() == true)
@@ -77,21 +68,25 @@ void loop()
 
     if(obdDev->getClamp15State() == false)
     {
-        Serial.println("Clamp 15 is false, try to restart it");
+        Serial.println("Clamp 15:f");
         baseLayer->reset();
         if (obdDev->initialize() == false)
         {
-            Serial.println("restarting failed");
+            Serial.println("restart:f");
         }
     }
     else
     {
-        Serial.println("clamp15 true");
+        Serial.println("clamp15:t");
         switch (testCase)
         {
 
             case 'a'://getValueOfPid own class
                 testCaseA();
+                break;
+
+            case 'b'://print valid pids
+                testCaseB();
                 break;
 
             case 'c'://update pid vector and give it out
@@ -117,7 +112,6 @@ void loop()
 
 void testCaseA ()
 {
-    //getValueOfPid own class -> geht
     //    Serial.println("Read one pid");
     bool status = false;
     int value = 200;
@@ -132,6 +126,19 @@ void testCaseA ()
     {
         Serial.println("-");
         //Serial.println(value);
+    }
+    delay(2000);
+}
+
+void testCaseB ()
+{
+    Serial.println("supported Pids:");
+    for (unsigned char i=0; i<=255; ++i)
+    {
+        if (obdDev->isPidValid(i) == true)
+        {
+            Serial.println(i);
+        }
     }
     delay(2000);
 }
@@ -221,19 +228,19 @@ void testCaseE ()
     }
     else
     {
-        //        Serial.println("got no trouble codes\n");
+        Serial.println("-");
     }
 }
 
 void testCaseF ()
 {
-    //get vehicle identification number own class -> failed
+    //get vehicle identification number
     //    Serial.println("read vin");
     char* vehicleIdent = obdDev->getVehicleIdentificationNumber();
 
     if (vehicleIdent != nullptr)
     {
-        //        Serial.println("got vehicle identification");
+        Serial.println("VIN:");
         for (unsigned char i=0; i<ourTypes::lengthOfVehicleIdentificationNumber; ++i)
         {
             Serial.print(vehicleIdent[i]);
@@ -243,7 +250,6 @@ void testCaseF ()
     }
     else
     {
-    //        Serial.println("got NO vehicle identifcation number\n");
         Serial.println("no");
     }
 }

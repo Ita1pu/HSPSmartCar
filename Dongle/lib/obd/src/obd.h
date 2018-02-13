@@ -40,6 +40,7 @@ class ObdDevice
 
         char* getVehicleIdentificationNumber();
 
+        bool isPidValid(unsigned char pid);
         bool getClamp15State();
 
 

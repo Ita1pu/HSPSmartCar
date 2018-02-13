@@ -385,6 +385,10 @@ char* ObdDevice::getVehicleIdentificationNumber()
     }
 }
 
+bool ObdDevice::isPidValid(unsigned char pid)
+{
+    return baseLayer->isValidPID(pid);
+}
 
 bool ObdDevice::getClamp15State()
 {

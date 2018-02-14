@@ -7,7 +7,7 @@ bool MemsSensor::memsInit(){
   Wire.begin();
   Wire.setClock(400000);
 
-  byte c = readByte(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
+  char c = readByte(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
   if (c == 0x68 || c == 0x71){
     retVal = initMPU9250();
     if(retVal){

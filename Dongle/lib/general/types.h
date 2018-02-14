@@ -1,6 +1,6 @@
 #ifndef TYPES_H
 #define TYPES_H
-
+#include <stdint.h>
 
 namespace ourTypes
 {
@@ -14,12 +14,21 @@ namespace ourTypes
     typedef int bigPidVal;
     typedef uint16_t dtcData;//DiagnisticTroubleCode Data
 
+    typedef struct vid{char x[lengthOfVehicleIdentificationNumber];} vid;
+
     struct pidData
     {
         char pid;
         int value;
     };
 
+    enum OperatingMode{LOGGING, UPLOAD};
+
+    struct {
+      OperatingMode mode;
+      bool bluetooth;
+      uint16_t currentLoopCount;
+    } typedef ProgrammMode;
 }
 
 #endif

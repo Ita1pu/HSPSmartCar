@@ -93,5 +93,45 @@ namespace obd
     */
     const unsigned char EngineRunTime          =            (0x7F);
 
+    /**
+        M. Schleinkofer: added ID values for GPS, acceleration values, gyroscope values
+    */
+    /**
+        Full name: geographical latitude in degree * 1000000; e.g. 48215559 => 48,215559°; Range: [-180000000; 180000000]
+    */
+    const unsigned char GpsLatitude          =             (0xF0);
+    /**
+        Full name: geographical longitude in degree * 1000000; e.g. 48215559 => 48,215559°; Range: [-180000000; 180000000]
+    */
+    const unsigned char GpsLongitude         =             (0xF1);
+    /**
+        Full name: number of available navigation sattelites; Range: [0; 24]
+    */
+    const unsigned char GpsSatCount          =             (0xF2);
+    /**
+        Full name: acceleration value of x axis in 1/1000 of gravitational force; Range: [to be checked]
+    */
+    const unsigned char AccelXAxis           =             (0xF3);
+    /**
+        Full name: acceleration value of y axis in 1/1000 of gravitational force; Range: [to be checked]
+    */
+    const unsigned char AccelYAxis           =             (0xF4);
+    /**
+        Full name: acceleration value of z axis in 1/1000 of gravitational force; Range: [to be checked]
+    */
+    const unsigned char AccelZAxis           =             (0xF5);
+    /**
+        Full name: gyroscope value of x axis in 1/1000 of degrees per second; Range: [to be checked]
+    */
+    const unsigned char GyroXAxis            =             (0xF6);
+    /**
+        Full name: gyroscope value of y axis in 1/1000 of degrees per second; Range: [to be checked]
+    */
+    const unsigned char GyroYAxis            =             (0xF7);
+    /**
+        Full name: gyroscope value of z axis in 1/1000 of degrees per second; Range: [to be checked]
+    */
+    const unsigned char GyroZAxis            =             (0xF8);
+
 }//end namespace obd
 #endif

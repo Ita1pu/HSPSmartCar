@@ -1,5 +1,5 @@
 #include "acc_reader.h"
-#include <math.h>
+#include <cmath>
 
 bool AccReader::Initialize(){
   _isFirst = true;

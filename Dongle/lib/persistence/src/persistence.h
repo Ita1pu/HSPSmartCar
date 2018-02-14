@@ -47,7 +47,7 @@ class Persistence{
     /**
      * @brief The Constructor for the Logging Class
      * Here all initalization for the class is done..
-     * 
+     *
      * @param current_vid the Vehicle Identification number of the vehicle the software is running in
      * @param current_time the time when the Logging starts
      * @param mapper The Mapp handler for VID-->MVID
@@ -58,7 +58,7 @@ class Persistence{
     stdRetVal create_logging_entry( uint64_t time,
                               uint16_t data_id, uint32_t data_value);
     stdRetVal init();
-    stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file 
+    stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file
     stdRetVal close_logging_file();
     /*Getter*/
     stdRetVal GetInitStatus();
@@ -70,7 +70,7 @@ class Persistence{
     /// The Handler for file system
     /** This field encapsulates a class that provides functions for file wirting and handling*/
     File_System_Handler *_file_system;
-    /// 
+    ///
     /***/
     stdRetVal _initStatus = 0x00;
     /// The mapped vid value of the current car

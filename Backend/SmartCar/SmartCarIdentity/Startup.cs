@@ -5,9 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using SmartCarIdentity.Database;
-using SmartCarIdentity.Identity;
-using SmartCarIdentity.Models.Identity;
+using SmartCar.Shared.Model.Identity;
+using SmartCar.Shared.Database;
 
 namespace SmartCarIdentity
 {

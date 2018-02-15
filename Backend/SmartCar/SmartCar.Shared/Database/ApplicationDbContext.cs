@@ -6,21 +6,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using SmartCarIdentity.Identity;
-using SmartCarIdentity.Models.Identity;
+using SmartCar.Shared.Model;
+using SmartCar.Shared.Model.Identity;
 
-namespace SmartCarIdentity.Database
+namespace SmartCar.Shared.Database
 {
     public class ApplicationDbContext : DbContext
     {
+        #region Identity
         public DbSet<AppUser> Users { get; set; }
         public DbSet<IdentityUserClaim<string>> IdentityUserClaims { get; set; }
-
         public DbSet<IdentityUserRole<string>> IdentityUserRoles { get; set; }
-
         public DbSet<AppUserRole> Roles { get; set; }
         public DbSet<IdentityRoleClaim<string>> IdentityRoleClaims { get; set; }
-        
+        #endregion
+
+        #region SmartCar
+        public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Trip> Trips { get; set; }
+        public DbSet<TripData> TripData { get; set; }
+        public DbSet<SignalMap> SignalMap { get; set; }
+        #endregion
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 

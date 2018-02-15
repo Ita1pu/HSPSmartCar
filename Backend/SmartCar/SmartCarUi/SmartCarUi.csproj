@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\SmartCar.Shared\SmartCar.Shared.csproj" />
+    <ProjectReference Include="..\SmartCar.Shared\SmartCar.Shared.csproj" />
   </ItemGroup>
 
 </Project>

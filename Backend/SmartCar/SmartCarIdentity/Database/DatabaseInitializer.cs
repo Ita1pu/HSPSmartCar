@@ -7,10 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using SmartCarIdentity.Identity;
-using SmartCarIdentity.Models.Identity;
+using SmartCar.Shared.Model.Identity;
 
-namespace SmartCarIdentity.Database
+namespace SmartCar.Shared.Database
 {
     public static class DatabaseInitializer
     {

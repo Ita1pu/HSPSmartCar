@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D2EDE1BE-BADF-41DB-AB53-A54B34096A8D}"
 EndProject
@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartCarIdentity", "SmartCa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartCarUi", "SmartCarUi\SmartCarUi.csproj", "{EBD906CE-0999-427D-B580-F229998263C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCar.Shared", "..\SmartCar.Shared\SmartCar.Shared.csproj", "{05403FFD-B4C8-4CD4-A229-19D5312855C1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartCar.Shared", "SmartCar.Shared\SmartCar.Shared.csproj", "{05403FFD-B4C8-4CD4-A229-19D5312855C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

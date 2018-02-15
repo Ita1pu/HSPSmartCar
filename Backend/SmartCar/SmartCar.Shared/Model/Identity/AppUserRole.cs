@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
-using SmartCarIdentity.Identity;
 
-namespace SmartCarIdentity.Models.Identity
+namespace SmartCar.Shared.Model.Identity
 {
     public class AppUserRole : IdentityRole
     {

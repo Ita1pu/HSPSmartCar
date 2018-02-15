@@ -19,10 +19,9 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using SmartCarIdentity.Database;
-using SmartCarIdentity.Identity;
+using SmartCar.Shared.Model.Identity;
+using SmartCar.Shared.Database;
 using SmartCarIdentity.Models;
-using SmartCarIdentity.Models.Identity;
 
 namespace SmartCarIdentity.Controllers.Account
 {

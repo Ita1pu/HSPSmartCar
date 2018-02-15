@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartCar.Shared;
 using Microsoft.AspNetCore.Http;
+using SmartCar.Shared.Rest;
 
 namespace SmartCarApi.DataParser
 {

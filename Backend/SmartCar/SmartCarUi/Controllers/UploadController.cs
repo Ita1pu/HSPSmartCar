@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SmartCar.Shared;
+using SmartCar.Shared.Rest;
 
 namespace SmartCarUi.Controllers
 {

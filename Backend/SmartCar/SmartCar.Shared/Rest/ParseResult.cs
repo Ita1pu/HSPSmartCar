@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartCar.Shared
+namespace SmartCar.Shared.Rest
 {
     public class ParseResult
     {

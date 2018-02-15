@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using SmartCar.Shared.Database;
 using SmartCarApi.DataParser;
 
 namespace SmartCarApi.Controllers
@@ -15,6 +16,13 @@ namespace SmartCarApi.Controllers
     [Route("api/[controller]/[action]")]
     public class UploadController : Controller
     {
+        private ApplicationDbContext _db;
+
+        public UploadController(ApplicationDbContext dbContext)
+        {
+            _db = dbContext;
+        }
+
         [HttpPost]
         public IActionResult Logfile(IFormFile logfile)
         {

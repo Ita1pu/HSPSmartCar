@@ -11,6 +11,7 @@
 #include <types.h>
 #include <vid_mapper.h>
 #include <FreematicsSD.h>
+#include <globalConfig.h>
 
 #define CLOCK_TIMER_NR 2
 #define FLAG_TIMER_NR 1
@@ -58,11 +59,13 @@ void setup()
     currentMode.bluetooth = false;
     currentMode.mode = LOGGING;
     currentMode.currentLoopCount = 0;
-    Serial.println("Init start!");
+    Serial.println(F("Init start!"));
     //Init Acceleration Sensor
     success = accSensor->Initialize();
     if(success != 0x00){
       accSensor->Calibrate(false,true);
+      Serial.print(F(" S"));
+      Serial.print(freeMemory());
     }
     //Initialize GPS Receiver
     success = locSrv->Initialize(GPS_BAUD_RATE);
@@ -72,7 +75,7 @@ void setup()
         locSrv->RenewGPSData();
         ++ctr;
         delay(500);
-        Serial.println(" Clock waiting");
+        Serial.print(F(" C"));
       //wait for GPS signal to initialize clock
       }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
     }
@@ -92,6 +95,7 @@ void setup()
       fastPids = obdDev->getFastPids();
       normalPids = obdDev->getNormalPids();
       slowPids = obdDev->getSlowPids();
+      Serial.print(F(" O"));
     }
     //initialize persistence layer
     SD = new SDClass();
@@ -99,9 +103,11 @@ void setup()
     mapper = new persistence::Vid_mapper(&current_vid);
     p = new persistence::Persistence(&current_vid, clck, mapper, file_system);
     success = p->GetInitStatus();
-    if(success == 0x00){
-      Serial.println("Init failed!");
+    if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
+      Serial.println(F(" P"));
       //Maybe sleep mode
+    }else{
+      Serial.print(F(" Pf"));
     }
     //TODO: Log Category E
     bool pidSucc = false;

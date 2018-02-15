@@ -10,7 +10,7 @@ volatile uint16_t Timer::tcnt1;
 volatile uint16_t Timer::tcnt2;
 
 bool Timer::set(uint8_t timerNr, uint16_t ms, void (*f)()){
-  if(f == 0x0){
+  if(f == nullptr){
     return false;
   }
 

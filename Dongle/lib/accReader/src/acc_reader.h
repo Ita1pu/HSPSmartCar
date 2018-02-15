@@ -55,7 +55,6 @@ public:
    */
    void Calibrate(bool accel, bool gyro);
 private:
-  bool _isFirst;
   bool _isInit;
   MemsSensor _sensor;
   float accOffset[3];

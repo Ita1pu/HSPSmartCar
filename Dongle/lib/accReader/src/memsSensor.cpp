@@ -3,18 +3,16 @@
 #include <Wire.h>
 
 bool MemsSensor::memsInit(){
-  bool retVal = false;
   Wire.begin();
   Wire.setClock(400000);
-
-  char c = readByte(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
-  if (c == 0x68 || c == 0x71){
-    retVal = initMPU9250();
-    if(retVal){
-      retVal = initAK8963();
+  // Read WHO_AM_I register for MPU-9250
+  if (readByte(WHO_AM_I_MPU9250) == 0x68 || readByte(WHO_AM_I_MPU9250) == 0x71){
+    if(initMPU9250() && initAK8963()){
+      return true;
+    }else{
+      return false;
     }
   }
-  return retVal;
 }
 
 bool MemsSensor::memsRead(float *accelValues, float *gyroValues, float *magValues){

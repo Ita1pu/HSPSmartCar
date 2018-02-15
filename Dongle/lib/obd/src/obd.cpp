@@ -1,5 +1,5 @@
 #include "obd.h"
-
+//#include <globalConfig.h>
 namespace obd
 {
 
@@ -51,7 +51,6 @@ bool ObdDevice::initialize()
             return false;
         }
     }
-
     //check all possible protokolls
     if (baseLayer->init(PROTO_AUTO) == true)
     {
@@ -112,7 +111,6 @@ bool ObdDevice::initialize()
         wasAlreadyInitialiesed = true;
 //        Serial.println("now initialiesed first time");
     }
-
     return fillPidVectors();
 }
 

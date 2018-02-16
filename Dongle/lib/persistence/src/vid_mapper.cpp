@@ -18,7 +18,7 @@ stdRetVal Vid_mapper::create_new_map_entry()
   return UNDEFINED_ERROR;
 }
 
-Vid_mapper::Vid_mapper(const vid *current_vid)
+void Vid_mapper::initialize(const vid *current_vid)
 {
   this->_current_vid = current_vid;
 }

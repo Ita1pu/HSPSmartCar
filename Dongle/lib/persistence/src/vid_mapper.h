@@ -20,7 +20,7 @@ namespace persistence{
       //Setter
       void set_map_file(File map_file);
     public:
-      Vid_mapper(const vid *current_vid);
+      void initialize(const vid *current_vid);
       persistence::stdRetVal get_map_value(uint8_t *mvid_result);
   };
 };

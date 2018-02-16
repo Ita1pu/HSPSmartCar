@@ -3,15 +3,10 @@
 using namespace persistence;
 #define SD_CS_PIN                          10
 
-File_System_Handler::File_System_Handler(SDClass *sdClass)
+stdRetVal File_System_Handler::init(SDClass *sdClass)
 {
   this->card = sdClass;
   this->status = NO_ERROR;
-  this->init();
-}
-
-stdRetVal File_System_Handler::init()
-{
   this->status = 1;
   return card->begin(SD_CS_PIN);
 }
@@ -94,11 +89,13 @@ stdRetVal File_System_Handler::open_file(char *file_path, char mode){
 stdRetVal File_System_Handler::close_current_file()
 {
   this->current_file.close();
+  return NO_ERROR;
 }
 
 stdRetVal File_System_Handler::flush_current_file()
 {
   this->current_file.flush();
+  return NO_ERROR;
 }
 
 File File_System_Handler::getCurrentFile()

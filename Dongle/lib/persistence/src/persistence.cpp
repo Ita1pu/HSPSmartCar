@@ -6,13 +6,13 @@ using namespace persistence;
 /**
  * @brief The Constructor for the Logging Class
  * Here all initalization for the class is done..
- * 
+ *
  * @param current_vid the Vehicle Identification number of the vehicle the software is running in
  * @param current_time the time when the Logging starts
  * @param mapper The Mapp handler for VID-->MVID
  * @param file_system The handler for the filesystem
  */
-Persistence::Persistence(const vid *current_vid, Clock *clock,
+void Persistence::init(const vid *current_vid, Clock *clock,
                         Vid_mapper *mapper, File_System_Handler *file_system){
 
   this->_vid_mapper = mapper;
@@ -29,7 +29,7 @@ stdRetVal Persistence::GetInitStatus()
 }
 /**
  * @brief Assigns the first 5 chars of the filename to the date: YYYYMMDD
- * 
+ *
  */
 stdRetVal Persistence::setOpenFileDate(uint32_t open_date){
   this->_open_file_date = open_date;
@@ -44,8 +44,8 @@ stdRetVal Persistence::close_logging_file()
 }
 /**
  * @brief Gets the mvid to the passed current_vid
- * 
- * @return stdRetVal 
+ *
+ * @return stdRetVal
  */
 stdRetVal Persistence::set_mapped_vehicle_id()
 {
@@ -55,11 +55,11 @@ stdRetVal Persistence::set_mapped_vehicle_id()
 
 /**
  * @brief create a logging entry in the current open file
- * 
+ *
  * @param time the  time when the value has been logged
  * @param data_id The ID of the logdata
  * @param data_value The value of the data
- * @return stdRetVal 
+ * @return stdRetVal
  */
 stdRetVal Persistence::create_logging_entry(uint64_t logging_time, uint16_t data_id, uint32_t data_value){
   uint8_t i = 0, offset = 0, buf[SIZE_OF_LOGGING_ENTRY];
@@ -90,10 +90,10 @@ stdRetVal Persistence::create_logging_entry(uint64_t logging_time, uint16_t data
    * @brief open the last fiel which hast been written to the file system
    *
    * Search the filesystem for the last entry that has been written
-   * 
+   *
    * @param current_time the current time
    * @param ret_file A pointer to the last wirrten file. Will be set by the class
-   * @return stdRetVal 
+   * @return stdRetVal
    */
 stdRetVal Persistence::find_last_written_file(File *ret_file){
   //TDOD Think about if it is neccessary or change to last sent file..
@@ -102,12 +102,12 @@ stdRetVal Persistence::find_last_written_file(File *ret_file){
 }
 /**
  * @brief Creates the logging file for the current car and date
- * 
+ *
  * @param folder MVID
  * @param file_name Date
  * @return stdRetVal Error code
  */
-stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_name){  
+stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_name){
   stdRetVal ret = NO_ERROR;
   char file_path[16] = {0};
   strcat(file_path, folder);
@@ -141,14 +141,14 @@ stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_nam
 /**
  * @brief opens the loggfile for the passed looging_start_time
  * This function opens a file for the passed logging time. If no file is found then a new one will be created
- * 
+ *
  * @param start_date the Date generated from GPS-Module
- * @return stdRetVal 
+ * @return stdRetVal
  */
 stdRetVal Persistence::open_logging_file(){
   char folder[3]; //Mapped vehicle ID
   char file_name[SIZE_OF_CURRENT_DATE + 1]; //YYYYMMDD
-  uint32_t start_date = this->_clock->GetDate(); 
+  uint32_t start_date = this->_clock->GetDate();
   sprintf(file_name, "%lu", start_date);
   sprintf(folder, "%x/", this->_current_mvid);
 
@@ -158,11 +158,11 @@ stdRetVal Persistence::open_logging_file(){
 }
 /**
  * @brief Checks if date has changed and creates a new file if neccessary
- * 
+ *
  * When the vehicle was driving through midnight then a new file has to be
  * created. This function checks it and creates a new file if neccessary
  * @param current_time the current time
- * @return stdRetVal 
+ * @return stdRetVal
  */
 stdRetVal Persistence::update_file_name(){
   stdRetVal ret = NO_ERROR;
@@ -178,4 +178,3 @@ stdRetVal Persistence::update_file_name(){
   }
   return ret;
 }
-

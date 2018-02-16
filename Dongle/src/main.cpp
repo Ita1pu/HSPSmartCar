@@ -28,11 +28,11 @@ uint8_t flags;
 
 obd::ObdDevice* obdDev;
 
-SDLib::SDClass *SD;
-persistence::Persistence *p;
-persistence::Vid_mapper *mapper;
-persistence::File_System_Handler *file_system;
 ourTypes::vid current_vid;
+SDLib::SDClass SD;
+persistence::Vid_mapper mapper;
+persistence::File_System_Handler file_system;
+persistence::Persistence p;
 
 persistence::stdRetVal success = 0;
 ProgrammMode currentMode;
@@ -76,8 +76,12 @@ void setup()
         ++ctr;
         delay(500);
         Serial.print(F(" C"));
+        Serial.print(freeMemory());
       //wait for GPS signal to initialize clock
       }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
+    }else{
+      Serial.print(F(" Gf"));
+      Serial.print(freeMemory());
     }
     //initialize flag timer for Main loop
     success = clck->SetTimer(FLAG_TIMER_NR, LOOP_DURATION, &flags);
@@ -88,26 +92,37 @@ void setup()
       //obd init succeeded
       char* tmpVid = obdDev->getVehicleIdentificationNumber();
       //transfer vid to struct
+      unsigned char zeroCt = 0;
       for(int i = 0; i < ourTypes::lengthOfVehicleIdentificationNumber; i++){
         current_vid.x[i] = tmpVid[i];
+        if(tmpVid[i] == 0x00)
+          zeroCt++;
+      }
+      if(zeroCt >= lengthOfVehicleIdentificationNumber){
+        current_vid = {'0', 'A', '1', 'B', '2', 'C', '3', 'D', '4', 'E', '5', 'F', '6', '7', '8', '9', '0'};
       }
       vFastPids = obdDev->getVeryFastPids();
       fastPids = obdDev->getFastPids();
       normalPids = obdDev->getNormalPids();
       slowPids = obdDev->getSlowPids();
       Serial.print(F(" O"));
+      Serial.print(freeMemory());
+    }else{
+      Serial.print(F(" Of"));
+      Serial.print(freeMemory());
     }
     //initialize persistence layer
-    SD = new SDClass();
-    file_system = new persistence::File_System_Handler(SD);
-    mapper = new persistence::Vid_mapper(&current_vid);
-    p = new persistence::Persistence(&current_vid, clck, mapper, file_system);
-    success = p->GetInitStatus();
+    file_system.init(&SD);
+    mapper.initialize(&current_vid);
+    p.init(&current_vid, clck, &mapper, &file_system);
+    success = p.GetInitStatus();
     if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
       Serial.println(F(" P"));
+      Serial.print(freeMemory());
       //Maybe sleep mode
     }else{
       Serial.print(F(" Pf"));
+      Serial.print(freeMemory());
     }
     //TODO: Log Category E
     bool pidSucc = false;
@@ -115,13 +130,13 @@ void setup()
     //EthanolPercent
     pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, pidSucc);
     if(pidSucc){
-      p->create_logging_entry(clck->GetEpochMs(), obd::EthanolPercent, pidRetVal);
+      p.create_logging_entry(clck->GetEpochMs(), obd::EthanolPercent, pidRetVal);
     }
     //TODO: Log Category F
     //FuelType
     pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
     if(pidSucc){
-      p->create_logging_entry(clck->GetEpochMs(), obd::FuelType, pidRetVal);
+      p.create_logging_entry(clck->GetEpochMs(), obd::FuelType, pidRetVal);
     }
 }
 
@@ -132,10 +147,12 @@ void loop()
     uploadBT();
     delay(200);
     //when finished uploading
-    currentMode.mode == LOGGING;
+    //currentMode.mode == LOGGING;
   }else{
     //check if timer has reached its limit
     if(flags){
+      Serial.print(F(" L"));
+      Serial.print(freeMemory());
       //reset flags
       flags = 0;
       uint64_t currEpo = clck->GetEpochMs();
@@ -145,9 +162,9 @@ void loop()
         logData(vFastPids, &currEpo);
       }
       //push acceleration values into the pid vector; the values are given as 1/1000 of gravitational acceleration
-      p->create_logging_entry(currEpo, obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
-      p->create_logging_entry(currEpo, obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
-      p->create_logging_entry(currEpo, obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
+      p.create_logging_entry(currEpo, obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
+      p.create_logging_entry(currEpo, obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
+      p.create_logging_entry(currEpo, obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
 
       //The values for the module comparison are used to not poll all pid categories at once when counter = 0
       //log fast / Category B
@@ -155,9 +172,9 @@ void loop()
         if(locSrv->RenewGPSData()){
           //log GPS data
           int32_t currLat = locSrv->GetLatitude();
-          p->create_logging_entry(currEpo, obd::GpsLatitude, currLat);
+          p.create_logging_entry(currEpo, obd::GpsLatitude, currLat);
           int32_t currLon = locSrv->GetLongitude();
-          p->create_logging_entry(currEpo, obd::GpsLongitude, currLon);
+          p.create_logging_entry(currEpo, obd::GpsLongitude, currLon);
         }
         //log fast OBD data
         if(obdDev->updateFastPids()){
@@ -195,7 +212,7 @@ void loop()
 
 void logData(std::vector<ourTypes::pidData>* pids, uint64_t* msEpoch){
   for(auto &currTup : *pids){
-    p->create_logging_entry(*msEpoch, currTup.pid, currTup.value);
+    p.create_logging_entry(*msEpoch, currTup.pid, currTup.value);
   }
 }
 

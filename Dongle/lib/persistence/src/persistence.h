@@ -53,11 +53,10 @@ class Persistence{
      * @param mapper The Mapp handler for VID-->MVID
      * @param file_system The handler for the filesystem
      */
-    Persistence(const vid *current_vid, Clock *clock, Vid_mapper *mapper,
+    void init(const vid *current_vid, Clock *clock, Vid_mapper *mapper,
                 File_System_Handler *file_system);
     stdRetVal create_logging_entry( uint64_t time,
                               uint16_t data_id, uint32_t data_value);
-    stdRetVal init();
     stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file
     stdRetVal close_logging_file();
     /*Getter*/

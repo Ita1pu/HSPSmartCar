@@ -11,11 +11,11 @@
 namespace persistence{
 class File_System_Handler{
   public:
-    File_System_Handler(SDClass *sdClass);
-    /*Getters*/
+      /*Getters*/
     /*Setter*/
 
     //Functions
+    stdRetVal init(SDClass *sdClass);
     stdRetVal stop();
     stdRetVal mkdir( char *name);
     stdRetVal rmdir( char *dir_path);
@@ -25,9 +25,7 @@ class File_System_Handler{
     stdRetVal close_current_file();
     stdRetVal flush_current_file();
     File getCurrentFile();
-
   private:
-    stdRetVal init();
     //A Pointer to the SD_Card class
     SDClass *card;
     //The file which is currently opened

@@ -51,7 +51,7 @@ namespace SmartCarIdentity
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "smartcar_backend"
+                        "smartcar_api"
                     },
                 },
                 new Client
@@ -66,7 +66,7 @@ namespace SmartCarIdentity
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        "smartcar_app"
+                        "smartcar_api"
                     }
                 }
             };

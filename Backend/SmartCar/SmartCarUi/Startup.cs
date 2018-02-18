@@ -40,6 +40,7 @@ namespace SmartCarUi
                     options.ClientId = "smartcar_ui"; // client setup in Auth Server
                     options.ClientSecret = "kX6fFG4f4PDt";
                     options.ResponseType = "code id_token"; // means Hybrid flow (id + access token)
+                    options.Scope.Add("smartcar_api");
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.SaveTokens = true;
                 });

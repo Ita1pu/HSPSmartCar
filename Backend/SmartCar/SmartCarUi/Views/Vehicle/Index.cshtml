@@ -1,0 +1,60 @@
+﻿@using SmartCar.Shared.Model
+@model IEnumerable<Vehicle>
+
+<h1>Vehicles</h1>
+
+<!-- Print result message if it exists -->
+@if (ViewBag.ResultMessage != null)
+{
+    if (ViewBag.Successful)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.ResultMessage
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ResultMessage
+        </div>
+    }
+}
+
+<hr />
+
+<!-- Add vehicles -->
+<div class="container">
+    <h4>Add Vehicle</h4>
+    
+    <form method="post" asp-controller="Vehicle" asp-action="AddVehicle">
+        <div class="form-row">
+            <div class="col">
+                <input type="text" class="form-control" name="Brand" placeholder="Brand">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" name="Model" placeholder="Model">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" name="MVID" placeholder="MVID">
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+<!-- Show Vehicles -->
+<div class="container">
+    @if (Model != null)
+    {
+         foreach (var vehicle in Model)
+         {
+             <div class="panel panel-default">
+                 <div class="panel-body" style="width: 100px; height: 100px">
+                     
+                 </div>
+             </div>
+         }
+    }
+</div>

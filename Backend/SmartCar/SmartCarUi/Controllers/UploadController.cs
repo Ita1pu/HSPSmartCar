@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -26,9 +27,8 @@ namespace SmartCarUi.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadLogfile(IFormFile logfile)
         {
-            ParseResult parseResult;
             var accessToken = await HttpContext.GetTokenAsync("access_token");
-
+            
             var client = new HttpClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
             
@@ -39,12 +39,17 @@ namespace SmartCarUi.Controllers
 
                 content.Add(new ByteArrayContent(postStream.ToArray()), "logfile", logfile.FileName);
                 var response = await client.PostAsync("http://localhost:5001/api/upload/logfile", content);
-                
-                var responseContent = await response.Content.ReadAsStringAsync();
-                parseResult = JsonConvert.DeserializeObject<ParseResult>(responseContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var parseResult = JsonConvert.DeserializeObject<ParseResult>(responseContent);
+
+                    return View("Index", parseResult);
+                }
+
+                return View("Index", new ParseResult{Success = false});
             }
-            
-            return View("Index", parseResult);
         }
     }
 }

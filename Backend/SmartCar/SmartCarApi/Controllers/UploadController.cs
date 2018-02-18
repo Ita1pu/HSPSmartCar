@@ -5,25 +5,42 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SmartCar.Shared.Database;
+using SmartCar.Shared.Rest;
 using SmartCarApi.DataParser;
+using SmartCarApi.Extensions;
 
 namespace SmartCarApi.Controllers
 {
+    /// <summary>
+    /// Provides an api for the upload of trip data.
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
+    [Authorize]
     [Route("api/[controller]/[action]")]
     public class UploadController : Controller
     {
-        private ApplicationDbContext _db;
+        private Repository _repo;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UploadController"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
         public UploadController(ApplicationDbContext dbContext)
         {
-            _db = dbContext;
+            _repo = new Repository(dbContext);
         }
 
+        /// <summary>
+        /// Parses the given trip data logfile.
+        /// </summary>
+        /// <param name="logfile">The logfile with trip data that shall be parsed.</param>
         [HttpPost]
+        [ProducesResponseType(typeof(ParseResult), 200)]
         public IActionResult Logfile(IFormFile logfile)
         {
             var parser = new LogfileParser();

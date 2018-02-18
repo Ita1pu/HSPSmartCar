@@ -26,3 +26,8 @@ The following software should be installed on the target:
 - (Kitematics) 
 *Useful to manage your running containers if you are setting up a developement environment on windows.*
 
+## Documentation
+### Rest API
+The SmartCar API is documented by an automatically generated using [Swagger](https://swagger.io/) for asp.net core applications.
+The documentation is accessible when the Web API server is running under the address http://<api_ip>:<api_port>/swagger.
+

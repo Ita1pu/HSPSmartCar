@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <StandardCplusplus.h>
+//#include <StandardCplusplus.h>
 
 #include <acc_reader.h>
 #include <bluetooth.h>
@@ -10,8 +10,8 @@
 
 #include <FreematicsBase.h>
 
-#include <vector>
-#include <utility.h>
+//#include <vector>
+//#include <utility.h>
 
 
 void testCaseA ();
@@ -33,6 +33,7 @@ void setup()
     //OBD_PROTOCOLS odbType = PROTO_KWP2000_FAST; //bei andi: PROTO_KWP2000_5KBPS
                                                 // michi: PROTO_ISO_9141_2
                                                 //franz: PROTO_ISO_9141_2
+
 
     baseLayer = new COBDSPI();
 //    Serial.println("Got base layer*");
@@ -137,7 +138,7 @@ void testCaseB ()
     {
         if (obdDev->isPidValid(i) == true)
         {
-            Serial.println(i);
+            Serial.println(i, HEX);
         }
     }
     delay(10000);
@@ -147,66 +148,55 @@ void testCaseC ()
 {
     //update pid vector and give it out
     //    Serial.println("update pid vectors and print them");
-    bool statusSlow = obdDev->updateSlowPids();
-    bool statusNormal = obdDev->updateNormalPids();
-    bool statusFast = obdDev->updateFastPids();
-    bool statusVeryFast = obdDev->updateVeryFastPids();
+    ourTypes::pidData* pids = obdDev->getPidArray();
+    char pidAmount = 0;
 
-    if (statusSlow == true && statusNormal == true && statusFast == true && statusVeryFast == true)
+
+    pidAmount = obdDev->updateVeryFastPids();
+    if (pidAmount > 0)
     {
-        //        Serial.println("slow pids");
-        std::vector<ourTypes::pidData>* pids = obdDev->getSlowPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
+        Serial.println("vf");
+        for (unsigned char i=0; i<(unsigned char)pidAmount; ++i)
         {
             //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
+            Serial.print((pids[i]).pid, HEX);
             //            Serial.print(" value: ");
             Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-
-        //        Serial.println("normal pids");
-        pids = obdDev->getNormalPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-        //        Serial.println("fast pids");
-        pids = obdDev->getFastPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-        //        Serial.println("very fast pids");
-        pids = obdDev->getVeryFastPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
+            Serial.println((pids[i]).value);
         }
         //        Serial.println("\n");
     }
-    else
+
+    pidAmount = obdDev->updateNormalPids();
+    if (pidAmount > 0)
     {
-        Serial.println("-");
+        Serial.println("n");
+        for (unsigned char i=0; i<(unsigned char)pidAmount; ++i)
+        {
+            //            Serial.print("Pid ");
+            Serial.print((pids[i]).pid, HEX);
+            //            Serial.print(" value: ");
+            Serial.print(" ");
+            Serial.println((pids[i]).value);
+        }
+        //        Serial.println("\n");
     }
+
+    pidAmount = obdDev->updateSlowPids();
+    if (pidAmount > 0)
+    {
+        Serial.println("s");
+        for (unsigned char i=0; i<(unsigned char)pidAmount; ++i)
+        {
+            //            Serial.print("Pid ");
+            Serial.print((pids[i]).pid, HEX);
+            //            Serial.print(" value: ");
+            Serial.print(" ");
+            Serial.println((pids[i]).value);
+        }
+        //        Serial.println("\n");
+    }
+
 }
 
 
@@ -214,14 +204,15 @@ void testCaseE ()
 {
     //get diagnostic trouble codes
     //    Serial.println("read trouble codes");
-    std::vector<ourTypes::dtcData>* dtcs = obdDev->getDiagnositcTroubleCodes();
+    unsigned char amount = 0;
+    ourTypes::dtcData* dtcs = obdDev->getDiagnositcTroubleCodes(amount);
 
-    if (dtcs != nullptr && dtcs->size() != 0)
+    if (dtcs != nullptr && amount != 0)
     {
-        Serial.print("got #"), Serial.println(dtcs->size());
-        for (unsigned int i=0; i<dtcs->size(); ++i)
+        Serial.print("got #"), Serial.println(amount);
+        for (unsigned int i=0; i<amount; ++i)
         {
-            Serial.print("Code: "), Serial.println((dtcs->at(i)), DEC);
+            Serial.print("Code: "), Serial.println(dtcs[i], DEC);
         }
         //        Serial.println("\n");
         delete dtcs;
@@ -253,3 +244,6 @@ void testCaseF ()
         Serial.println("no");
     }
 }
+
+//programm 14634 bytes
+//data 575 bytes

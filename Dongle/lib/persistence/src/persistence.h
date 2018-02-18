@@ -35,10 +35,11 @@
 #include <vid_mapper.h>
 #include <persistence_error_codes.h>
 #include <FreematicsSD.h>
-#include <clock.h>
+#include <gps.h>
 
 using namespace obd;
 using namespace ourTypes;
+using namespace gps;
 #define SIZE_OF_CURRENT_DATE          8
 #define SIZE_OF_LOGGING_ENTRY         15
 namespace persistence {
@@ -53,7 +54,7 @@ class Persistence{
      * @param mapper The Mapp handler for VID-->MVID
      * @param file_system The handler for the filesystem
      */
-    void init(const vid *current_vid, Clock *clock, Vid_mapper *mapper,
+    void init(const vid *current_vid, LocationTimeService *clock, Vid_mapper *mapper,
                 File_System_Handler *file_system);
     stdRetVal create_logging_entry( uint64_t time,
                               uint16_t data_id, uint32_t data_value);
@@ -88,7 +89,7 @@ class Persistence{
     /** This filed holds the class used for VID mapping*/
     Vid_mapper *_vid_mapper;
     /// The clock getting the time from GPS
-    Clock *_clock;
+    LocationTimeService *_clock;
     //Functions
     stdRetVal set_mapped_vehicle_id(); /// Sets the field _current_mvid to the vars MVID
     stdRetVal find_last_written_file(File *ret_file); /// Finds the last wirtten file

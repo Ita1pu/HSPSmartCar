@@ -3,7 +3,6 @@
 
 #include <acc_reader.h>
 #include <bluetooth.h>
-#include <clock.h>
 #include <gps.h>
 #undef abs
 #include <obd.h>
@@ -20,19 +19,17 @@
 #define GPS_BAUD_RATE 115200L
 
 
-AccReader* accSensor;
-LocationService* locSrv = 0;
-Clock* clck = 0;
 COBDSPI coproc;
-uint8_t flags;
+AccReader* accSensor;
+gps::LocationTimeService locSrv = gps::LocationTimeService(&coproc);
 
 obd::ObdDevice* obdDev;
 
 ourTypes::vid current_vid;
-SDLib::SDClass SD;
-persistence::Vid_mapper mapper;
-persistence::File_System_Handler file_system;
-persistence::Persistence p;
+//SDLib::SDClass SD;
+//persistence::Vid_mapper mapper;
+//persistence::File_System_Handler file_system;
+//persistence::Persistence p;
 
 persistence::stdRetVal success = 0;
 ProgrammMode currentMode;
@@ -44,18 +41,14 @@ std::vector<ourTypes::pidData>* slowPids;
 
 //function to upload Data to smartphone
 void uploadBT();
-void logData(std::vector<ourTypes::pidData>* pids, uint64_t* msEpoch);
 
 void setup()
 {
   //Instantiate Objects
     Serial.begin(SERIAL_BAUD_RATE);
     coproc.begin();
-    locSrv = new LocationService(&coproc);
-    clck = new Clock(&coproc);
     accSensor = new AccReader();
   //Initialize global variables
-    flags = 0;
     currentMode.bluetooth = false;
     currentMode.mode = LOGGING;
     currentMode.currentLoopCount = 0;
@@ -68,23 +61,19 @@ void setup()
       Serial.print(freeMemory());
     }
     //Initialize GPS Receiver
-    success = locSrv->Initialize(GPS_BAUD_RATE);
+    success = locSrv.Initialize(GPS_BAUD_RATE);
     if(success != 0x00){
-      int ctr = 0;
       do{
-        locSrv->RenewGPSData();
-        ++ctr;
         delay(500);
-        Serial.print(F(" C"));
+        locSrv.RenewGPSData();
+        Serial.print(F(" G"));
         Serial.print(freeMemory());
-      //wait for GPS signal to initialize clock
-      }while(!clck->Initialize(locSrv, CLOCK_TIMER_NR));
+      //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
+    }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
     }else{
       Serial.print(F(" Gf"));
       Serial.print(freeMemory());
     }
-    //initialize flag timer for Main loop
-    success = clck->SetTimer(FLAG_TIMER_NR, LOOP_DURATION, &flags);
     //initialize OBD reader
     obdDev = new obd::ObdDevice(&coproc);
     success = obdDev->initialize();
@@ -112,7 +101,7 @@ void setup()
       Serial.print(freeMemory());
     }
     //initialize persistence layer
-    file_system.init(&SD);
+    /*file_system.init(&SD);
     mapper.initialize(&current_vid);
     p.init(&current_vid, clck, &mapper, &file_system);
     success = p.GetInitStatus();
@@ -137,7 +126,9 @@ void setup()
     pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
     if(pidSucc){
       p.create_logging_entry(clck->GetEpochMs(), obd::FuelType, pidRetVal);
-    }
+    }*/
+        //initialize flag timer for Main loop
+        locSrv.StartFlagTimer();
 }
 
 void loop()
@@ -150,49 +141,71 @@ void loop()
     //currentMode.mode == LOGGING;
   }else{
     //check if timer has reached its limit
-    if(flags){
+    if(timerFlags){
       Serial.print(F(" L"));
       Serial.print(freeMemory());
       //reset flags
-      flags = 0;
-      uint64_t currEpo = clck->GetEpochMs();
+      timerFlags = 0;
+      //uint64_t currEpo = clck->GetEpochMs();
+      Serial.print(currentMode.currentLoopCount);
+      Serial.print(": ");
+      Serial.print(locSrv.GetTime());
 
       //log very fast / Category A
-      if(obdDev->updateVeryFastPids()){
-        logData(vFastPids, &currEpo);
+      if(!obdDev->updateVeryFastPids()){
+        Serial.print(F(" VFPf"));
+        //logData(vFastPids, &currEpo);
+      }
+      if(accSensor->GetAccelerationAxis(0)*1000 > 10000){
+        Serial.print(F(" ACCf"));
+      }
+      if(accSensor->GetAccelerationAxis(1)*1000 > 10000){
+        Serial.print(F(" ACCf"));
+      }
+      if(accSensor->GetAccelerationAxis(2)*1000 > 10000){
+        Serial.print(F(" ACCf"));
       }
       //push acceleration values into the pid vector; the values are given as 1/1000 of gravitational acceleration
-      p.create_logging_entry(currEpo, obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
-      p.create_logging_entry(currEpo, obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
-      p.create_logging_entry(currEpo, obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
+      //p.create_logging_entry(currEpo, obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
+      //p.create_logging_entry(currEpo, obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
+      //p.create_logging_entry(currEpo, obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
 
       //The values for the module comparison are used to not poll all pid categories at once when counter = 0
       //log fast / Category B
       if(currentMode.currentLoopCount%5 == 1){
-        if(locSrv->RenewGPSData()){
+        if(locSrv.RenewGPSData()){
           //log GPS data
-          int32_t currLat = locSrv->GetLatitude();
-          p.create_logging_entry(currEpo, obd::GpsLatitude, currLat);
-          int32_t currLon = locSrv->GetLongitude();
-          p.create_logging_entry(currEpo, obd::GpsLongitude, currLon);
+          int32_t currLat = locSrv.GetLatitude();
+          if(currLat < 100){
+            Serial.print(currLat);
+          }
+          //p.create_logging_entry(currEpo, obd::GpsLatitude, currLat);
+          int32_t currLon = locSrv.GetLongitude();
+          if(currLat < 100){
+            Serial.print(currLon);
+          }
+          //p.create_logging_entry(currEpo, obd::GpsLongitude, currLon);
         }
         //log fast OBD data
-        if(obdDev->updateFastPids()){
-          logData(fastPids, &currEpo);
+        if(!obdDev->updateFastPids()){
+          //logData(fastPids, &currEpo);
+          Serial.print(F(" FPf"));
         }
       }
 
       //log normal / Category C
       if(currentMode.currentLoopCount%50 == 2){
-        if(obdDev->updateNormalPids()){
-          logData(normalPids, &currEpo);
+        if(!obdDev->updateNormalPids()){
+          //logData(normalPids, &currEpo);
+          Serial.print(F(" NPf"));
         }
       }
 
       //logSlowest / Category D
       if(currentMode.currentLoopCount%1500 == 3){
-        if(obdDev->updateSlowPids()){
-          logData(slowPids, &currEpo);
+        if(!obdDev->updateSlowPids()){
+          //logData(slowPids, &currEpo);
+          Serial.print(F(" SPf"));
         }
       }
 
@@ -206,15 +219,16 @@ void loop()
       currentMode.currentLoopCount++;
       //cycle every 5 minutes
       currentMode.currentLoopCount%=1500;
+      Serial.println();
     }
   }
 }
 
-void logData(std::vector<ourTypes::pidData>* pids, uint64_t* msEpoch){
+/*void logData(std::vector<ourTypes::pidData>* pids, uint64_t* msEpoch){
   for(auto &currTup : *pids){
     p.create_logging_entry(*msEpoch, currTup.pid, currTup.value);
   }
-}
+}*/
 
 void uploadBT(){
   return;

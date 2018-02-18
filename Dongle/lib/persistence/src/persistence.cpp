@@ -12,7 +12,7 @@ using namespace persistence;
  * @param mapper The Mapp handler for VID-->MVID
  * @param file_system The handler for the filesystem
  */
-void Persistence::init(const vid *current_vid, Clock *clock,
+void Persistence::init(const vid *current_vid, LocationTimeService *clock,
                         Vid_mapper *mapper, File_System_Handler *file_system){
 
   this->_vid_mapper = mapper;

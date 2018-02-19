@@ -43,7 +43,32 @@ namespace SmartCarUi.Controllers
             if (response.IsSuccessStatusCode)
             {
                 TempData["successful"] = true;
-                TempData["resultMessage"] = "Vehicle added";
+                TempData["resultMessage"] = "Vehicle added.";
+            }
+            else
+            {
+                TempData["successful"] = false;
+                TempData["resultMessage"] = "Error occured when adding the vehicle.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> RemoveVehicle(int vehicleId)
+        {
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+
+            var response = await client.DeleteAsync("http://localhost:5001/api/vehicle/" + vehicleId);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["successful"] = true;
+                TempData["resultMessage"] = "Vehicle removed.";
+            }
+            else
+            {
+                TempData["successful"] = false;
+                TempData["resultMessage"] = "Error occured when removing the vehicle.";
             }
 
             return RedirectToAction("Index");

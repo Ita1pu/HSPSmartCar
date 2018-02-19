@@ -25,7 +25,7 @@
 <!-- Add vehicles -->
 <div class="container">
     <h4>Add Vehicle</h4>
-    
+
     <form method="post" asp-controller="Vehicle" asp-action="AddVehicle">
         <div class="form-row">
             <div class="col">
@@ -48,13 +48,33 @@
 <div class="container">
     @if (Model != null)
     {
-         foreach (var vehicle in Model)
-         {
-             <div class="panel panel-default">
-                 <div class="panel-body" style="width: 100px; height: 100px">
-                     
-                 </div>
-             </div>
-         }
+        <div class="card-deck">
+            @foreach (var vehicle in Model)
+            {
+                <div class="card card-body m-3" style="max-width: 300px;">
+                    <img src="images/carIcon.png" class="mx-auto m-2" height="72" width="72" />
+
+                    <div class="text-center">
+                        <p class="card-text"><span style="font-size: 16pt; font-weight: bold">@vehicle.Brand</span> @vehicle.Model</p>
+                    </div>
+
+                    <p class="card-text">MVID: @vehicle.MVID</p>
+
+                    <div class="flex-row">
+                        <a class="btn btn-danger btn-sm removeLink" asp-controller="Vehicle" asp-action="RemoveVehicle" asp-route-vehicleId="@vehicle.VehicleId">Remove</a>
+                    </div>
+                </div>
+            }
+        </div>
     }
 </div>
+
+@section Scripts{ 
+    <script>
+        $( document ).ready(function() {
+            $(".removeLink").on('click', function (e) {
+                return confirm("Do you realy want to remove the vehicle?");
+            });
+        });
+    </script>
+}

@@ -15,47 +15,49 @@ bool MemsSensor::memsInit(){
   }
 }
 
-bool MemsSensor::memsRead(float *accelValues, float *gyroValues, float *magValues){
+bool MemsSensor::memsRead(float *values, dataType type){
   uint8_t rawData[7];   // x/y/z register data stored here
-  int16_t accCtr[3];    //x/y/z acceleration counter value stored here
-  int16_t gyrCtr[3];    //x/y/z gyroscope counter value stored here
-  int16_t magCtr[3];    //x/y/z magnetometer counter value stored here
+  int16_t ctr[3];    //x/y/z counter value stored here
 
-  if(accelValues!= 0){
-    readBytes(ACCEL_XOUT_H, 6, rawData);  // Read the six acceleration raw data registers into data array
-    accCtr[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    accCtr[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;
-    accCtr[2] = ((int16_t)rawData[4] << 8) | rawData[5] ;
-  }
+  if(values == 0)
+  return false;
 
-  if(gyroValues !=0){
-    readBytes(GYRO_XOUT_H, 6, rawData);
-    gyrCtr[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    gyrCtr[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;
-    gyrCtr[2] = ((int16_t)rawData[4] << 8) | rawData[5] ;
-  }
-
-  if(magValues != 0 && readByteAK(AK8963_ST1) & 0x01) { // wait for magnetometer data ready bit to be set
-    readBytesAK(AK8963_XOUT_L, 7, rawData);  // Read the six raw data and ST2 registers sequentially into data array
-    uint8_t c = rawData[6]; // End data read by reading ST2 register
-    if(!(c & 0x08)) { // Check if magnetic sensor overflow set, if not then report data
-      magCtr[0] = ((int16_t)rawData[1] << 8) | rawData[0] ;  // Turn the MSB and LSB into a signed 16-bit value
-      magCtr[1] = ((int16_t)rawData[3] << 8) | rawData[2] ;  // Data stored as little Endian
-      magCtr[2] = ((int16_t)rawData[5] << 8) | rawData[4] ;
-   }
-  }
-
-  //convert counter values to real Values by multiplying with factor
-  for(int i = 0; i < 3; ++i){
-    if(accelValues!= 0)
-      accelValues[i] = (float)accCtr[i] * 2.0f / 32768.0f; // 2 because of +-2g Measurement Range; 32768 because of 16-bit with of Counter
-
-    if(gyroValues!= 0)
-      gyroValues[i] = (float)gyrCtr[i] * 250.0f / 32768.0f; // 250 because of +-250dps Measurement Range; 32768 because of 16-bit with of counter
-
-    if(magValues!= 0)
-      magValues[i] = (float)magCtr[i] * 4912.0f / 32760.0f; // 4912 because of +-4912µTesla Measurement Range; 32760 because of maximum value
-                                                        //see Register Description of MPU-9250 page 50
+  switch(type){
+    case Acceleration:
+      readBytes(ACCEL_XOUT_H, 6, rawData);  // Read the six acceleration raw data registers into data array
+      ctr[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
+      ctr[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;
+      ctr[2] = ((int16_t)rawData[4] << 8) | rawData[5] ;
+      for(int i = 0; i < 3; i++){
+        values[i] = (float)ctr[i] * 2.0f / 32768.0f; // 2 because of +-2g Measurement Range; 32768 because of 16-bit with of Counter
+      }
+    break;
+    case Gyroscope:
+      readBytes(GYRO_XOUT_H, 6, rawData);
+      ctr[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
+      ctr[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;
+      ctr[2] = ((int16_t)rawData[4] << 8) | rawData[5] ;
+      for(int i = 0; i < 3; i++){
+        values[i] = (float)ctr[i] * 250.0f / 32768.0f; // 250 because of +-250dps Measurement Range; 32768 because of 16-bit with of counter
+      }
+    break;
+    case Magnetometer:
+      if(readByteAK(AK8963_ST1) & 0x01){ //wait for magnetometer data ready to be set
+        readBytesAK(AK8963_XOUT_L, 7, rawData); //Read 6 raw data and ST2 register into array
+        if(!(rawData[6] & 0x08)){ //Check if magnetic sensor overflow is set, if not then report data
+          ctr[0] = ((int16_t)rawData[1] << 8) | rawData[0] ;  // Turn the MSB and LSB into a signed 16-bit value
+          ctr[1] = ((int16_t)rawData[3] << 8) | rawData[2] ;  // Data stored as little Endian
+          ctr[2] = ((int16_t)rawData[5] << 8) | rawData[4] ;
+          for(int i = 0; i < 3; i++){
+            values[i] = (float)ctr[i] * 4912.0f / 32760.0f; // 4912 because of +-4912µTesla Measurement Range; 32760 because of maximum value
+          }
+        }else{
+          return false;
+        }
+      }
+    break;
+    default:
+    return false;
   }
 
   return true;

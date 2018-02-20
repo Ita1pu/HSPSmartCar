@@ -148,6 +148,12 @@
 #define MPU9250_ADDRESS 0x68  // Device address when ADO = 0
 #define AK8963_ADDRESS  0x0C   // Address of magnetometer
 
+enum dataType{
+  Acceleration,
+  Gyroscope,
+  Magnetometer
+};
+
 class MemsSensor{
 public:
   /**
@@ -167,12 +173,11 @@ public:
    * The Acceleration values give the data in the range of +-2g; 1.5 means an acceleration of 1.5 g => 14,71 m/s²
    * The Gyroscope values give the data in the range of +-250 degrees per second; 140 means a rotation of 140 dps
    * The Magnetometer values give the data in the range of +- 4912 µTesla; 11.1 means a magnetic flux of 11.1 µTesla
-   * @param accelValues The pointer to a float array with 3 elements where the acceleration data can be stored; can be 0;
-   * @param gyroValues The pointer to a float array with 3 elements where the rotation data can be stored; can be 0;
-   * @param magValues The pointer to a float array with 3 elements where the magnet data can be stored; can be 0;
+   * @param values The pointer to a float array with 3 elements where the acceleration data can be stored; can be 0;
+   * @param type Specifies the kind of data which can be received
    * @return always true
    */
-  bool memsRead(float* accelValues, float* gyroValues, float* magValues);
+  bool memsRead(float* values, dataType type);
 
   /**
    * Set offset Values in gyroscope

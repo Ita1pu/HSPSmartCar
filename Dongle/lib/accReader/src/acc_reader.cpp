@@ -16,7 +16,7 @@ float AccReader::GetAccelerationAxis(uint8_t ct){
     return -999.999;
 
   float accs[3];
-  if(_sensor.memsRead(accs, 0, 0)){
+  if(_sensor.memsRead(accs, Acceleration)){
     //remove offset
     return accs[ct]-accOffset[ct];
   }else{
@@ -27,7 +27,7 @@ float AccReader::GetAccelerationAxis(uint8_t ct){
 float AccReader::GetAccelerationMag(){
   float accs[3];
   float tmp = 0.0f;
-  if(_sensor.memsRead(accs, 0, 0)){
+  if(_sensor.memsRead(accs, Acceleration)){
     //remove offset
     accs[0] -= accOffset[0];
     accs[1] -= accOffset[1];
@@ -48,7 +48,7 @@ float AccReader::GetAngle(uint8_t ct){
     return -999.999;
 
   float angs[3];
-  if(_sensor.memsRead(0, angs, 0)){
+  if(_sensor.memsRead(angs, Gyroscope)){
     return angs[ct];
   }else{
     return -999.999;
@@ -60,7 +60,7 @@ float AccReader::GetMagnet(uint8_t ct){
     return -999.999;
 
   float mags[3];
-  if(_sensor.memsRead(0, 0, mags)){
+  if(_sensor.memsRead(mags, Magnetometer)){
     return mags[ct];
   }else{
     return -999.999;
@@ -70,14 +70,14 @@ float AccReader::GetMagnet(uint8_t ct){
 void AccReader::Calibrate(bool accel, bool gyro){
   float tmp[3];
   if(accel){
-    if(_sensor.memsRead(tmp, 0, 0)){
+    if(_sensor.memsRead(tmp, Acceleration)){
       accOffset[0] = tmp[0];
       accOffset[1] = tmp[1];
       accOffset[2] = tmp[2];
     }
   }
   if(gyro){
-    if(_sensor.memsRead(0, tmp, 0)){
+    if(_sensor.memsRead(tmp, Gyroscope)){
       _sensor.offsetGyro(tmp);
     }
   }

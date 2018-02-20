@@ -10,26 +10,16 @@ ObdDevice::ObdDevice(COBDSPI* baseLayer) : baseLayer(baseLayer)
 
 ObdDevice::~ObdDevice()
 {
-    if (veryFastPids != nullptr)
+    if (pidArray != nullptr)
     {
-        delete veryFastPids;
+        delete pidArray;
     }
-    if (fastPids != nullptr)
-    {
-            delete fastPids;
-    }
-    if (normalPids != nullptr)
-    {
-        delete normalPids;
-    }
-    if (slowPids != nullptr)
-    {
-        delete slowPids;
-    }
+    /*
     if (dtcVector != nullptr)
     {
         delete dtcVector;
     }
+    */
 }
 
 bool ObdDevice::initialize()
@@ -111,88 +101,357 @@ bool ObdDevice::initialize()
         wasAlreadyInitialiesed = true;
 //        Serial.println("now initialiesed first time");
     }
+<<<<<<< HEAD
     return fillPidVectors();
+=======
+    identifyMaxPidArrayLength();
+    Serial.print(maxLengthPidArray), Serial.println("Entrys");
+    pidArray = new ourTypes::pidData[maxLengthPidArray];
+    return (pidArray == nullptr) ? false : true;
 }
 
-bool ObdDevice::fillPidVectors()
+/*!
+This function get the values of the very fast pids via obd. It writes the pairs (pid, value) into the pid array.
+@return -1 if an error occured, 0 if nothing was read and everything >0 determines the amount of pids in the array.
+*/
+char ObdDevice::updateVeryFastPids()
 {
-    veryFastPids = new std::vector<ourTypes::pidData>;
-    fastPids = new std::vector<ourTypes::pidData>;
-    normalPids = new std::vector<ourTypes::pidData>;
-    slowPids = new std::vector<ourTypes::pidData>;
-    if ((veryFastPids == nullptr) || (fastPids == nullptr) || (normalPids == nullptr) || (slowPids == nullptr))
+    //>>>>>>>very fast pids<<<<<<<
+    unsigned char retVal = 0;
+    bool queryState = false;
+    obd::PidNames pidName;
+
+    pidName = obd::PidNames::EngineRpm;
+    char currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        return false;
+        (pidArray[retVal]).pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
     }
 
-    //not the selected pid signals are (if supported from the current car) added to their classes
+    pidName = obd::PidNames::VehicleSpeed;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::RelativAcceleratorPedalPos;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::EngineFuelRate;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::DriverTorqueDemandEngine;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::ActualTorqueEngine;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::EngineTorqueRef;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    //Serial.println(retVal);
+    if (retVal > maxLengthPidArray)
+    {
+        return -1; //something happend that should not be possible
+    }
+    else
+    {
+        return (retVal < 0) ? 0 : retVal; //minimum is 0
+    }
+>>>>>>> Dongle
+}
+
+/*!
+This function get the values of the normal pids via obd. It writes the pairs (pid, value) into the pid array.
+@return -1 if an error occured, 0 if nothing was read and everything >0 determines the amount of pids in the array.
+*/
+char ObdDevice::updateNormalPids()
+{
+    //>>>>>>>>normal pids<<<<<<<<<<<<
+    unsigned char retVal = 0;
+    bool queryState = false;
+    obd::PidNames pidName;
+
+    pidName = obd::PidNames::EngineCoolantTemp;
+    char currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::RunTimeSineEngineStart;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::AbsBarometricPressure;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::AmbientAirTemp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::EngineOilTemp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    if (retVal > maxLengthPidArray)
+    {
+        return -1; //something happend that should not be possible
+    }
+    else
+    {
+        return (retVal < 0) ? 0 : retVal; //minimum is 0
+    }
+}
+
+/*!
+This function get the values of the slow pids via obd. It writes the pairs (pid, value) into the pid array.
+@return -1 if an error occured, 0 if nothing was read and everything >0 determines the amount of pids in the array.
+*/
+char ObdDevice::updateSlowPids()
+{
+    //>>>>>>>slow pids<<<<<<<<<<<
+    unsigned char retVal = 0;
+    bool queryState = false;
+    obd::PidNames pidName;
+
+    pidName = obd::PidNames::DistTraveledWithMalfuncIndicaLamp;
+    unsigned char currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    pidName = obd::PidNames::FuelTankLvlInput;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+
+    if (retVal > maxLengthPidArray)
+    {
+        return -1; //something happend that should not be possible
+    }
+    else
+    {
+        return (retVal < 0) ? 0 : retVal; //minimum is 0
+    }
+}
+
+void ObdDevice::identifyMaxPidArrayLength()
+{
+    unsigned char tempCnt = 0;
+    obd::PidNames pidName;
     //>>>>>>>very fast pids<<<<<<<
-    if (baseLayer->isValidPID(obd::EngineRpm))
+    pidName = obd::PidNames::EngineRpm;
+    unsigned char currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::EngineRpm, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::VehicleSpeed))
+
+    pidName = obd::PidNames::VehicleSpeed;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::VehicleSpeed, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::RelativAcceleratorPedalPos))
+
+    pidName = obd::PidNames::RelativAcceleratorPedalPos;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::RelativAcceleratorPedalPos, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::EngineFuelRate))
+
+    pidName = obd::PidNames::EngineFuelRate;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::EngineFuelRate, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::DriverTorqueDemandEngine))
+
+    pidName = obd::PidNames::DriverTorqueDemandEngine;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::DriverTorqueDemandEngine, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::ActualTorqueEngine))
+
+    pidName = obd::PidNames::ActualTorqueEngine;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::ActualTorqueEngine, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::EngineTorqueRef))
+
+    pidName = obd::PidNames::EngineTorqueRef;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        veryFastPids->push_back(ourTypes::pidData {obd::EngineTorqueRef, 0});
+        ++tempCnt;
     }
+    maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 
     //>>>>>>>>normal pids<<<<<<<<<<<<
-    if (baseLayer->isValidPID(obd::EngineCoolantTemp))
+    tempCnt = 0;
+    pidName = obd::PidNames::EngineCoolantTemp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        normalPids->push_back(ourTypes::pidData {obd::EngineCoolantTemp, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::RunTimeSineEngineStart))
+
+    pidName = obd::PidNames::RunTimeSineEngineStart;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        normalPids->push_back(ourTypes::pidData {obd::RunTimeSineEngineStart, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::AbsBarometricPressure))
+
+    pidName = obd::PidNames::AbsBarometricPressure;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        normalPids->push_back(ourTypes::pidData {obd::AbsBarometricPressure, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::AmbientAirTemp))
+
+    pidName = obd::PidNames::AmbientAirTemp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        normalPids->push_back(ourTypes::pidData {obd::AmbientAirTemp, 0});
+        ++tempCnt;
     }
-    if (baseLayer->isValidPID(obd::EngineOilTemp))
+
+    pidName = obd::PidNames::EngineOilTemp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        normalPids->push_back(ourTypes::pidData {obd::EngineOilTemp, 0});
+        ++tempCnt;
     }
+    maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 
     //>>>>>>>slow pids<<<<<<<<<<<
-    if (baseLayer->isValidPID(obd::DistTraveledWithMalfuncIndicaLamp))
+    tempCnt = 0;
+    pidName = obd::PidNames::DistTraveledWithMalfuncIndicaLamp;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
     {
-        slowPids->push_back(ourTypes::pidData {obd::DistTraveledWithMalfuncIndicaLamp, 0});
-    }
-    if (baseLayer->isValidPID(obd::FuelTankLvlInput))
-    {
-        slowPids->push_back(ourTypes::pidData {obd::FuelTankLvlInput, 0});
+        ++tempCnt;
     }
 
-//    Serial.print("Supported very fast: "); Serial.println(veryFastPids->size());
-//    Serial.print("Supported fast: "); Serial.println(fastPids->size());
-//    Serial.print("Supported normal: "); Serial.println(normalPids->size());
-//    Serial.print("Supported slow: "); Serial.println(slowPids->size());
-    return true;
+    pidName = obd::PidNames::FuelTankLvlInput;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        ++tempCnt;
+    }
+    maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 }
 
 
@@ -239,65 +498,9 @@ int ObdDevice::getValueOfPid(char pid, bool& successful)
     return value;
 }
 
-bool ObdDevice::updateVeryFastPids()
+ourTypes::pidData* ObdDevice::getPidArray()
 {
-    return updatePidVector(veryFastPids);
-}
-
-bool ObdDevice::updateFastPids()
-{
-    return updatePidVector(fastPids);
-}
-
-bool ObdDevice::updateNormalPids()
-{
-    return updatePidVector(normalPids);
-}
-
-bool ObdDevice::updateSlowPids()
-{
-    return updatePidVector(slowPids);
-}
-
-/*!
-This function updates the values from pids in a given vector.
-@return True if there was no error with freematics and all values are updated
-*/
-bool ObdDevice::updatePidVector(std::vector<ourTypes::pidData>* pidVector)
-{
-    bool retVal = true;
-    bool temp = false;
-    for(unsigned int i=0; i<pidVector->size(); ++i)
-    {
-        (pidVector->at(i)).value = getValueOfPid((pidVector->at(i)).pid, temp);
-        if (temp == false)
-        {
-            retVal = false;
-            delay(5); //wait short time or the odb is to much triggered
-        }
-    }
-    return retVal;
-}
-
-
-std::vector<ourTypes::pidData>* ObdDevice::getVeryFastPids()
-{
-    return veryFastPids;
-}
-
-std::vector<ourTypes::pidData>* ObdDevice::getFastPids()
-{
-    return fastPids;
-}
-
-std::vector<ourTypes::pidData>* ObdDevice::getNormalPids()
-{
-    return normalPids;
-}
-
-std::vector<ourTypes::pidData>* ObdDevice::getSlowPids()
-{
-    return slowPids;
+    return pidArray;
 }
 
 
@@ -307,43 +510,38 @@ if 10 are read there could be more. Every diagnostic trouble code is represented
 With freematic library only the digits are available. The category letter is not available.
 @return A vector of pidData. Every pidData element represents a trouble code. If nullptr is returned something went wrong.
 */
-std::vector<ourTypes::dtcData>* ObdDevice::getDiagnositcTroubleCodes()
+ourTypes::dtcData* ObdDevice::getDiagnositcTroubleCodes(unsigned char& amount)
 {
+    amount = 0;
     //hier ist eine maximale Anzahl an Versuchen nicht sinvoll, weil wenn kein Fehler vorliegt 0 zurück gegeben wird, ebenso wenn steuergerät nicht verfügbar ist
     uint16_t* readCodes = new uint16_t[ourTypes::MAXTROUBLECODES];
-    if (dtcVector != nullptr)
-    {
-        delete dtcVector;
-    }
-    dtcVector = new std::vector<ourTypes::dtcData>;
 
-    if (readCodes == nullptr || dtcVector == nullptr)
+    if (readCodes == nullptr)
     {
         return nullptr;
     }
 
-    std::vector<ourTypes::dtcData>* returnVal = nullptr;
+    ourTypes::dtcData* returnVal = nullptr;
 
     unsigned char readTroubleCodesCount = baseLayer->readDTC(readCodes, ourTypes::MAXTROUBLECODES);
-    Serial.print("I read #"), Serial.print(readTroubleCodesCount, HEX), Serial.println("# codes");
+//    Serial.print("I read #"), Serial.print(readTroubleCodesCount, HEX), Serial.println("# codes");
     if (readTroubleCodesCount == 0)
     {
-        Serial.println("noDTC");
-        delete dtcVector;
-        dtcVector = nullptr;
+//        Serial.println("noDTC");
         returnVal = nullptr;
     }
     else
     {
-        Serial.println("DTCs");
+//        Serial.println("DTCs");
+        returnVal = new ourTypes::dtcData[readTroubleCodesCount];
         for (int i=0; i<readTroubleCodesCount; ++i)
         {
             if (readCodes[i] != 0)
             {
-                dtcVector->push_back(readCodes[i]);
+                returnVal[amount] = readCodes[i];
+                ++amount;
             }
         }
-        returnVal = dtcVector;
     }
     delete[] readCodes;
     return returnVal;

@@ -1,8 +1,10 @@
 #ifndef OBD_H
 #define OBD_H
 
-#include <vector>
-#include <utility.h>
+//#include <vector>
+//#include <utility.h>
+
+#include <avr/pgmspace.h>
 
 #include <FreematicsONE.h>
 
@@ -25,18 +27,17 @@ class ObdDevice
 
         int getValueOfPid(char pid, bool& successful);
 
-        bool updateVeryFastPids();
-        bool updateFastPids();
-        bool updateNormalPids();
-        bool updateSlowPids();
+        char updateVeryFastPids();
+        char updateNormalPids();
+        char updateSlowPids();
+        //char updateFastPids(); //nicht in benutzung, haben hier keine ausgewählt
 
-        //dont delete the vectors i will update them when i am called
-        std::vector<ourTypes::pidData>* getVeryFastPids();
-        std::vector<ourTypes::pidData>* getFastPids();
-        std::vector<ourTypes::pidData>* getNormalPids();
-        std::vector<ourTypes::pidData>* getSlowPids();
+        //dont delete the array i will update it when i am called
+        ourTypes::pidData* getPidArray();
+        //this array have to be delete after infos are used
+        ourTypes::dtcData* getDiagnositcTroubleCodes(unsigned char& amount);
 
-        std::vector<ourTypes::dtcData>* getDiagnositcTroubleCodes();
+        //std::vector<ourTypes::dtcData>* getDiagnositcTroubleCodes();
         void clearDiagnosticTroubleCodes();
 
         char* getVehicleIdentificationNumber();
@@ -46,18 +47,18 @@ class ObdDevice
 
 
     private:
-        bool updatePidVector(std::vector<ourTypes::pidData>* pidVector);
-        bool fillPidVectors();
-
         bool Clamp15 = false;
         bool wasAlreadyInitialiesed = false;
         COBDSPI* baseLayer;
         OBD_PROTOCOLS lastUsedProtocol;
-        std::vector<ourTypes::pidData>* veryFastPids = nullptr;
-        std::vector<ourTypes::pidData>* fastPids = nullptr;
-        std::vector<ourTypes::pidData>* normalPids = nullptr;
-        std::vector<ourTypes::pidData>* slowPids = nullptr;
-        std::vector<ourTypes::dtcData>* dtcVector = nullptr;//diagnostic trouble codes vector
+        //std::vector<ourTypes::dtcData>* dtcVector = nullptr;//diagnostic trouble codes vector
+
+
+
+        void identifyMaxPidArrayLength();
+
+        unsigned char maxLengthPidArray = 0;
+        ourTypes::pidData* pidArray;
 };
 
 };//end namespace obd

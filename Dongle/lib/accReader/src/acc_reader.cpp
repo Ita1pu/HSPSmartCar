@@ -68,18 +68,17 @@ float AccReader::GetMagnet(uint8_t ct){
 }
 
 void AccReader::Calibrate(bool accel, bool gyro){
-  float tmpacc[3];
-  float tmpgyr[3];
+  float tmp[3];
   if(accel){
-    if(_sensor.memsRead(tmpacc, 0, 0)){
-      accOffset[0] = tmpacc[0];
-      accOffset[1] = tmpacc[1];
-      accOffset[2] = tmpacc[2];
+    if(_sensor.memsRead(tmp, 0, 0)){
+      accOffset[0] = tmp[0];
+      accOffset[1] = tmp[1];
+      accOffset[2] = tmp[2];
     }
   }
   if(gyro){
-    if(_sensor.memsRead(0, tmpgyr, 0)){
-      _sensor.offsetGyro(tmpgyr);
+    if(_sensor.memsRead(0, tmp, 0)){
+      _sensor.offsetGyro(tmp);
     }
   }
 }

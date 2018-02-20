@@ -101,9 +101,6 @@ bool ObdDevice::initialize()
         wasAlreadyInitialiesed = true;
 //        Serial.println("now initialiesed first time");
     }
-<<<<<<< HEAD
-    return fillPidVectors();
-=======
     identifyMaxPidArrayLength();
     Serial.print(maxLengthPidArray), Serial.println("Entrys");
     pidArray = new ourTypes::pidData[maxLengthPidArray];
@@ -214,7 +211,6 @@ char ObdDevice::updateVeryFastPids()
     {
         return (retVal < 0) ? 0 : retVal; //minimum is 0
     }
->>>>>>> Dongle
 }
 
 /*!

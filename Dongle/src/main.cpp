@@ -26,18 +26,15 @@ gps::LocationTimeService locSrv = gps::LocationTimeService(&coproc);
 obd::ObdDevice* obdDev;
 
 ourTypes::vid current_vid;
-//SDLib::SDClass SD;
-//persistence::Vid_mapper mapper;
-//persistence::File_System_Handler file_system;
-//persistence::Persistence p;
+SDLib::SDClass SD;
+persistence::Vid_mapper mapper;
+persistence::File_System_Handler file_system;
+persistence::Persistence p;
 
 persistence::stdRetVal success = 0;
 ProgrammMode currentMode;
 
-std::vector<ourTypes::pidData>* vFastPids;
-std::vector<ourTypes::pidData>* fastPids;
-std::vector<ourTypes::pidData>* normalPids;
-std::vector<ourTypes::pidData>* slowPids;
+ourTypes::pidData* pidCollection;
 
 //function to upload Data to smartphone
 void uploadBT();
@@ -57,8 +54,6 @@ void setup()
     success = accSensor->Initialize();
     if(success != 0x00){
       accSensor->Calibrate(false,true);
-      Serial.print(F(" S"));
-      Serial.print(freeMemory());
     }
     //Initialize GPS Receiver
     success = locSrv.Initialize(GPS_BAUD_RATE);
@@ -66,13 +61,8 @@ void setup()
       do{
         delay(500);
         locSrv.RenewGPSData();
-        Serial.print(F(" G"));
-        Serial.print(freeMemory());
       //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
     }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
-    }else{
-      Serial.print(F(" Gf"));
-      Serial.print(freeMemory());
     }
     //initialize OBD reader
     obdDev = new obd::ObdDevice(&coproc);
@@ -81,37 +71,22 @@ void setup()
       //obd init succeeded
       char* tmpVid = obdDev->getVehicleIdentificationNumber();
       //transfer vid to struct
-      unsigned char zeroCt = 0;
-      for(int i = 0; i < ourTypes::lengthOfVehicleIdentificationNumber; i++){
-        current_vid.x[i] = tmpVid[i];
-        if(tmpVid[i] == 0x00)
-          zeroCt++;
+      if(tmpVid != nullptr){
+        for(int i = 0; i < ourTypes::lengthOfVehicleIdentificationNumber; i++){
+          current_vid.x[i] = tmpVid[i];
+        }
+      }else{
+          current_vid = {'0', 'A', '1', 'B', '2', 'C', '3', 'D', '4', 'E', '5', 'F', '6', '7', '8', '9', '0'};
       }
-      if(zeroCt >= lengthOfVehicleIdentificationNumber){
-        current_vid = {'0', 'A', '1', 'B', '2', 'C', '3', 'D', '4', 'E', '5', 'F', '6', '7', '8', '9', '0'};
-      }
-      vFastPids = obdDev->getVeryFastPids();
-      fastPids = obdDev->getFastPids();
-      normalPids = obdDev->getNormalPids();
-      slowPids = obdDev->getSlowPids();
-      Serial.print(F(" O"));
-      Serial.print(freeMemory());
-    }else{
-      Serial.print(F(" Of"));
-      Serial.print(freeMemory());
+      pidCollection = obdDev->getPidArray();
     }
     //initialize persistence layer
-    /*file_system.init(&SD);
+    file_system.init(&SD);
     mapper.initialize(&current_vid);
-    p.init(&current_vid, clck, &mapper, &file_system);
+    p.init(&current_vid, &locSrv, &mapper, &file_system);
     success = p.GetInitStatus();
     if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
-      Serial.println(F(" P"));
-      Serial.print(freeMemory());
       //Maybe sleep mode
-    }else{
-      Serial.print(F(" Pf"));
-      Serial.print(freeMemory());
     }
     //TODO: Log Category E
     bool pidSucc = false;
@@ -119,14 +94,14 @@ void setup()
     //EthanolPercent
     pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, pidSucc);
     if(pidSucc){
-      p.create_logging_entry(clck->GetEpochMs(), obd::EthanolPercent, pidRetVal);
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
     }
     //TODO: Log Category F
     //FuelType
     pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
     if(pidSucc){
-      p.create_logging_entry(clck->GetEpochMs(), obd::FuelType, pidRetVal);
-    }*/
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::FuelType, pidRetVal);
+    }
         //initialize flag timer for Main loop
         locSrv.StartFlagTimer();
 }
@@ -156,7 +131,7 @@ void loop()
         Serial.print(F(" VFPf"));
         //logData(vFastPids, &currEpo);
       }
-      if(accSensor->GetAccelerationAxis(0)*1000 > 10000){
+      /*if(accSensor->GetAccelerationAxis(0)*1000 > 10000){
         Serial.print(F(" ACCf"));
       }
       if(accSensor->GetAccelerationAxis(1)*1000 > 10000){
@@ -164,11 +139,11 @@ void loop()
       }
       if(accSensor->GetAccelerationAxis(2)*1000 > 10000){
         Serial.print(F(" ACCf"));
-      }
+      }*/
       //push acceleration values into the pid vector; the values are given as 1/1000 of gravitational acceleration
-      //p.create_logging_entry(currEpo, obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
-      //p.create_logging_entry(currEpo, obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
-      //p.create_logging_entry(currEpo, obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
 
       //The values for the module comparison are used to not poll all pid categories at once when counter = 0
       //log fast / Category B
@@ -179,18 +154,18 @@ void loop()
           if(currLat < 100){
             Serial.print(currLat);
           }
-          //p.create_logging_entry(currEpo, obd::GpsLatitude, currLat);
+          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, currLat);
           int32_t currLon = locSrv.GetLongitude();
           if(currLat < 100){
             Serial.print(currLon);
           }
-          //p.create_logging_entry(currEpo, obd::GpsLongitude, currLon);
+          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, currLon);
         }
         //log fast OBD data
-        if(!obdDev->updateFastPids()){
+        //if(!obdDev->updateFastPids()){
           //logData(fastPids, &currEpo);
-          Serial.print(F(" FPf"));
-        }
+          //Serial.print(F(" FPf"));
+        //}
       }
 
       //log normal / Category C
@@ -230,154 +205,6 @@ void loop()
   }
 }*/
 
-<<<<<<< HEAD
 void uploadBT(){
   return;
-=======
-    delay(5000);
-}
-
-void testCaseA ()
-{
-    //    Serial.println("Read one pid");
-    bool status = false;
-    int value = 200;
-    value = obdDev->getValueOfPid(0x20, status);
-    if (status == true)
-    {
-        //        Serial.print("Read sucessfull EngineCoolant Temp");
-        Serial.print("0x20 =");
-        Serial.println(value);
-    }
-    else
-    {
-        Serial.println("-");
-        //Serial.println(value);
-    }
-    delay(2000);
-}
-
-void testCaseB ()
-{
-    Serial.println("supported Pids:");
-    for (unsigned char i=1; i<=0x7F; ++i)
-    {
-        if (obdDev->isPidValid(i) == true)
-        {
-            Serial.println(i);
-        }
-    }
-    delay(10000);
-}
-
-void testCaseC ()
-{
-    //update pid vector and give it out
-    //    Serial.println("update pid vectors and print them");
-    bool statusSlow = obdDev->updateSlowPids();
-    bool statusNormal = obdDev->updateNormalPids();
-    bool statusFast = obdDev->updateFastPids();
-    bool statusVeryFast = obdDev->updateVeryFastPids();
-
-    if (statusSlow == true && statusNormal == true && statusFast == true && statusVeryFast == true)
-    {
-        //        Serial.println("slow pids");
-        std::vector<ourTypes::pidData>* pids = obdDev->getSlowPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-
-        //        Serial.println("normal pids");
-        pids = obdDev->getNormalPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-        //        Serial.println("fast pids");
-        pids = obdDev->getFastPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-
-        //        Serial.println("very fast pids");
-        pids = obdDev->getVeryFastPids();
-        for (unsigned int i=0; i<pids->size(); ++i)
-        {
-            //            Serial.print("Pid ");
-            Serial.print((pids->at(i)).pid, HEX);
-            //            Serial.print(" value: ");
-            Serial.print(" ");
-            Serial.println((pids->at(i)).value);
-        }
-        //        Serial.println("\n");
-    }
-    else
-    {
-        Serial.println("-");
-    }
-}
-
-
-void testCaseE ()
-{
-    //get diagnostic trouble codes
-    //    Serial.println("read trouble codes");
-    std::vector<ourTypes::dtcData>* dtcs = obdDev->getDiagnositcTroubleCodes();
-
-    if (dtcs != nullptr && dtcs->size() != 0)
-    {
-        Serial.print("got #"), Serial.println(dtcs->size());
-        for (unsigned int i=0; i<dtcs->size(); ++i)
-        {
-            Serial.print("Code: "), Serial.println((dtcs->at(i)), DEC);
-        }
-        //        Serial.println("\n");
-        delete dtcs;
-    }
-    else
-    {
-        Serial.println("-");
-    }
-}
-
-void testCaseF ()
-{
-    //get vehicle identification number
-    //    Serial.println("read vin");
-    char* vehicleIdent = obdDev->getVehicleIdentificationNumber();
-
-    if (vehicleIdent != nullptr)
-    {
-        Serial.println("VIN:");
-        for (unsigned char i=0; i<ourTypes::lengthOfVehicleIdentificationNumber; ++i)
-        {
-            Serial.print(vehicleIdent[i]);
-        }
-        Serial.println("\n");
-        delete[] vehicleIdent;
-    }
-    else
-    {
-        Serial.println("no");
-    }
->>>>>>> Dongle
 }

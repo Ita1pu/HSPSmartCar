@@ -9,6 +9,11 @@ const Settings = {
 
     swipeDistance: 100,
 
+    Backend: {
+        clientId: "smartcar_app",
+        secret: "tZop4xbZ9wV"
+    },
+
     Store: {
         selectedView: "selectedView",
         showSwipeHelp: "showSwipeHelp",
@@ -21,6 +26,14 @@ const Settings = {
             MpH: "MpH",
             KmH: "KmH"
         },
-        address_or_uuid: "address_or_uuid"
+        address_or_uuid: "address_or_uuid",
+        Backend: {
+            url: "url",
+            identityPort: "identityPort",
+            apiPort: "apiPort",
+            username: "username",
+            password: "password",
+            token: "token"
+        }
     }
 };

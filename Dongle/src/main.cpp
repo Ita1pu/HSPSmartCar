@@ -12,11 +12,9 @@
 #include <FreematicsSD.h>
 #include <globalConfig.h>
 
-#define CLOCK_TIMER_NR 2
-#define FLAG_TIMER_NR 1
-#define LOOP_DURATION 200
 #define SERIAL_BAUD_RATE 115200L
 #define GPS_BAUD_RATE 115200L
+#define INACT_TIME_MS 120000u
 
 
 COBDSPI coproc;
@@ -62,7 +60,7 @@ void setup()
         delay(500);
         locSrv.RenewGPSData();
       //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
-    }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
+      }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
     }
     //initialize OBD reader
     obdDev = new obd::ObdDevice(&coproc);
@@ -86,7 +84,13 @@ void setup()
     p.init(&current_vid, &locSrv, &mapper, &file_system);
     success = p.GetInitStatus();
     if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
-      //Maybe sleep mode
+      //sleep mode
+      do{
+        //endless loop
+        delay(0xFFFFFFFF);
+        coproc.uninit();
+        coproc.enterLowPowerMode();
+      }while(true);
     }
     //TODO: Log Category E
     bool pidSucc = false;
@@ -110,11 +114,11 @@ void loop()
 {
   //TODO: Check if bluetooth is connected and check for mode
   if(currentMode.mode == UPLOAD){
-    uploadBT();
+    //uploadBT();
     delay(200);
     //when finished uploading
-    //currentMode.mode == LOGGING;
-  }else{
+    currentMode.mode = LOGGING;
+  }else if(currentMode.mode == LOGGING){
     //check if timer has reached its limit
     if(timerFlags){
       Serial.print(F(" L"));
@@ -127,20 +131,13 @@ void loop()
       Serial.print(locSrv.GetTime());
 
       //log very fast / Category A
-      if(!obdDev->updateVeryFastPids()){
-        Serial.print(F(" VFPf"));
-        //logData(vFastPids, &currEpo);
+      char pidLen = obdDev->updateVeryFastPids();
+      if(pidLen > 0){
+        for(char i = 0; i < pidLen; i++){
+          p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
+        }
       }
-      /*if(accSensor->GetAccelerationAxis(0)*1000 > 10000){
-        Serial.print(F(" ACCf"));
-      }
-      if(accSensor->GetAccelerationAxis(1)*1000 > 10000){
-        Serial.print(F(" ACCf"));
-      }
-      if(accSensor->GetAccelerationAxis(2)*1000 > 10000){
-        Serial.print(F(" ACCf"));
-      }*/
-      //push acceleration values into the pid vector; the values are given as 1/1000 of gravitational acceleration
+      //log acceleration values; the values are given as 1/1000 of gravitational acceleration
       p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelXAxis, accSensor->GetAccelerationAxis(0)*1000);
       p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelYAxis, accSensor->GetAccelerationAxis(1)*1000);
       p.create_logging_entry(locSrv.GetEpochMs(), obd::AccelZAxis, accSensor->GetAccelerationAxis(2)*1000);
@@ -162,25 +159,26 @@ void loop()
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, currLon);
         }
         //log fast OBD data
-        //if(!obdDev->updateFastPids()){
-          //logData(fastPids, &currEpo);
-          //Serial.print(F(" FPf"));
-        //}
+        //no fast pids selected
       }
 
       //log normal / Category C
       if(currentMode.currentLoopCount%50 == 2){
-        if(!obdDev->updateNormalPids()){
-          //logData(normalPids, &currEpo);
-          Serial.print(F(" NPf"));
+        pidLen = obdDev->updateNormalPids();
+        if(pidLen > 0){
+          for(char i = 0; i < pidLen; i++){
+            p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
+          }
         }
       }
 
       //logSlowest / Category D
       if(currentMode.currentLoopCount%1500 == 3){
-        if(!obdDev->updateSlowPids()){
-          //logData(slowPids, &currEpo);
-          Serial.print(F(" SPf"));
+        pidLen = obdDev->updateSlowPids();
+        if(pidLen > 0){
+          for(char i = 0; i < pidLen; i++){
+            p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
+          }
         }
       }
 
@@ -189,21 +187,31 @@ void loop()
         //write to bluetooth
       }
       if(!obdDev->getClamp15State()){
-        //TODO: go to sleep if clamp 15 is not closed
+        //go to sleep for 2 min if clamp 15 is not closed
+        currentMode.mode = SLEEP;
+        p.close_logging_file();
+        coproc.enterLowPowerMode();
       }
       currentMode.currentLoopCount++;
       //cycle every 5 minutes
       currentMode.currentLoopCount%=1500;
       Serial.println();
     }
+  }else{
+    //currentMode.mode == SLEEP
+    delay(INACT_TIME_MS);
+    coproc.leaveLowPowerMode();
+    delay(50);
+    if(obdDev->getClamp15State()){
+      //if Car is still off
+      coproc.enterLowPowerMode();
+    }else{
+      currentMode.currentLoopCount = 0;
+      currentMode.mode = LOGGING;
+      p.init(&current_vid, &locSrv, &mapper, &file_system);
+    }
   }
 }
-
-/*void logData(std::vector<ourTypes::pidData>* pids, uint64_t* msEpoch){
-  for(auto &currTup : *pids){
-    p.create_logging_entry(*msEpoch, currTup.pid, currTup.value);
-  }
-}*/
 
 void uploadBT(){
   return;

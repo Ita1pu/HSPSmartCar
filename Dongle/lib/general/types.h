@@ -22,7 +22,7 @@ namespace ourTypes
         int value;
     };
 
-    enum OperatingMode{LOGGING, UPLOAD};
+    enum OperatingMode{LOGGING, UPLOAD, SLEEP};
 
     struct {
       OperatingMode mode;

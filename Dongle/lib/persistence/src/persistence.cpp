@@ -9,13 +9,10 @@ using namespace persistence;
  *
  * @param current_vid the Vehicle Identification number of the vehicle the software is running in
  * @param current_time the time when the Logging starts
- * @param mapper The Mapp handler for VID-->MVID
  * @param file_system The handler for the filesystem
  */
-void Persistence::init(const vid *current_vid, LocationTimeService *clock,
-                        Vid_mapper *mapper, File_System_Handler *file_system){
+void Persistence::init(LocationTimeService *clock, File_System_Handler *file_system){
 
-  this->_vid_mapper = mapper;
   this->_file_system = file_system;
   this->_clock = clock;
   this->_initStatus |= this->set_mapped_vehicle_id();
@@ -49,7 +46,23 @@ stdRetVal Persistence::close_logging_file()
  */
 stdRetVal Persistence::set_mapped_vehicle_id()
 {
-  this->_vid_mapper->get_map_value(&this->_current_mvid);
+  //MVID_TYPE depends on SIZE_OF_MVID_COUNTER
+  MVID_TYPE mvid_counter = 0;
+  char mvid_counter_str[SIZE_OF_MVID_FOLDER_NAME];
+  sprintf(mvid_counter_str, "%x", mvid_counter);
+  //Loop over existing folders to get new MVID
+  while(this->_file_system->exists(mvid_counter_str))
+  {
+    mvid_counter++;
+    sprintf(mvid_counter_str, "%x", mvid_counter);
+    // If Number of Maximum Loggings is reached continue logging to MVID_MAX
+    if (mvid_counter == MVID_MAX)
+    {
+      this->_current_mvid = mvid_counter;
+      return MVID_COUNTER_FULL;
+    }
+  }
+  this->_current_mvid = mvid_counter;
   return NO_ERROR;
 }
 
@@ -146,7 +159,7 @@ stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_nam
  * @return stdRetVal
  */
 stdRetVal Persistence::open_logging_file(){
-  char folder[3]; //Mapped vehicle ID
+  char folder[SIZE_OF_MVID_FOLDER_NAME]; //Mapped vehicle ID
   char file_name[SIZE_OF_CURRENT_DATE + 1]; //YYYYMMDD
   uint32_t start_date = this->_clock->GetDate();
   sprintf(file_name, "%lu", start_date);

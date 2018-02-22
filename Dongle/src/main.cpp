@@ -8,7 +8,6 @@
 #include <obd.h>
 #include <persistence.h>
 #include <types.h>
-#include <vid_mapper.h>
 #include <FreematicsSD.h>
 #include <globalConfig.h>
 
@@ -25,7 +24,6 @@ obd::ObdDevice* obdDev;
 
 ourTypes::vid current_vid;
 SDLib::SDClass SD;
-persistence::Vid_mapper mapper;
 persistence::File_System_Handler file_system;
 persistence::Persistence p;
 
@@ -80,8 +78,7 @@ void setup()
     }
     //initialize persistence layer
     file_system.init(&SD);
-    mapper.initialize(&current_vid);
-    p.init(&current_vid, &locSrv, &mapper, &file_system);
+    p.init(&locSrv, &file_system);
     success = p.GetInitStatus();
     if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
       //sleep mode
@@ -208,7 +205,7 @@ void loop()
     }else{
       currentMode.currentLoopCount = 0;
       currentMode.mode = LOGGING;
-      p.init(&current_vid, &locSrv, &mapper, &file_system);
+      p.init(&locSrv, &file_system);
     }
   }
 }

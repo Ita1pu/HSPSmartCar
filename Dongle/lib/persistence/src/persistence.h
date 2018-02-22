@@ -32,7 +32,6 @@
 #include <file_system_handler.h>
 #include <signals.h>
 #include <types.h>
-#include <vid_mapper.h>
 #include <persistence_error_codes.h>
 #include <FreematicsSD.h>
 #include <gps.h>
@@ -42,6 +41,23 @@ using namespace ourTypes;
 using namespace gps;
 #define SIZE_OF_CURRENT_DATE          8
 #define SIZE_OF_LOGGING_ENTRY         15
+ //Size of MVID in Bytes
+#define SIZE_OF_MVID_COUNTER          1
+//Folder name is the hex value of MVID_COUNTER + String-termination
+#define SIZE_OF_MVID_FOLDER_NAME      (SIZE_OF_MVID_COUNTER * 2) + 1
+#if SIZE_OF_MVID_COUNTER == 1
+  #define MVID_TYPE uint8_t
+  #define MVID_MAX  0xFF
+#elif SIZE_OF_MVID_COUNTER == 2
+  #define MVID_TYPE uint16_t
+  #define MVID_MAX  0xFFFF
+#elif SIZE_OF_MVID_COUNTER == 4
+  #define MVID_TYPE uint32_t
+  #define MVID_MAX  0xFFFFFFFF
+#else
+  #define MVID_TYPE uint8_t
+  #define MVID_MAX  0xFF
+#endif
 namespace persistence {
 class Persistence{
   public:
@@ -51,10 +67,9 @@ class Persistence{
      *
      * @param current_vid the Vehicle Identification number of the vehicle the software is running in
      * @param current_time the time when the Logging starts
-     * @param mapper The Mapp handler for VID-->MVID
      * @param file_system The handler for the filesystem
      */
-    void init(const vid *current_vid, LocationTimeService *clock, Vid_mapper *mapper,
+    void init(LocationTimeService *clock,
                 File_System_Handler *file_system);
     stdRetVal create_logging_entry( uint64_t time,
                               uint16_t data_id, uint32_t data_value);
@@ -82,12 +97,6 @@ class Persistence{
     /// File handle for the current logfile
     /** The file handler for the current logfile for writing, creating and deleting*/
     File _open_file;
-    /// The mapfile for VID --> MVID
-    /** The mapping is stored in a file. This is the name of the mapfile*/
-    File _vid_map_table;
-    /// The class handling the mapping of the VIDs
-    /** This filed holds the class used for VID mapping*/
-    Vid_mapper *_vid_mapper;
     /// The clock getting the time from GPS
     LocationTimeService *_clock;
     //Functions

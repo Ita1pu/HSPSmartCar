@@ -15,7 +15,6 @@
 #define GPS_BAUD_RATE 115200L
 #define INACT_TIME_MS 120000u
 
-
 COBDSPI coproc;
 AccReader* accSensor;
 gps::LocationTimeService locSrv = gps::LocationTimeService(&coproc);
@@ -32,6 +31,14 @@ ProgrammMode currentMode;
 
 ourTypes::pidData* pidCollection;
 
+//btLog function
+inline void btLog(uint16_t pid, uint32_t value){
+  Serial.print('#');
+  Serial.print(pid);
+  Serial.print(':');
+  Serial.print(value);
+  Serial.print(';');
+}
 //function to upload Data to smartphone
 void uploadBT();
 
@@ -40,17 +47,10 @@ void setup()
   //Instantiate Objects
     Serial.begin(SERIAL_BAUD_RATE);
     coproc.begin();
-    accSensor = new AccReader();
   //Initialize global variables
-    currentMode.bluetooth = false;
     currentMode.mode = LOGGING;
     currentMode.currentLoopCount = 0;
     Serial.println(F("Init start!"));
-    //Init Acceleration Sensor
-    success = accSensor->Initialize();
-    if(success != 0x00){
-      accSensor->Calibrate(false,true);
-    }
     //Initialize GPS Receiver
     success = locSrv.Initialize(GPS_BAUD_RATE);
     if(success != 0x00){
@@ -60,36 +60,44 @@ void setup()
       //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
       }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
     }
-    //initialize OBD reader
-    obdDev = new obd::ObdDevice(&coproc);
-    success = obdDev->initialize();
-    if(success == 0x01){
-      //obd init succeeded
-      char* tmpVid = obdDev->getVehicleIdentificationNumber();
-      //transfer vid to struct
-      if(tmpVid != nullptr){
-        for(int i = 0; i < ourTypes::lengthOfVehicleIdentificationNumber; i++){
-          current_vid.x[i] = tmpVid[i];
-        }
-      }else{
-          current_vid = {'0', 'A', '1', 'B', '2', 'C', '3', 'D', '4', 'E', '5', 'F', '6', '7', '8', '9', '0'};
-      }
-      pidCollection = obdDev->getPidArray();
-    }
     //initialize persistence layer
     file_system.init(&SD);
     p.init(&locSrv, &file_system);
     success = p.GetInitStatus();
-    if(success == NO_ERROR || success == NEW_LOGGING_FILE_CREATED){
+    if(success != NO_ERROR && success != NEW_LOGGING_FILE_CREATED){
       //sleep mode
       do{
         //endless loop
+        Serial.print(F("Init failed!"));
         delay(0xFFFFFFFF);
         coproc.uninit();
         coproc.enterLowPowerMode();
       }while(true);
     }
-    //TODO: Log Category E
+    //Init Acceleration Sensor
+    accSensor = new AccReader();
+    success = accSensor->Initialize();
+    if(success != 0x00){
+      accSensor->Calibrate(false,true);
+    }
+    //initialize OBD reader
+    obdDev = new obd::ObdDevice(&coproc);
+    do{
+      success = obdDev->initialize();
+      if(success != 0x01){
+        //wait until car is started for the first time
+        coproc.enterLowPowerMode();
+        delay(INACT_TIME_MS);
+        coproc.leaveLowPowerMode();
+        delay(50);
+      }else{
+        break;
+      }
+    }while(true);//wait until car is started
+
+    pidCollection = obdDev->getPidArray();
+
+    //Log Category E
     bool pidSucc = false;
     int32_t pidRetVal = 0;
     //EthanolPercent
@@ -97,19 +105,19 @@ void setup()
     if(pidSucc){
       p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
     }
-    //TODO: Log Category F
+    //Log Category F
     //FuelType
     pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
     if(pidSucc){
       p.create_logging_entry(locSrv.GetEpochMs(), obd::FuelType, pidRetVal);
     }
-        //initialize flag timer for Main loop
-        locSrv.StartFlagTimer();
+    //initialize flag timer for Main loop
+    locSrv.StartFlagTimer();
 }
 
 void loop()
 {
-  //TODO: Check if bluetooth is connected and check for mode
+  //TODO:check for mode
   if(currentMode.mode == UPLOAD){
     //uploadBT();
     delay(200);
@@ -118,20 +126,20 @@ void loop()
   }else if(currentMode.mode == LOGGING){
     //check if timer has reached its limit
     if(timerFlags){
-      Serial.print(F(" L"));
-      Serial.print(freeMemory());
       //reset flags
       timerFlags = 0;
-      //uint64_t currEpo = clck->GetEpochMs();
+      Serial.print(F("L:"));
       Serial.print(currentMode.currentLoopCount);
-      Serial.print(": ");
-      Serial.print(locSrv.GetTime());
 
       //log very fast / Category A
       char pidLen = obdDev->updateVeryFastPids();
       if(pidLen > 0){
         for(char i = 0; i < pidLen; i++){
           p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
+          //bluetooth logging
+          if(pidCollection[i].pid == obd::EngineRpm || pidCollection[i].pid == obd::VehicleSpeed){
+            btLog(pidCollection[i].pid, pidCollection[i].value);
+          }
         }
       }
       //log acceleration values; the values are given as 1/1000 of gravitational acceleration
@@ -141,36 +149,32 @@ void loop()
 
       //The values for the module comparison are used to not poll all pid categories at once when counter = 0
       //log fast / Category B
-      if(currentMode.currentLoopCount%5 == 1){
+      if(currentMode.currentLoopCount%3 == 1){
         if(locSrv.RenewGPSData()){
           //log GPS data
-          int32_t currLat = locSrv.GetLatitude();
-          if(currLat < 100){
-            Serial.print(currLat);
-          }
-          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, currLat);
-          int32_t currLon = locSrv.GetLongitude();
-          if(currLat < 100){
-            Serial.print(currLon);
-          }
-          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, currLon);
+          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, locSrv.GetLatitude());
+          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, locSrv.GetLongitude());
         }
         //log fast OBD data
         //no fast pids selected
       }
 
       //log normal / Category C
-      if(currentMode.currentLoopCount%50 == 2){
+      if(currentMode.currentLoopCount%30 == 2){
         pidLen = obdDev->updateNormalPids();
         if(pidLen > 0){
           for(char i = 0; i < pidLen; i++){
             p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
+            //btLog for temperatures
+            if(pidCollection[i].pid == obd::EngineCoolantTemp || pidCollection[i].pid == obd::AmbientAirTemp || pidCollection[i].pid == obd::EngineOilTemp){
+              btLog(pidCollection[i].pid, pidCollection[i].value);
+            }
           }
         }
       }
 
       //logSlowest / Category D
-      if(currentMode.currentLoopCount%1500 == 3){
+      if(currentMode.currentLoopCount%600 == 3){
         pidLen = obdDev->updateSlowPids();
         if(pidLen > 0){
           for(char i = 0; i < pidLen; i++){
@@ -179,33 +183,45 @@ void loop()
         }
       }
 
-      //TODO: check BT for LOGGING
-      if(currentMode.bluetooth == true){
-        //write to bluetooth
-      }
       if(!obdDev->getClamp15State()){
         //go to sleep for 2 min if clamp 15 is not closed
         currentMode.mode = SLEEP;
-        p.close_logging_file();
+        Serial.print(F("Going to sleep!"));
+        locSrv.StopFlagTimer();
+        locSrv.UnInit();
         coproc.enterLowPowerMode();
       }
       currentMode.currentLoopCount++;
-      //cycle every 5 minutes
-      currentMode.currentLoopCount%=1500;
+      //cycle every ~5 minutes
+      currentMode.currentLoopCount%=600;
       Serial.println();
     }
   }else{
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
     coproc.leaveLowPowerMode();
+    Serial.println(F("Check while sleep"));
     delay(50);
-    if(obdDev->getClamp15State()){
+    if(!obdDev->getClamp15State()){
       //if Car is still off
       coproc.enterLowPowerMode();
     }else{
       currentMode.currentLoopCount = 0;
       currentMode.mode = LOGGING;
-      p.init(&locSrv, &file_system);
+      bool success = locSrv.Initialize(GPS_BAUD_RATE);
+      if(success != false){
+        do{
+          delay(500);
+          locSrv.RenewGPSData();
+        //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
+        }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
+      }
+      locSrv.StartFlagTimer();
+      //EthanolPercent
+      uint32_t pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, success);
+      if(success){
+        p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
+      }
     }
   }
 }

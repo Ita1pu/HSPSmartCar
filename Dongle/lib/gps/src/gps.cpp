@@ -30,9 +30,18 @@ inline bool initFlagTimer(){
   TIMSK1 |= (1<<OCIE1A);
   return true;
 }
+/**
+ *This function stops the Timer 1 to set the Flags every 500ms
+ */
+inline void stopFlagTimer(){
+  //Turn off timer(clock) by zeroing CS10 to CS12
+  TCCR1B &= ~((1<<CS12) | (1<<CS11) | (1<<CS10));
+  //Turn off Interrupt
+  TIMSK1 &= ~(1<<OCIE1A);
+}
 
 /**
- *This function configures the Timer 2 to set the timerFlags every 500ms
+ *This function configures the Timer 2 to update the clockDeviation every 8ms
  *@return Returns true when finished.
  */
 inline bool initClockTimer(){
@@ -52,8 +61,16 @@ inline bool initClockTimer(){
   //set compare register to 124 to have clock every 8 ms
   OCR2A = 124;
   TIMSK2 |= (1<<OCIE2A);
-    Serial.print(" gI");
   return true;
+}
+/**
+ *This function stops the Timer 2
+ */
+inline void stopClockTimer(){
+  //Turn off timer(clock) by zeroing CS20 to CS22
+  TCCR2B &= ~((1<<CS22) | (1<<CS21) | (1<<CS20));
+  //Turn off Interrupt
+  TIMSK2 &= ~(1<<OCIE2A);
 }
 
 LocationTimeService::LocationTimeService(COBDSPI* coProc){
@@ -79,12 +96,17 @@ bool LocationTimeService::Initialize(unsigned long baud){
   clockDeviation = 0;
   timerFlags = 0x0;
 
-  //if previous commands succeeded, then configure clock interrupt
+  //if previous commands succeeded, then configure and start clock interrupt
   if(retVal){
     retVal = initClockTimer();
   }
   _isInit = retVal;
   return retVal;
+}
+
+void LocationTimeService::UnInit(){
+  stopClockTimer();
+ _coProc->gpsInit(0);
 }
 
 bool LocationTimeService::IsInitialized(){
@@ -146,5 +168,9 @@ bool LocationTimeService::RenewGPSData(){
 
 bool LocationTimeService::StartFlagTimer(){
   return initFlagTimer();
+}
+
+void LocationTimeService::StopFlagTimer(){
+  stopFlagTimer();
 }
 }

@@ -26,7 +26,6 @@ namespace ourTypes
 
     struct {
       OperatingMode mode;
-      bool bluetooth;
       uint16_t currentLoopCount;
     } typedef ProgrammMode;
 }

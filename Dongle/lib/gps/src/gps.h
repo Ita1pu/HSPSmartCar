@@ -27,6 +27,12 @@ namespace gps{
    bool Initialize(unsigned long baud);
 
    /**
+    * Method to uninitialize
+    * Powers down the gps receiver
+    */
+   void UnInit();
+
+   /**
     * Method to get the longitude of the device's current position
     * A positive return value means western longitude and a negative value means eastern longitude
     * Measured average time: 1 µSecond.
@@ -78,10 +84,13 @@ namespace gps{
    uint8_t* GetFlag();
     /**
      * Start the timer which sets the timerFlags
-     * @param millis the number of milliseconds the timer should run
      * @return Wether the setup was successfull
      */
    bool StartFlagTimer();
+   /**
+    * Start the timer which sets the timerFlags
+    */
+   void StopFlagTimer();
     /**
      * Method to renew the GPS information available by the get-methods
      * Measured average time: 39.4 Milliseconds; WCET: 259 Milliseconds

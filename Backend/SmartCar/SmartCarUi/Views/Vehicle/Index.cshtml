@@ -35,7 +35,7 @@
                 <input type="text" class="form-control" name="Model" placeholder="Model">
             </div>
             <div class="col">
-                <input type="text" class="form-control" name="MVID" placeholder="MVID">
+                <input type="text" class="form-control" name="Vid" placeholder="VID">
             </div>
             <button type="submit" class="btn btn-primary">Add</button>
         </div>
@@ -52,16 +52,24 @@
             @foreach (var vehicle in Model)
             {
                 <div class="card card-body m-3" style="max-width: 300px;">
-                    <img src="images/carIcon.png" class="mx-auto m-2" height="72" width="72" />
+                    @if (vehicle.IsDefault)
+                    {
+                        <div class="flex-row" style="position: absolute; right: 20px">
+                            <img src="images/check.png" class="float-right"/>
+                        </div>
+                    }
+
+                    <img src="images/carIcon.png" class="mx-auto m-2" height="72" width="72"/>
 
                     <div class="text-center">
                         <p class="card-text"><span style="font-size: 16pt; font-weight: bold">@vehicle.Brand</span> @vehicle.Model</p>
                     </div>
 
-                    <p class="card-text">MVID: @vehicle.MVID</p>
+                    <p class="card-text">VID: @vehicle.Vid</p>
 
-                    <div class="flex-row">
+                    <div >
                         <a class="btn btn-danger btn-sm removeLink" asp-controller="Vehicle" asp-action="RemoveVehicle" asp-route-vehicleId="@vehicle.VehicleId">Remove</a>
+                        <a class="btn btn-danger btn-sm" asp-controller="Vehicle" asp-action="SetDefaultVehicle" asp-route-vehicleId="@vehicle.VehicleId">Set Default</a>
                     </div>
                 </div>
             }

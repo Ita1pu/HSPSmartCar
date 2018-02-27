@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SmartCar.Shared.Model.Identity;
 
 namespace SmartCar.Shared.Model
 {
@@ -12,6 +13,8 @@ namespace SmartCar.Shared.Model
         [Key]
         public int TripId { get; set; }
 
+        public AppUser User { get; set; }
+
         public Vehicle Vehicle { get; set; }
 
         public DateTime TripStart { get; set; }
@@ -19,5 +22,7 @@ namespace SmartCar.Shared.Model
         public TimeSpan Duration { get; set; }
 
         public double Distance { get; set; }
+
+        public List<TripData> TripData { get; set; }
     }
 }

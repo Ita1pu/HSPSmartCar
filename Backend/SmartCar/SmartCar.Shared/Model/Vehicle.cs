@@ -16,12 +16,12 @@ namespace SmartCar.Shared.Model
 
         public AppUser Owner { get; set; }
 
-        public string VID { get; set; }
-
-        public int MVID { get; set; }
-
+        public string Vid { get; set; }
+        
         public string Brand { get; set; }
 
         public string Model { get; set; }
+
+        public bool IsDefault { get; set; }
     }
 }

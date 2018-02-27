@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SmartCar.Shared.Database;
+using SmartCarIdentity.Database;
 
 namespace SmartCarIdentity
 {

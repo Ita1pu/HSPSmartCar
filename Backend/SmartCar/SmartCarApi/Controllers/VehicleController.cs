@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SmartCar.Shared.Database;
 using SmartCar.Shared.Model;
@@ -13,7 +14,7 @@ using SQLitePCL;
 namespace SmartCarApi.Controllers
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/vehicle")]
     public class VehicleController : Controller
     {
         private Repository _repo;
@@ -57,7 +58,7 @@ namespace SmartCarApi.Controllers
 
             if (user == null) return Unauthorized();
 
-            var existingVehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.MVID == vehicle.MVID);
+            var existingVehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.Vid == vehicle.Vid);
 
             if (existingVehicle == null)
             {
@@ -70,6 +71,60 @@ namespace SmartCarApi.Controllers
             }
 
             return BadRequest();
+        }
+
+        /// <summary>
+        /// Sets the default vehicle of the user to the given vehicle.
+        /// </summary>
+        /// <param name="vehicle">The vehicle that shall be set default.</param>
+        [HttpPut]
+        [Route("setDefault")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> SetDefault([FromBody] Vehicle vehicle)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var newDefaultVehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.VehicleId == vehicle.VehicleId);
+
+            if (newDefaultVehicle != null)
+            {
+                //Reset default vehicle
+                var userVehicle = _db.Vehicles.Where(v => v.Owner.Id == user.Id);
+                await userVehicle.ForEachAsync(v => { v.IsDefault = false; });
+
+                //Set new default
+                newDefaultVehicle.IsDefault = true;
+
+                await _db.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        /// <summary>
+        /// Resets the selected default vehicle of the authenticated user.
+        /// </summary>
+        [HttpPut]
+        [Route("resetDefault")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> ResetDefault()
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var userVehicles = _db.Vehicles.Where(v => v.Owner.Id == user.Id);
+
+            await userVehicles.ForEachAsync(v => v.IsDefault = false);
+            await _db.SaveChangesAsync();
+
+            return Ok();
         }
 
         /// <summary>

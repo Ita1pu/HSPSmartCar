@@ -12,8 +12,17 @@ namespace SmartCar.Shared.Model
         [Key]
         public int TripDataId { get; set; }
 
+        public int Mvid { get; set; }
+
+        public DateTime Timestamp { get; set; }
+
         public SignalMap SignalType { get; set; }
 
         public int Value { get; set; }
+
+        public override string ToString()
+        {
+            return $"TripData: Mvid {Mvid}, Timestamp {Timestamp}, SignalType {SignalType?.SignalName}, Value {Value}";
+        }
     }
 }

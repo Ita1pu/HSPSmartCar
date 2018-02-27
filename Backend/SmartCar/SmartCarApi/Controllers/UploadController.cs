@@ -21,7 +21,7 @@ namespace SmartCarApi.Controllers
     /// </summary>
     /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     [Authorize]
-    [Route("api/[controller]/[action]")]
+    [Route("api/upload/[action]")]
     public class UploadController : Controller
     {
         private Repository _repo;
@@ -40,11 +40,15 @@ namespace SmartCarApi.Controllers
         /// </summary>
         /// <param name="logfile">The logfile with trip data that shall be parsed.</param>
         [HttpPost]
+        [ProducesResponseType(400)]
         [ProducesResponseType(typeof(ParseResult), 200)]
         public IActionResult Logfile(IFormFile logfile)
         {
-            var parser = new LogfileParser();
-            var parseResult = parser.Parse(logfile);
+            var user = _repo.GetUser(User);
+            if (user == null) return Unauthorized();
+
+            var parser = new TripParser(_repo.DbContext, user);
+            var parseResult = parser.ParseLogfile(logfile);
             
             return Ok(JsonConvert.SerializeObject(parseResult));
         }

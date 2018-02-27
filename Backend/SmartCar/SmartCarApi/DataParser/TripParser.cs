@@ -35,10 +35,15 @@ namespace SmartCarApi.DataParser
 
             if (tripData.Any())
             {
+                var splitTrips = SplitTrips(tripData);
+
+                _db.Trips.AddRange(splitTrips);
+                _db.SaveChanges();
+
                 var result = new ParseResult
                 {
                     Success = true,
-                    ParsedTrips = 2
+                    ParsedTrips = splitTrips.Count
                 };
 
                 return result;
@@ -47,7 +52,7 @@ namespace SmartCarApi.DataParser
             return new ParseResult{Success = false};
         }
 
-        private IEnumerable<TripData> ParseTripData(IFormFile file)
+        private List<TripData> ParseTripData(IFormFile file)
         {
             var tripData = new List<TripData>();
             var reader = new BinaryReader(file.OpenReadStream());
@@ -99,29 +104,35 @@ namespace SmartCarApi.DataParser
             return ValueParser.ParseInt32(rawValue);
         }
 
-        private IEnumerable<Trip> SplitTrips(IEnumerable<TripData> rawTripDataSource)
+        private List<Trip> SplitTrips(IEnumerable<TripData> rawTripDataSource)
         {
             var trips = new List<Trip>();
             var tripDateSource = rawTripDataSource.ToList();
 
             if (tripDateSource.Any())
             {
-                var mvid = tripDateSource.FirstOrDefault().Mvid;
-                var lastEntry = tripDateSource.FirstOrDefault().Timestamp;
-                var currentTrip = new Trip{User = _user, TripStart = lastEntry};
+                var lastMvid = tripDateSource.FirstOrDefault()?.Mvid ?? 0;
+                var lastTimestamp = tripDateSource.FirstOrDefault()?.Timestamp ?? new DateTime();
+                var currentTrip = new Trip{User = _user, TripStart = lastTimestamp};
 
                 foreach (var tripEntry in tripDateSource)
                 {
                     //If a new mvid is found or the time difference between two consecutive entries is greater than
                     //the value defined by NewTripSpan, a new trip is created.
-                    if (tripEntry.Mvid != mvid || (tripEntry.Timestamp - lastEntry).Seconds > NewTripSpan)
+                    if (tripEntry.Mvid != lastMvid || (tripEntry.Timestamp - lastTimestamp).TotalSeconds > NewTripSpan)
                     {
                         trips.Add(currentTrip);
                         currentTrip = new Trip { User = _user, TripStart = tripEntry.Timestamp };
                     }
                     
+                    lastMvid = tripEntry.Mvid;
+                    lastTimestamp = tripEntry.Timestamp;
+
                     currentTrip.TripData.Add(tripEntry);
                 }
+
+                //Add last active trip
+                trips.Add(currentTrip);
             }
 
             return trips;

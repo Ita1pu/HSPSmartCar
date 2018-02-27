@@ -84,6 +84,15 @@ namespace SmartCarUi.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> ResetDefaultVehicle()
+        {
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+
+            var response = await client.PutAsync("http://localhost:5001/api/vehicle/resetDefault", null);
+
+            return RedirectToAction("Index");
+        }
+
         private async Task<IEnumerable<Vehicle>> GetUserVehicles()
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);

@@ -24,5 +24,10 @@ namespace SmartCar.Shared.Model
         public double Distance { get; set; }
 
         public List<TripData> TripData { get; set; }
+
+        public Trip()
+        {
+            TripData = new List<TripData>();
+        }
     }
 }

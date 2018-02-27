@@ -2,16 +2,18 @@
   "name": "asp.net",
   "private": true,
   "dependencies": {
-    "bootstrap": "v4.0.0-beta",
+    "bootstrap": "v4.0.0",
     "jquery": "2.2.0",
     "jquery-validation": "1.17.0",
     "jquery-validation-unobtrusive": "3.2.6",
     "jquery.easing": "v1.3.1",
     "popper.js": "v1.13.0-next",
-    "font-awesome": "fontawesome#v4.7.0"
+    "font-awesome": "fontawesome#v4.7.0",
+    "pikaday": "1.6.1",
+    "moment": "2.20.1"
   },
   "resolutions": {
     "jquery-validation": "1.17.0",
-    "bootstrap": "v4.0.0-beta"
+    "bootstrap": "v4.0.0"
   }
 }

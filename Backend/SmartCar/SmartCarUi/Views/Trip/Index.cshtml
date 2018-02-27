@@ -1,0 +1,70 @@
+﻿@model TripsViewModel
+
+<h1>Trip Management</h1>
+
+<hr />
+
+<div class="container">
+    <h4>Select Range</h4>
+
+    <form method="post" asp-controller="Trip" asp-action="ShowTrips">
+        <div class="form-row">
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker-start" name="RangeStart" placeholder="Range Start" value="@Model?.RangeStart.ToShortDateString()">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-calendar fa-lg" id="date-trigger-start"></i></span>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group">
+                    <input type="text" class="form-control datepicker-end" name="RangeEnd" placeholder="Range End" value="@Model?.RangeEnd.ToShortDateString()">
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-calendar fa-lg" id="date-trigger-end"></i></span>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Show</button>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+@if (Model?.Trips != null)
+{
+    <table class="table">
+        @foreach (var trip in Model.Trips)
+        {
+            <tr>
+                <td></td>
+            </tr>
+        }
+    </table>
+}
+
+@section Scripts
+{
+    <script src="~/lib/moment/moment.js"></script>
+    <script src="~/lib/pikaday/pikaday.js"></script>
+    <script src="~/lib/pikaday/plugins/pikaday.jquery.js"></script>
+    <link rel="stylesheet" href="~/lib/pikaday/css/pikaday.css" />
+
+    <!-- Calendar configuration -->
+    <script>
+        $(function () {
+            $('.datepicker-start').pikaday({
+                firstDay: 1,
+                trigger: document.getElementById('date-trigger-start'),
+                format: 'DD.MM.YYYY'
+            });
+            $('.datepicker-end').pikaday({
+                firstDay: 1,
+                trigger: document.getElementById('date-trigger-end'),
+                format: 'DD.MM.YYYY'
+            });
+        });
+    </script>
+}

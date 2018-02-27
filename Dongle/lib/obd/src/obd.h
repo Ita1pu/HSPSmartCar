@@ -31,12 +31,11 @@ class ObdDevice
         char updateSlowPids();
         //char updateFastPids(); //nicht in benutzung, haben hier keine ausgewählt
 
-        //dont delete the array i will update it when i am called
+        //DO NOT delete the array i will update it when i am called
         ourTypes::pidData* getPidArray();
-        //this array have to be delete after infos are used
+        //this array have to be DELETE after infos are used
         ourTypes::dtcData* getDiagnositcTroubleCodes(unsigned char& amount);
 
-        //std::vector<ourTypes::dtcData>* getDiagnositcTroubleCodes();
         void clearDiagnosticTroubleCodes();
 
         char* getVehicleIdentificationNumber();
@@ -50,9 +49,6 @@ class ObdDevice
         bool wasAlreadyInitialiesed = false;
         COBDSPI* baseLayer;
         OBD_PROTOCOLS lastUsedProtocol;
-        //std::vector<ourTypes::dtcData>* dtcVector = nullptr;//diagnostic trouble codes vector
-
-
 
         void identifyMaxPidArrayLength();
 

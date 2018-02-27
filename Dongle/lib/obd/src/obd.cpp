@@ -14,12 +14,6 @@ ObdDevice::~ObdDevice()
     {
         delete pidArray;
     }
-    /*
-    if (dtcVector != nullptr)
-    {
-        delete dtcVector;
-    }
-    */
 }
 
 bool ObdDevice::initialize()
@@ -27,17 +21,17 @@ bool ObdDevice::initialize()
     if (wasAlreadyInitialiesed == true)
     {
         baseLayer->uninit();
-//        Serial.println("Base was already initialiezed, uninit will be called");
+//        Serial.println(F("Base was already initialiezed, uninit will be called"));
         if (baseLayer->init(lastUsedProtocol) == true)
         {
             Clamp15 = true;
-//            Serial.println("initialies with the lased used one worked");
+//            Serial.println(F("initialies with the lased used one worked"));
             return true;
         }
         else
         {
             Clamp15 = false;
-//            Serial.println("initialies with the lased used one failed");
+//            Serial.println(F("initialies with the lased used one failed"));
             return false;
         }
     }
@@ -46,61 +40,61 @@ bool ObdDevice::initialize()
     if (baseLayer->init(PROTO_AUTO) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_AUTO");
+//        Serial.println(F("base initialized protocol is PROTO_AUTO"));
         lastUsedProtocol = PROTO_AUTO;
     }
     else if (baseLayer->init(PROTO_ISO_9141_2) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_ISO_9141_2");
+//        Serial.println(F("base initialized protocol is PROTO_ISO_9141_2"));
         lastUsedProtocol = PROTO_ISO_9141_2;
     }
     else if (baseLayer->init(PROTO_KWP2000_5KBPS) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_KWP2000_5KBPS");
+//        Serial.println(F("base initialized protocol is PROTO_KWP2000_5KBPS"));
         lastUsedProtocol = PROTO_KWP2000_5KBPS;
     }
     else if (baseLayer->init(PROTO_KWP2000_FAST) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_KWP2000_FAST");
+//        Serial.println(F("base initialized protocol is PROTO_KWP2000_FAST"));
         lastUsedProtocol = PROTO_KWP2000_FAST;
     }
     else if (baseLayer->init(PROTO_CAN_11B_500K) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_CAN_11B_500K");
+//        Serial.println(F("base initialized protocol is PROTO_CAN_11B_500K"));
         lastUsedProtocol = PROTO_CAN_11B_500K;
     }
     else if (baseLayer->init(PROTO_CAN_29B_500K) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_CAN_29B_500K");
+//        Serial.println(F("base initialized protocol is PROTO_CAN_29B_500K"));
         lastUsedProtocol = PROTO_CAN_29B_500K;
     }
     else if (baseLayer->init(PROTO_CAN_29B_250K) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_CAN_29B_250K");
+//        Serial.println(F("base initialized protocol is PROTO_CAN_29B_250K"));
         lastUsedProtocol = PROTO_CAN_29B_250K;
     }
     else if (baseLayer->init(PROTO_CAN_11B_250K) == true)
     {
         Clamp15 = true;
-//        Serial.println("base initialized protocol is PROTO_CAN_11B_250K");
+//        Serial.println(F("base initialized protocol is PROTO_CAN_11B_250K"));
         lastUsedProtocol = PROTO_CAN_11B_250K;
     }
 
     if (Clamp15 == false)
     {
         return false;
-//        Serial.println("not initialiesed");
+//        Serial.println(F("not initialiesed"));
     }
     else
     {
         wasAlreadyInitialiesed = true;
-//        Serial.println("now initialiesed first time");
+//        Serial.println(F("now initialiesed first time"));
     }
     identifyMaxPidArrayLength();
     Serial.print(maxLengthPidArray), Serial.println("Entrys");
@@ -114,7 +108,6 @@ This function get the values of the very fast pids via obd. It writes the pairs 
 */
 char ObdDevice::updateVeryFastPids()
 {
-    //>>>>>>>very fast pids<<<<<<<
     unsigned char retVal = 0;
     bool queryState = false;
     obd::PidNames pidName;
@@ -220,7 +213,6 @@ This function get the values of the normal pids via obd. It writes the pairs (pi
 */
 char ObdDevice::updateNormalPids()
 {
-    //>>>>>>>>normal pids<<<<<<<<<<<<
     unsigned char retVal = 0;
     bool queryState = false;
     obd::PidNames pidName;
@@ -301,7 +293,6 @@ This function get the values of the slow pids via obd. It writes the pairs (pid,
 */
 char ObdDevice::updateSlowPids()
 {
-    //>>>>>>>slow pids<<<<<<<<<<<
     unsigned char retVal = 0;
     bool queryState = false;
     obd::PidNames pidName;
@@ -340,11 +331,15 @@ char ObdDevice::updateSlowPids()
     }
 }
 
+/*!
+This function determines the max needed length for the pid array. It checks the supported pids and which category (very fast - slow) contains the most.
+This is then the maximal length.
+*/
 void ObdDevice::identifyMaxPidArrayLength()
 {
     unsigned char tempCnt = 0;
     obd::PidNames pidName;
-    //>>>>>>>very fast pids<<<<<<<
+    //>>>>>>> check very fast pids<<<<<<<
     pidName = obd::PidNames::EngineRpm;
     unsigned char currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
     if (baseLayer->isValidPID(currentPid))
@@ -395,7 +390,7 @@ void ObdDevice::identifyMaxPidArrayLength()
     }
     maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 
-    //>>>>>>>>normal pids<<<<<<<<<<<<
+    //>>>>>>>> check normal pids<<<<<<<<<<<<
     tempCnt = 0;
     pidName = obd::PidNames::EngineCoolantTemp;
     currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
@@ -433,7 +428,7 @@ void ObdDevice::identifyMaxPidArrayLength()
     }
     maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 
-    //>>>>>>>slow pids<<<<<<<<<<<
+    //>>>>>>> check slow pids<<<<<<<<<<<
     tempCnt = 0;
     pidName = obd::PidNames::DistTraveledWithMalfuncIndicaLamp;
     currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
@@ -467,6 +462,10 @@ void ObdDevice::end()
     baseLayer->end();
 }
 
+/*!
+This function get the value of a specific pid value. This value ist given via parameter. The bool& secccessful tells the caller if the return value is valid.
+@returns the value of the pid. This is only valid if successfull is true.
+*/
 int ObdDevice::getValueOfPid(char pid, bool& successful)
 {
     if (baseLayer->isValidPID(pid) == false)
@@ -505,7 +504,7 @@ ourTypes::pidData* ObdDevice::getPidArray()
 This function reads out the diagnostic trouble codes that currently are in the system. If less than 10 are read, there are not more,
 if 10 are read there could be more. Every diagnostic trouble code is represented by 5 digits. First is a letter follwod by 4 digits.
 With freematic library only the digits are available. The category letter is not available.
-@return A vector of pidData. Every pidData element represents a trouble code. If nullptr is returned something went wrong.
+@return An array of pidData. Every pidData element represents a trouble code. If nullptr is returned something went wrong.
 */
 ourTypes::dtcData* ObdDevice::getDiagnositcTroubleCodes(unsigned char& amount)
 {

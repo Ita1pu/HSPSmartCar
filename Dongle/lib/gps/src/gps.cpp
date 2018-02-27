@@ -2,6 +2,7 @@
 #include <time.h>
 
 #define cmdLen 15
+#define AVR_EPOCH 946684800u
 
 namespace gps{
   //The Register settings can be calculated by using the web-applet on
@@ -126,7 +127,7 @@ uint8_t LocationTimeService::GetSat(){
 }
 
 uint32_t LocationTimeService::GetTime(){
-  return _gData.time*10+clockDeviation;
+  return (_gData.time*10)+clockDeviation;
 }
 
 uint32_t LocationTimeService::GetDate(){
@@ -141,16 +142,20 @@ uint64_t LocationTimeService::GetEpochMs(){
   struct tm timeStruct;
   timeStruct.tm_year = 100 + (_gData.date%100); //Years since 1900
   timeStruct.tm_mon = ((_gData.date/100)%100) - 1; //The Month; January is 0, thus offset of 1;
-  timeStruct.tm_mday = (_gData.date/10000)%100; //The day;
+  timeStruct.tm_mday = (_gData.date/10000); //The day;
   timeStruct.tm_hour = _gData.time/1000000; //The hour of the day;
   timeStruct.tm_min = (_gData.time/10000)%100; //The minutes after the hour
   timeStruct.tm_sec = (_gData.time/100)%100; //The seconds after the minute
   timeStruct.tm_isdst = 0; //no Daylight Saving Time since UTC is unsigned
-
-  //mktime(&timeStruct) gives epoch in seconds
-  //this times 100  + _gData.time%100 gives epoch in 1/100 seconds
-  //this times 10 + clockDeviation gives epoch in ms
-  return (((mktime(&timeStruct)*100) + _gData.time%100) * 10)+clockDeviation;
+  uint64_t retVal;
+  //mktime(&timeStruct)+AVR_EPOCH gives unix epoch in seconds
+  //this times 1000 gives milliseconds
+  //+ (_gData.time%100)*100 adds milliseconds from GPS
+  //+ clockDeviation gives epoch in ms
+  retVal = (uint64_t)(mktime(&timeStruct)+AVR_EPOCH)*1000ul;
+  retVal += (_gData.time%100)*10;
+  retVal += clockDeviation;
+  return retVal;
 }
 
 bool LocationTimeService::RenewGPSData(){

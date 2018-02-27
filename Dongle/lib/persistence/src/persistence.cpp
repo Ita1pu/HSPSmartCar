@@ -160,7 +160,7 @@ stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_nam
  */
 stdRetVal Persistence::open_logging_file(){
   char folder[SIZE_OF_MVID_FOLDER_NAME]; //Mapped vehicle ID
-  char file_name[SIZE_OF_CURRENT_DATE + 1]; //YYYYMMDD
+  char file_name[SIZE_OF_CURRENT_DATE + 1]; //DDMMYYY
   uint32_t start_date = this->_clock->GetDate();
   sprintf(file_name, "%lu", start_date);
   sprintf(folder, "%x/", this->_current_mvid);

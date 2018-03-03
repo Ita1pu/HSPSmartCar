@@ -62,18 +62,21 @@ namespace gps{
    bool IsInitialized();
     /**
      * Receive the UTC time of day;
+     * Measured average time: 40 µSeconds
      * @return Time of day as integer in following Format: HHMMSSmmm
      */
    uint32_t GetTime();
 
     /**
      * Receive the UTC _date
+     * Measured average time: 1 µSecond
      * @return Date of the current day in following Format: DDMMYY
      */
     uint32_t GetDate();
 
     /**
      * Receive the UTC time in ms since 1.1.1970
+     * Measured average time: 617 µSecond
      * @return milliseconds since 1.1.1970
      */
    uint64_t GetEpochMs();
@@ -93,7 +96,7 @@ namespace gps{
    void StopFlagTimer();
     /**
      * Method to renew the GPS information available by the get-methods
-     * Measured average time: 39.4 Milliseconds; WCET: 259 Milliseconds
+     * Measured average time: 39.4 Milliseconds; WCET: 80 Milliseconds
      */
    bool RenewGPSData();
   protected:

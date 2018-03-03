@@ -128,8 +128,6 @@ void loop()
     if(timerFlags){
       //reset flags
       timerFlags = 0;
-      Serial.print(F("L:"));
-      Serial.print(currentMode.currentLoopCount);
 
       //log very fast / Category A
       char pidLen = obdDev->updateVeryFastPids();
@@ -186,7 +184,7 @@ void loop()
       if(!obdDev->getClamp15State()){
         //go to sleep for 2 min if clamp 15 is not closed
         currentMode.mode = SLEEP;
-        Serial.print(F("Going to sleep!"));
+        Serial.print(F("Sl!"));
         locSrv.StopFlagTimer();
         locSrv.UnInit();
         coproc.enterLowPowerMode();
@@ -200,7 +198,7 @@ void loop()
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
     coproc.leaveLowPowerMode();
-    Serial.println(F("Check while sleep"));
+    Serial.println(F("Cs"));
     delay(50);
     if(!obdDev->getClamp15State()){
       //if Car is still off

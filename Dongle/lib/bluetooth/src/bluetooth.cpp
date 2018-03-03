@@ -1,26 +1,34 @@
 #include "bluetooth.h"
 
 using namespace Bluetooth;
+  /**
+   * @brief Uploads a Single entry via bluetooth
+   *
+   */
+  void upload_entry(){
+    return;
+  }
 
-bluetooth::bluetooth(std::string deviceName)
-{
-    BTSerial.begin(115200);
-    this->_deviceName = deviceName;
-}
+  /**
+   * @brief Uploads a Single entry via bluetooth
+   *
+   */
+  void delete_entry(){
+    return;
+  }
 
-uint8_t bluetooth::getStatus(){
-    return this->_status;
-}
+  /**
+   * @brief Writes to a Log-file wich data has been uploaded already
+   *
+   */
+  void log_upload(){
+    return;
+  }
 
-std::string bluetooth::getDeviceName(){
-    return this->_deviceName;
-}
-
-stdRetVal bluetooth::connect(){
-    return INIT_SUCCESS;
-}
-
-stdRetVal bluetooth::makeViseble()
-{
-    return 0;
-}
+  /**
+   * @brief Uploadtask for Bluetooth
+   *
+   */
+  void upload_bt(){
+    return;
+  }

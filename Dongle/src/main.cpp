@@ -10,6 +10,7 @@
 #include <types.h>
 #include <FreematicsSD.h>
 #include <globalConfig.h>
+#include <bluetooth.h>
 
 #define SERIAL_BAUD_RATE 115200L
 #define GPS_BAUD_RATE 115200L
@@ -39,8 +40,6 @@ inline void btLog(uint16_t pid, uint32_t value){
   Serial.print(value);
   Serial.print(';');
 }
-//function to upload Data to smartphone
-void uploadBT();
 
 void setup()
 {
@@ -119,7 +118,7 @@ void loop()
 {
   //TODO:check for mode
   if(currentMode.mode == UPLOAD){
-    //uploadBT();
+    //Bluetooth::upload_bt();
     delay(200);
     //when finished uploading
     currentMode.mode = LOGGING;
@@ -224,8 +223,4 @@ void loop()
       }
     }
   }
-}
-
-void uploadBT(){
-  return;
 }

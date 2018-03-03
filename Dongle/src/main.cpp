@@ -198,6 +198,7 @@ void loop()
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
     coproc.leaveLowPowerMode();
+    obdDev->initialize();
     Serial.println(F("Cs"));
     delay(50);
     if(!obdDev->getClamp15State()){

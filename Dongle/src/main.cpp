@@ -187,6 +187,7 @@ void loop()
         Serial.print(F("Sl!"));
         locSrv.StopFlagTimer();
         locSrv.UnInit();
+        obdDev->uninit();
         coproc.enterLowPowerMode();
       }
       currentMode.currentLoopCount++;
@@ -198,6 +199,7 @@ void loop()
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
     coproc.leaveLowPowerMode();
+    obdDev->initialize();
     Serial.println(F("Cs"));
     delay(50);
     if(!obdDev->getClamp15State()){

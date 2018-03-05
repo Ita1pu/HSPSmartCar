@@ -1,11 +1,11 @@
-#include "bluetooth.h"
+#include <bluetooth.h>
 
-using namespace Bluetooth;
+using namespace bluetooth;
   /**
    * @brief Uploads a Single entry via bluetooth
    *
    */
-  void upload_entry(){
+  void BtUploader::upload_entry(){
     return;
   }
 
@@ -13,7 +13,7 @@ using namespace Bluetooth;
    * @brief Uploads a Single entry via bluetooth
    *
    */
-  void delete_entry(){
+  void BtUploader::delete_entry(){
     return;
   }
 
@@ -21,14 +21,22 @@ using namespace Bluetooth;
    * @brief Writes to a Log-file wich data has been uploaded already
    *
    */
-  void log_upload(){
-    return;
+  void BtUploader::log_upload_postion(){
+    this->_p->log_bt_upload_position(this->_current_car, this->_current_file, this->_postition);
   }
 
   /**
    * @brief Uploadtask for Bluetooth
    *
    */
-  void upload_bt(){
+  void BtUploader::upload_bt(){
     return;
+  }
+
+  void BtUploader::init(persistence::Persistence *p){
+    this->_p = p;
+  }
+
+  BtUploader::~BtUploader(){
+    this->log_upload_postion();
   }

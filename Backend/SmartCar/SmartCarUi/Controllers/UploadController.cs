@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using SmartCar.Shared;
 using SmartCar.Shared.Rest;
+using SmartCarUi.Extensions;
 
 namespace SmartCarUi.Controllers
 {
@@ -27,11 +28,8 @@ namespace SmartCarUi.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadLogfile(IFormFile logfile)
         {
-            var accessToken = await HttpContext.GetTokenAsync("access_token");
-            
-            var client = new HttpClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+
             using (var content = new MultipartFormDataContent())
             {
                 var postStream = new MemoryStream();

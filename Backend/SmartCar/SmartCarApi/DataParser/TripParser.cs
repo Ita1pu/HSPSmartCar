@@ -57,12 +57,15 @@ namespace SmartCarApi.DataParser
             var tripData = new List<TripData>();
             var reader = new BinaryReader(file.OpenReadStream());
             var tripEntry = new byte[EntrySize];
+            int readChars = 0;
 
             _signals = _db.SignalMap.ToList();
 
+            //Seek over null entry
+            reader.BaseStream.Seek(EntrySize, SeekOrigin.Begin);
+
             //Initial read
-            //Todo: Skip first 15 byte
-            int readChars = reader.Read(tripEntry, 0, EntrySize);
+            readChars = reader.Read(tripEntry, 0, EntrySize);
 
             while (readChars >= EntrySize)
             {

@@ -23,6 +23,8 @@ namespace SmartCar.Shared.Model
 
         public double Distance { get; set; }
 
+        public double AvgSpeed { get; set; }
+
         public List<TripData> TripData { get; set; }
 
         public Trip()

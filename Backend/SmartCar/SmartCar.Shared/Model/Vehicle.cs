@@ -17,7 +17,9 @@ namespace SmartCar.Shared.Model
         public AppUser Owner { get; set; }
 
         public string Vid { get; set; }
-        
+
+        public string LicencePlate { get; set; }
+
         public string Brand { get; set; }
 
         public string Model { get; set; }

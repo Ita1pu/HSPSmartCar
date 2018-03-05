@@ -21,7 +21,7 @@ namespace SmartCarApi.DataParser
         private readonly AppUser _user;
         private readonly ApplicationDbContext _db;
 
-        private List<SignalMap> _signals;
+        private List<SignalMap> _signals;             
 
         public TripParser(ApplicationDbContext db, AppUser user)
         {
@@ -61,6 +61,7 @@ namespace SmartCarApi.DataParser
             _signals = _db.SignalMap.ToList();
 
             //Initial read
+            //Todo: Skip first 15 byte
             int readChars = reader.Read(tripEntry, 0, EntrySize);
 
             while (readChars >= EntrySize)

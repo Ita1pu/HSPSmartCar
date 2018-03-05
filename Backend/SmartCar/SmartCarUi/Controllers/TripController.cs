@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SmartCar.Shared.Model;
 using SmartCarUi.Models;
 
 namespace SmartCarUi.Controllers
 {
+    [Authorize]
     public class TripController : Controller
     {
         public IActionResult Index()
@@ -17,6 +19,8 @@ namespace SmartCarUi.Controllers
                 RangeStart = DateTime.Parse("01.01." + DateTime.Now.Year),
                 RangeEnd = DateTime.Parse("31.12." + DateTime.Now.Year)
             };
+            
+            tripView.Trips = GetTrips(tripView.RangeStart, tripView.RangeEnd);
 
             return View(tripView);
         }

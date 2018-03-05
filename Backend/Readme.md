@@ -14,9 +14,10 @@ Offers a webinterface to the users to watch the processed data that is calculate
 ## Setup
 To run the backend on your local machine, execute the following steps:
 1. Checkout the backend project from [Backend](https://github.com/Itiapu/HSPSmartCar/tree/master/Backend).
-2. Open a shell and navigate to Backend/SmartCar
-3. Run `docker-compose up`
-4. The startup of the identity server will fail because of timing problems. Simply restart the dock container manually.
+2. Open the Visual Studio solution and build it in release mode.
+3. Open a shell and navigate to Backend/SmartCar
+4. Run `docker-compose up`
+5. The startup of the identity server will fail because of timing problems. Simply restart the dock container manually.
 
 ### Dependencies
 The following software should be installed on the target:

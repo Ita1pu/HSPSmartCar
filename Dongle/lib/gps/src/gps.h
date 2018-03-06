@@ -55,6 +55,12 @@ namespace gps{
     */
    uint8_t GetSat();
    /**
+    * Method return altitude above mean sea level
+    * Measured average time: 1 µSecond.
+    * @return meters above mean sea level
+    */
+   uint16_t GetAltitude();
+   /**
     * Method return the initialization status of the gps module
     * Measured average time: 1 µSecond.
     * @return Answers the question if the gps module is initialized

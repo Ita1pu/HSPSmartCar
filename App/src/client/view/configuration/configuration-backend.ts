@@ -169,7 +169,7 @@ namespace View {
                 processData: false,
                 timeout: 5000,
                 success: function (response) {
-                    Logging.push("Backend connected successfully!");
+                    Logging.push("Backend connected successfully: " + response);
 
                     // TODO set token
 

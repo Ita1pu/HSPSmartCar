@@ -26,7 +26,7 @@ const Settings = {
             MpH: "MpH",
             KmH: "KmH"
         },
-        address_or_uuid: "address_or_uuid",
+        deviceId: "deviceId",
         Backend: {
             url: "url",
             identityPort: "identityPort",

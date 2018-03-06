@@ -1,5 +1,3 @@
-// TODO nochmals testen (connection hat schonmal geklappt)
-
 namespace View {
     export class ConfigurationDongle {
         private control: JQuery
@@ -24,11 +22,13 @@ namespace View {
             connect.click(() => {
                 Logging.push("Dongle -> Connect was clicked!");
 
-                // TODO show dialog
                 let dialog = new Dialog.Dialog(
                     [ "" ],
                     [ new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 
-                    () => { dialog.destroy(); });
+                    () => { 
+                        Dongle.bluetooth.stopScan();
+                        dialog.destroy(); 
+                    });
 
                 let dialogBackground = dialog.getBackground();
                 let dialogBody = dialog.getBody();
@@ -39,58 +39,30 @@ namespace View {
 
                 dialogBody.html("");
 
-                // TODO refresh button
+                let dialogDiv = $("<div>", { class: Var.Style.View.Configuration.Dongle.dialog }).appendTo(dialogBody);
 
-                // TODO loading bubble einblenden
-
-                Dongle.bluetooth.browse((device: any) => {
+                Dongle.bluetooth.startScan((device: any) => {
                     Logging.push("Bluetooth device found: " + device.id + " | " + device.name); 
-                    
-                    // TODO css
-                    // TODO if no name show <unknown>
 
-                    let entry = $("<div>", { class: "" }).appendTo(dialogBody);
-                    let nameDiv = $("<div>", { class: ""}).text(device.name).appendTo(entry);
-                    let idDiv = $("<div>", { class: "" }).text(device.id).appendTo(entry);
+                    if (device.name == null || typeof device.name === typeof undefined || device.name == "")
+                        device.name = "---";
+
+                    let entry = $("<div>", { class: Var.Style.View.Configuration.Dongle.Dialog.entry }).appendTo(dialogDiv);
+                    let nameDiv = $("<div>", { class:  Var.Style.View.Configuration.Dongle.Dialog.Entry.name }).text(device.name).appendTo(entry);
+                    let idDiv = $("<div>", { class:  Var.Style.View.Configuration.Dongle.Dialog.Entry.id }).text(device.id).appendTo(entry);
+                    let rssiDiv = $("<div>", { class:  Var.Style.View.Configuration.Dongle.Dialog.Entry.rssi }).text(device.rssi).appendTo(entry);
                     
                     entry.click(() => {
-                        // TODO alles andere disablen und darüber noch einen loading bubble anzeigen
-
                         Logging.push("Dongle -> Entry was clicked: " + device.id + " | " +  device.name);
 
-                        let address_or_uuid = device.address;
-
-                        if (typeof address_or_uuid === "undefined") {
-                            address_or_uuid = device.uuid;
-                        }
-
-                        Store.set(Settings.Store.address_or_uuid, address_or_uuid);
-                        Dongle.bluetooth.connect(address_or_uuid, () => {
-                            test.removeClass(Var.Style.View.Configuration.Button.Test.progress);
-                            test.removeClass(Var.Style.View.Configuration.Button.Test.bad);
-            
-                            test.addClass(Var.Style.View.Configuration.Button.Test.good);
-
-                            dialog.destroy();
-                        }, () => {
-                            test.removeClass(Var.Style.View.Configuration.Button.Test.progress);
-                            test.removeClass(Var.Style.View.Configuration.Button.Test.good);
-            
-                            test.addClass(Var.Style.View.Configuration.Button.Test.bad);
-
-                            dialog.destroy();
-                        });
+                        Store.set(Settings.Store.deviceId, device.id);
+                        Dongle.bluetooth.stopScan();
+                        dialog.destroy(); 
+                        test.click();
                     });
-                }, 
-                () => {
-                    Logging.push("Bluetooth browse succeeded!");
-                    
-                    // TODO loading bubble ausblenden
                 },
                 () => {
                     Logging.push("Bluetooth browse failed!");
-
-                    // TODO loading bubble ausblenden
                 });
             });
 
@@ -107,7 +79,7 @@ namespace View {
                     test.addClass(Var.Style.View.Configuration.Button.Test.good);
                 },
                 () => {
-                    Dongle.bluetooth.connect(Store.get(Settings.Store.address_or_uuid), 
+                    Dongle.bluetooth.connect(Store.get(Settings.Store.deviceId), 
                     () => {
                         test.removeClass(Var.Style.View.Configuration.Button.Test.progress);
                         test.addClass(Var.Style.View.Configuration.Button.Test.good);
@@ -127,7 +99,7 @@ namespace View {
                     [ new Dialog.Button("Delete", () => {                        
                         Dongle.bluetooth.disconnect();
 
-                        Store.clear(Settings.Store.address_or_uuid);
+                        Store.clear(Settings.Store.deviceId);
 
                         dialog.destroy();
                     }, true), new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 

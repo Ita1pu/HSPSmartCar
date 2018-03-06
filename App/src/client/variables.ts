@@ -48,7 +48,18 @@ namespace Var {
                 Switch: {
                     enabled: "view-configuration-switch-enabled"
                 },
-                logging: "view-configuration-logging"
+                logging: "view-configuration-logging",
+                Dongle: {
+                    dialog: "view-configuration-dongle-dialog",
+                    Dialog: {
+                        entry: "view-configuration-dongle-dialog-entry",
+                        Entry: {
+                            name: "view-configuration-dongle-dialog-entry-name",
+                            id: "view-configuration-dongle-dialog-entry-id",
+                            rssi: "view-configuration-dongle-dialog-entry-rssi"
+                        }
+                    }
+                }
             }
         },
     }

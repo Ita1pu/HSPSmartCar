@@ -1,0 +1,44 @@
+
+.#{$view_configuration_dongle_dialog} {
+    @extend .#{$img_loading};
+
+    width: 100%;
+
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-size: 35px auto;
+
+    padding-bottom: 40px;
+}
+
+.#{$view_configuration_dongle_dialog_entry} {
+    background-color: $color_bg_header;
+
+    padding: 2px;
+
+    margin-bottom: 5px;
+}
+
+.#{$view_configuration_dongle_dialog_entry_name} {
+    margin: 2px;
+
+    text-align: center;
+
+    font-weight: bold;
+}
+
+.#{$view_configuration_dongle_dialog_entry_id} {
+    margin: 2px;
+
+    text-align: center;
+
+    font-size: 12px;
+}
+
+.#{$view_configuration_dongle_dialog_entry_rssi} {
+    margin: 2px;
+
+    text-align: center;
+    
+    font-size: 12px;
+}

@@ -2,13 +2,11 @@
 // TODO falls read or write fehlschlägt und dannach isConnected = false => NoConnectionPanel anzeigen (nur wenn selectedPanel != 0)
 
 namespace Dongle {
-    declare let bluetoothSerial: any;
+    declare let ble: any;
     
     export let bluetooth: Bluetooth = null;
 
     export class Bluetooth { 
-        private isConnected: boolean = false;
-
         private constructor() {
             this.connect();
         }
@@ -22,20 +20,25 @@ namespace Dongle {
 
         public IsConnected(success: () => void, failure: () => void) {
             this.enable(() => {      
-                bluetoothSerial.isConnected(success, failure);
+                let deviceId = Store.get(Settings.Store.deviceId);
+
+                if (deviceId != null)
+                    ble.isConnected(deviceId, success, failure);
+                else
+                    failure();
             }, 
             () => {
                 failure();
             });
         }
 
-        public connect(address_or_uuid: string = null, success: () => void = null, failure: () => void = null) {
+        public connect(deviceId: string = null, success: () => void = null, failure: () => void = null) {
             Logging.push("Bluetooth connecting...");
 
-            if (address_or_uuid == null) 
-                address_or_uuid = Store.get(Settings.Store.address_or_uuid);
-            if (address_or_uuid == null) {
-                Logging.push("Bluetooth not connected, address_or_uuid is null!");
+            if (deviceId == null) 
+                deviceId = Store.get(Settings.Store.deviceId);
+            if (deviceId == null) {
+                Logging.push("Bluetooth not connected, deviceId is null!");
 
                 if (failure != null)
                     failure();
@@ -44,34 +47,26 @@ namespace Dongle {
             }               
 
             this.enable(() => {            
-                let con = () => {
-                    Logging.push("Bluetooth connecting to: '" + address_or_uuid + "'...");
+                this.IsConnected(() => {
+                    Logging.push("Bluetooth already connected, disconnecting...");
 
-                    bluetoothSerial.connect(address_or_uuid, () => {
+                    success();                
+                }, () => {
+                    Logging.push("Bluetooth connecting to: '" + deviceId + "'...");
+
+                    ble.connect(deviceId, (device: any) => {
                         Logging.push("Bluetooth connect succeeded!");
 
                         DisplayFeature.noConnectionPanel.hide();
 
                         if (success != null)
                             success();
-                    }, () => {
-                        Logging.push("Bluetooth connect failed!");
+                    }, (error: any) => {
+                        Logging.push("Bluetooth connect failed: " + error);
 
                         if (failure != null)
                             failure();
                     });
-                }
-
-                bluetoothSerial.isConnected(() => {
-                    Logging.push("Bluetooth already connected, disconnecting...");
-
-                    this.disconnect();
-
-                    Logging.push("Bluetooth disconnected, connecting now...");
-
-                    con();                
-                }, () => {
-                    con();
                 });  
             }, 
             () => {
@@ -81,27 +76,33 @@ namespace Dongle {
         }
     
         public disconnect() {
-            bluetoothSerial.disconnect();
+            let deviceId = Store.get(Settings.Store.deviceId);
+
+            if (deviceId != null)
+                ble.disconnect(deviceId, () => {}, () => {});
         }
 
-        public browse(callback: (device: any) => void, success: () => void, failure: () => void) {   
+        public startScan(callback: (device: any) => void, failure: () => void) {   
             this.enable(() => {
-                bluetoothSerial.setDeviceDiscoveredListener(callback);
-                bluetoothSerial.discoverUnpaired(success, failure);
+                ble.startScan([], callback, failure);
             }, () => {
                 failure();
             }); 
         }
 
+        public stopScan() {
+            ble.stopScan();
+        }
+
         private enable(success: () => void, failure: () => void) {
-            bluetoothSerial.isEnabled(
+            ble.isEnabled(
                 () => {
                     Logging.push("Bluetooth already enabled!");
 
                     success();
                 }, 
                 () => {
-                bluetoothSerial.enable(() => {
+                ble.enable(() => {
                     Logging.push("Bluetooth enabled!");
 
                     success();

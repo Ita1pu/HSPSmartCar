@@ -35,7 +35,7 @@
                 <input type="text" class="form-control" name="Model" placeholder="Model">
             </div>
             <div class="col">
-                <input type="text" class="form-control" name="Vid" placeholder="VID">
+                <input type="text" class="form-control" name="LicencePlate" placeholder="Licence Plate">
             </div>
             <button type="submit" class="btn btn-primary">Add</button>
         </div>
@@ -73,7 +73,7 @@
                         <p class="card-text"><span style="font-size: 16pt; font-weight: bold">@vehicle.Brand</span> @vehicle.Model</p>
                     </div>
 
-                    <p class="card-text">VID: @vehicle.Vid</p>
+                    <p class="card-text">Licence Plate: @vehicle.LicencePlate</p>
 
                     <div >
                         <a class="btn btn-danger btn-sm removeLink" asp-controller="Vehicle" asp-action="RemoveVehicle" asp-route-vehicleId="@vehicle.VehicleId">Remove</a>

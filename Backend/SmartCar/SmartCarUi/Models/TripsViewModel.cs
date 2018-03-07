@@ -12,6 +12,8 @@ namespace SmartCarUi.Models
 
         public DateTime RangeEnd { get; set; }
 
+        public IEnumerable<Vehicle> Vehicles { get; set; }
+
         public IEnumerable<Trip> Trips { get; set; }
     }
 }

@@ -55,6 +55,8 @@ namespace SmartCar.Shared.Database
                 i.ToTable("RoleClaims");
                 i.HasKey(x => x.Id);
             });
+
+
         }
     }
 }

@@ -10,9 +10,6 @@ namespace SmartCarApi.Controllers
     [Authorize]
     public class TripDetailsController : Controller
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+
     }
 }

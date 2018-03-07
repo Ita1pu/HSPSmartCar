@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SmartCar.Shared.Database;
+using SmartCar.Shared.Model;
 using SmartCarApi.Extensions;
 
 namespace SmartCarApi.Controllers
@@ -45,8 +47,9 @@ namespace SmartCarApi.Controllers
                 var startDate = DateTime.Parse(rangeStart);
                 var endDate = DateTime.Parse(rangeEnd);
 
-                var trips = _db.Trips.Where(t => t.User.Id == user.Id
-                    && t.TripStart > startDate && t.TripStart < endDate);
+                var trips = _db.Trips.Include(t => t.Vehicle).Where(t => t.User.Id == user.Id
+                                                                         && t.TripStart > startDate &&
+                                                                         t.TripStart < endDate);
 
                 return Ok(JsonConvert.SerializeObject(trips));
             }
@@ -54,6 +57,83 @@ namespace SmartCarApi.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        /// <summary>
+        /// Gets the trip identified by the given trip id.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
+        [HttpGet]
+        [Route("{tripId}")]
+        public IActionResult GetTrip(int tripId)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var trip = _db.Trips.Include(t => t.Vehicle).FirstOrDefault(t => t.User.Id == user.Id && t.TripId == tripId);
+
+            if (trip != null)
+            {
+                return Ok(JsonConvert.SerializeObject(trip));
+            }
+
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Deletes the specified trip.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
+        [HttpDelete]
+        [Route("{tripId}")]
+        public async Task<IActionResult> Delete(int tripId)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var trip = _db.Trips.Include(t => t.TripData)
+                .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == tripId);
+
+            if (trip != null)
+            {
+                _db.Trips.Remove(trip);
+                await _db.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return NotFound();
+        }
+        
+        /// <summary>
+        /// Sets the vehicle of the given trip identified by the trip id.
+        /// </summary>
+        /// <param name="trip">The trip thats vehicle shall be set.</param>
+        [HttpPut]
+        [Route("setVehicle")]
+        public async Task<IActionResult> SetVehicle([FromBody]Trip trip)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var dbTrip = _db.Trips.Include(t => t.Vehicle).Include(t => t.TripData)
+                .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == trip.TripId);
+
+            var dbVehicle =
+                _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.VehicleId == trip.Vehicle.VehicleId);
+
+            if (dbTrip != null)
+            {
+                dbTrip.Vehicle = dbVehicle;
+                await _db.SaveChangesAsync();
+
+                return Ok();
+            }
+
+            return NotFound();
         }
     }
 }

@@ -1,0 +1,82 @@
+﻿@model TripViewModel
+    
+<div class="container">
+    <div class="row">
+        <a class="fa fa-chevron-circle-left fa-2x" asp-controller="Trip" asp-action="Index" style="text-decoration: none; color: inherit; margin-right: 20px; margin-top:10px"></a>
+        <h1>Trip Details</h1>
+    </div>
+</div>
+
+<hr/>
+
+<div id="map" style="height: 400px; width: auto"></div>
+
+<hr/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-clock-o fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.TripStart.ToString()</span><br />
+                <span>Start Time</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-hourglass fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.Duration.ToString()</span><br />
+                <span>Duration</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-truck fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.Distance km</span><br />
+                <span>Distance</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-chevron-right fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.AvgSpeed km/h</span><br />
+                <span>Average Speed</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<hr/>
+
+@section Scripts
+{
+    
+    <script>
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 3,
+                center: {lat: 0, lng: -180},
+                mapTypeId: 'terrain'
+            });
+
+            var flightPlanCoordinates = [
+                {lat: 37.772, lng: -122.214},
+                {lat: 21.291, lng: -157.821},
+                {lat: -18.142, lng: 178.431},
+                {lat: -27.467, lng: 153.027}
+            ];
+            var flightPath = new google.maps.Polyline({
+                path: flightPlanCoordinates,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+
+            flightPath.setMap(map);
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&callback=initMap">
+    </script>
+}

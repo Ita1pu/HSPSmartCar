@@ -14,7 +14,7 @@
                     <input type="text" class="form-control datepicker-start" name="RangeStart" placeholder="Range Start" value="@Model?.RangeStart.ToShortDateString()">
                     <div class="input-group-append">
                         <span class="input-group-text"><i class="fa fa-calendar fa-lg" id="date-trigger-start"></i></span>
-                        
+
                     </div>
                 </div>
             </div>
@@ -33,21 +33,67 @@
 
 <hr />
 
-@if (Model?.Trips != null)
-{
-    <table class="table">
-        @foreach (var trip in Model.Trips)
-        {
-            <tr>
-                <td></td>
-            </tr>
-        }
-    </table>
-}
-else
-{
-    <p class="lead">No trips found!</p>
-}
+<form method="post" asp-controller="Trip" asp-action="ModifyTrips">
+    <div class="container">
+        <div class="row m-0">
+            <button type="submit" class="btn btn-primary btn-space" name="Action" value="removeTrips">Remove Trips</button>
+            <button type="submit" class="btn btn-primary btn-space" name="Action" value="setVehicle">Set Vehicle</button>
+            
+            <select class="form-control" name="SelectedVehicleId" style="width: 150px">
+                <option value="-1">-</option>
+                @if (Model?.Vehicles != null)
+                {
+                    foreach (var licence in Model.Vehicles)
+                    {
+                        <option value="@licence.VehicleId">@licence.LicencePlate</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <hr />
+
+    @if (Model?.Trips != null && Model.Trips.Any())
+    {
+        int tripIndex = 0;
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>Trip Start</th>
+                    <th>Distance</th>
+                    <th>Duration</th>
+                    <th>Average Speed</th>
+                    <th>Vehicle</th>
+                    <th></th>
+                </tr>
+            </thead>
+            @foreach (var trip in Model.Trips)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="Trips[@tripIndex].IsSelected" value="true"/>
+                        <input type="hidden" name="Trips[@tripIndex].Trip.TripId" value="@trip.TripId"/>
+                    </td>
+                    <td><p>@trip.TripStart.ToString()</p></td>
+                    <td><p>@trip.Distance km</p></td>
+                    <td><p>@trip.Duration.ToString()</p></td>
+                    <td><p>@trip.AvgSpeed km/h</p></td>
+                    <td><p>@trip.Vehicle?.LicencePlate</p></td>
+                    <td><a class="btn btn-primary" asp-controller="Trip" asp-action="TripDetails" asp-route-tripId="@trip.TripId">Show Details</a></td>
+                </tr>
+
+                tripIndex++;
+            }
+        </table>
+    }
+    else
+    {
+        <p class="lead">No trips found!</p>
+    }
+</form>
 
 @section Scripts
 {

@@ -29,7 +29,7 @@ namespace View {
     
         document.addEventListener(Settings.isMobile ? "touchstart" : "mousedown", (evt: any) => {  
             if (Settings.isMobile) {           
-                xDown = evt.touches[0].clientX;                                      
+                xDown = evt.touches[0].clientX;
                 yDown = evt.touches[0].clientY;   
             }
             else {
@@ -60,9 +60,13 @@ namespace View {
                 xUp = evt.clientX;
                 yUp = evt.clientY;
             } 
-        
+
             let xDiff = xDown - xUp;
             let yDiff = yDown - yUp;
+
+            if (Math.abs(xDiff) > Math.abs(yDiff)) 
+                evt.preventDefault();
+        
             if (Math.abs(xDiff) + Math.abs(yDiff) > Settings.swipeDistance) {
                 if (Math.abs(xDiff) > Math.abs(yDiff)) {
                     if (xDiff > 0) {

@@ -24,7 +24,10 @@ namespace View {
 
                 let dialog = new Dialog.Dialog(
                     [ "" ],
-                    [ new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 
+                    [ new Dialog.Button("Cancel", () => { 
+                        Dongle.bluetooth.stopScan();
+                        dialog.destroy(); 
+                    }) ], 
                     () => { 
                         Dongle.bluetooth.stopScan();
                         dialog.destroy(); 

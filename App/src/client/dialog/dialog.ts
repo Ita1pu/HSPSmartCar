@@ -68,6 +68,14 @@ namespace Dialog {
             View.disableSwipe();
         }
 
+        public maximize() {
+            this.control.css("height", "100%");
+            this.body.css("height", "calc(100% - 85px)");
+
+            this.control.css("left", "10px");
+            this.control.css("top", "10px");
+        }
+
         public centerScreen() {
             this.control.css("left", "calc(50% - (" + this.control.width() + "px / 2) - 2px)");
             this.control.css("top", "calc(50% - (" + this.control.height() + "px / 2))");

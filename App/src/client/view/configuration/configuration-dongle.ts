@@ -33,13 +33,9 @@ namespace View {
                         dialog.destroy(); 
                     });
 
-                let dialogBackground = dialog.getBackground();
+                dialog.maximize();
+
                 let dialogBody = dialog.getBody();
-                let dialogButtonDiv = dialog.getButtonDiv();
-
-                dialogBody.height(dialogBackground.height() - dialogButtonDiv.height() - 50);
-                dialog.centerScreen();
-
                 dialogBody.html("");
 
                 let dialogDiv = $("<div>", { class: Var.Style.View.Configuration.Dongle.dialog }).appendTo(dialogBody);

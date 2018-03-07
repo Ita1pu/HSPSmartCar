@@ -58,52 +58,46 @@ namespace View {
                     }), new Dialog.Button("Cancel", () => { dialog.destroy(); }) ], 
                     () => { dialog.destroy(); });
 
-                let dialogBackground = dialog.getBackground();
+                dialog.maximize();
+
                 let dialogBody = dialog.getBody();
-                let dialogButtonDiv = dialog.getButtonDiv();
-
-                dialogBody.height(dialogBackground.height() - dialogButtonDiv.height() - 50);
-                dialog.centerScreen();
-
                 dialogBody.html("");
 
-                // TODO css
-
-                let table = $("<table>", { class: "" }).appendTo(dialogBody);
+                let table = $("<table>", { class: Var.Style.View.Configuration.Backend.Dialog.table }).appendTo(dialogBody);
 
                 // url
-                let urlTr = $("<tr>", { class: "" }).appendTo(table);
-                $("<td>", { class: "" }).text("URL:").appendTo(urlTr);
-                let urlDiv = $("<td>", { class: "" }).appendTo(urlTr);
-                urlInput = $("<input type='text'>", { class: "" }).text(Store.get(Settings.Store.Backend.url)).appendTo(urlDiv);
+                let urlTr = $("<tr>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.entry }).appendTo(table);
+                $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.label }).text("URL:").appendTo(urlTr);
+                let urlDiv = $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.input }).appendTo(urlTr);
+                urlInput = $("<input type='text'>").text(Store.get(Settings.Store.Backend.url)).appendTo(urlDiv);
                 urlInput.val(Store.get(Settings.Store.Backend.url));
 
                 // apiPort
-                let apiPortTr = $("<tr>", { class: "" }).appendTo(table);
-                $("<td>", { class: "" }).text("API Port:").appendTo(apiPortTr);
-                let apiPortDiv = $("<td>", { class: "" }).appendTo(apiPortTr);
-                apiPortInput = $("<input type='text'>", { class: "" }).text(Store.get(Settings.Store.Backend.apiPort)).appendTo(apiPortDiv);
+                let apiPortTr = $("<tr>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.entry }).appendTo(table);
+                $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.label }).text("API Port:").appendTo(apiPortTr);
+                let apiPortDiv = $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.input }).appendTo(apiPortTr);
+                apiPortInput = $("<input type='text'>").text(Store.get(Settings.Store.Backend.apiPort)).appendTo(apiPortDiv);
                 apiPortInput.val(Store.get(Settings.Store.Backend.apiPort));
 
                 // identityPort
-                let identityPortTr = $("<tr>", { class: "" }).appendTo(table);
-                $("<td>", { class: "" }).text("Identity Port:").appendTo(identityPortTr);
-                let identityPortDiv = $("<td>", { class: "" }).appendTo(identityPortTr);
-                identityPortInput = $("<input type='text'>", { class: "" }).text(Store.get(Settings.Store.Backend.identityPort)).appendTo(identityPortDiv);
+                let identityPortTr = $("<tr>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.entry }).appendTo(table);
+                $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.label }).text("Identity Port:").appendTo(identityPortTr);
+                let identityPortDiv = $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.input }).appendTo(identityPortTr);
+                identityPortInput = $("<input type='text'>").text(Store.get(Settings.Store.Backend.identityPort)).appendTo(identityPortDiv);
                 identityPortInput.val(Store.get(Settings.Store.Backend.identityPort));
 
                 // username
-                let usernameTr = $("<tr>", { class: "" }).appendTo(table);
-                $("<td>", { class: "" }).text("Username:").appendTo(usernameTr);
-                let usernameDiv = $("<td>", { class: "" }).appendTo(usernameTr);
-                usernameInput = $("<input type='text'>", { class: "" }).text(Store.get(Settings.Store.Backend.username)).appendTo(usernameDiv);
+                let usernameTr = $("<tr>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.entry }).appendTo(table);
+                $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.label }).text("Username:").appendTo(usernameTr);
+                let usernameDiv = $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.input }).appendTo(usernameTr);
+                usernameInput = $("<input type='text'>").text(Store.get(Settings.Store.Backend.username)).appendTo(usernameDiv);
                 usernameInput.val(Store.get(Settings.Store.Backend.username));
 
                 // password
-                let passwordTr = $("<tr>", { class: "" }).appendTo(table);
-                $("<td>", { class: "" }).text("Password:").appendTo(passwordTr);
-                let passwordDiv = $("<td>", { class: "" }).appendTo(passwordTr);
-                passwordInput = $("<input type='password'>", { class: "" }).text(Store.get(Settings.Store.Backend.password)).appendTo(passwordDiv);
+                let passwordTr = $("<tr>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.entry }).appendTo(table);
+                $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.label }).text("Password:").appendTo(passwordTr);
+                let passwordDiv = $("<td>", { class: Var.Style.View.Configuration.Backend.Dialog.Table.Entry.input }).appendTo(passwordTr);
+                passwordInput = $("<input type='password'>").text(Store.get(Settings.Store.Backend.password)).appendTo(passwordDiv);
                 passwordInput.val(Store.get(Settings.Store.Backend.password));
             });
 
@@ -169,9 +163,9 @@ namespace View {
                 processData: false,
                 timeout: 5000,
                 success: function (response) {
-                    Logging.push("Backend connected successfully: " + response);
+                    Logging.push("Backend connected successfully: " + JSON.stringify(response));
 
-                    // TODO set token
+                    // TODO save token
 
                     succesCallback();
                 },

@@ -1,0 +1,29 @@
+.#{$view_configuration_backend_dialog_table} {
+    overflow: scroll;
+
+    width: 100%;
+}
+
+.#{$view_configuration_backend_dialog_table_entry} {
+    
+}
+
+.#{$view_configuration_backend_dialog_table_entry_label} {
+    width: 1%;
+
+    white-space: nowrap;
+
+    text-align: right;
+
+    padding: 5px;
+}
+
+.#{$view_configuration_backend_dialog_table_entry_input} {
+    padding: 5px;
+}
+
+.#{$view_configuration_backend_dialog_table_entry_input} > input {
+    width: 100%;
+
+    padding: 5px;
+}

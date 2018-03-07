@@ -59,6 +59,18 @@ namespace Var {
                             rssi: "view-configuration-dongle-dialog-entry-rssi"
                         }
                     }
+                },
+                Backend: {
+                    Dialog: {
+                        table: "view-configuration-backend-dialog-table",
+                        Table: {
+                            entry: "view-configuration-backend-dialog-table-entry",
+                            Entry: {
+                                label: "view-configuration-backend-dialog-table-entry-label",
+                                input: "view-configuration-backend-dialog-table-entry-input"
+                            }
+                        }
+                    }
                 }
             }
         },

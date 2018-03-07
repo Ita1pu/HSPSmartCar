@@ -57,6 +57,8 @@ namespace Dongle {
                     let timer = setTimeout(() => {
                         this.stopScan();
 
+                        Logging.push("Bluetooth connect failed - scan timeout!");
+
                         if (failure != null)
                             failure();
                     }, 5000);

@@ -185,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\ApplicationDbContext.cs" />
+    <Compile Include="Rest\GpsCoordinate.cs" />
     <Compile Include="Rest\ParseResult.cs" />
     <Compile Include="Model\Identity\AppUser.cs" />
     <Compile Include="Model\Identity\AppUserRole.cs" />

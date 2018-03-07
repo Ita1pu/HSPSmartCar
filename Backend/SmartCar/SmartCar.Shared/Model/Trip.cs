@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SmartCar.Shared.Model.Identity;
+using SmartCar.Shared.Rest;
+
 
 namespace SmartCar.Shared.Model
 {
@@ -21,9 +23,13 @@ namespace SmartCar.Shared.Model
 
         public TimeSpan Duration { get; set; }
 
-        public double Distance { get; set; }
+        public double Distance { get; set; }//m
 
-        public double AvgSpeed { get; set; }
+        public double AvgSpeed { get; set; }//km/h
+
+        public GpsCoordinate StartLocation { get; set; }
+
+        public GpsCoordinate EndLocation { get; set; }
 
         public List<TripData> TripData { get; set; }
 

@@ -46,7 +46,7 @@ namespace SmartCarApi.Controllers
                 var endDate = DateTime.Parse(rangeEnd);
 
                 var trips = _db.Trips.Where(t => t.User.Id == user.Id
-                    && t.TripStart > startDate && t.TripStart < endDate);
+                    && t.TripStart >= startDate && t.TripStart <= endDate);
 
                 return Ok(JsonConvert.SerializeObject(trips));
             }

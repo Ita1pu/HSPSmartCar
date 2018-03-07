@@ -120,6 +120,9 @@ namespace obd
     */
     const unsigned char GpsSatCount          =             (0xF2);
     /**
+        ATTENTION: GPS altitude was added later. To preserve the correctness of the test data altitude data has PID 0xF9.
+    */
+    /**
         Full name: acceleration value of x axis in 1/1000 of gravitational force; Range: [to be checked]
     */
     const unsigned char AccelXAxis           =             (0xF3);
@@ -143,6 +146,10 @@ namespace obd
         Full name: gyroscope value of z axis in 1/1000 of degrees per second; Range: [to be checked]
     */
     const unsigned char GyroZAxis            =             (0xF8);
+    /**
+        Full name: altitude in meters above mean sea level; Range: [0; 65535]
+    */
+    const unsigned char GpsAltitude          =             (0xF9);
 
 }//end namespace obd
 #endif

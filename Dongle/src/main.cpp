@@ -152,6 +152,7 @@ void loop()
           //log GPS data
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, locSrv.GetLatitude());
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, locSrv.GetLongitude());
+          p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsAltitude, locSrv.GetAltitude());
         }
         //log fast OBD data
         //no fast pids selected

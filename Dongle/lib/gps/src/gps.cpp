@@ -126,6 +126,10 @@ uint8_t LocationTimeService::GetSat(){
   return _gData.sat;
 }
 
+uint16_t LocationTimeService::GetAltitude(){
+  return _gData.alt;
+}
+
 uint32_t LocationTimeService::GetTime(){
   return (_gData.time*10)+clockDeviation;
 }
@@ -162,12 +166,15 @@ bool LocationTimeService::RenewGPSData(){
   bool retVal = _coProc->gpsGetData(&_gData);
   //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
   if(_gData.sat > 14 && _gData.sat < 4){
-    _gData.time = 0;
-    _gData.date = 0;
-    _gData.lat = 0;
-    _gData.lng = 0;
+    //invalidate gps location
+    _gData.lat = 9999;
+    _gData.lng = 9999;
+    _gData.alt = 9999;
+    retVal = false;
+  }else{
+    clockDeviation = 0;
   }
-  clockDeviation = 0;
+
   return retVal;
 }
 

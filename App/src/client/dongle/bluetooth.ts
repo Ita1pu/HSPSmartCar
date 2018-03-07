@@ -44,7 +44,7 @@ namespace Dongle {
                     failure();
 
                 return;
-            }               
+            }
 
             this.enable(() => {            
                 this.IsConnected(() => {
@@ -54,18 +54,34 @@ namespace Dongle {
                 }, () => {
                     Logging.push("Bluetooth connecting to: '" + deviceId + "'...");
 
-                    ble.connect(deviceId, (device: any) => {
-                        Logging.push("Bluetooth connect succeeded!");
-
-                        DisplayFeature.noConnectionPanel.hide();
-
-                        if (success != null)
-                            success();
-                    }, (error: any) => {
-                        Logging.push("Bluetooth connect failed: " + error);
+                    let timer = setTimeout(() => {
+                        this.stopScan();
 
                         if (failure != null)
                             failure();
+                    }, 5000);
+
+                    this.startScan((device: any) => {
+                        if (device.id == deviceId) {
+                            this.stopScan();
+                            clearTimeout(timer);
+
+                            ble.connect(deviceId, () => {
+                                Logging.push("Bluetooth connect succeeded!");
+        
+                                DisplayFeature.noConnectionPanel.hide();
+        
+                                if (success != null)
+                                    success();
+                            }, (error: any) => {
+                                Logging.push("Bluetooth connect failed: " + error);
+        
+                                if (failure != null)
+                                    failure();
+                            });
+                        }
+                    }, () => {
+                        Logging.push("Bluetooth connect - scanning failed");
                     });
                 });  
             }, 

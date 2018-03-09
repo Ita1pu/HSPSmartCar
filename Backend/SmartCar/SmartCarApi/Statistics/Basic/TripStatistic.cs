@@ -26,7 +26,7 @@ namespace SmartCarApi.Statistics.Basic
                 trip.Distance += trace[i].Item2.GetDistance(trace[i + 1].Item2);
             }
 
-            trip.AvgSpeed = (trip.Distance/1000)  / trip.Duration.Hours;
+            trip.AvgSpeed = (trip.Distance/1000) / Math.Max(trip.Duration.Hours, 1);
 
             trip.StartLocation = trace[0].Item2;
             trip.EndLocation = trace[trace.Count - 1].Item2;
@@ -38,7 +38,7 @@ namespace SmartCarApi.Statistics.Basic
             int status = 0; //+1=longitude is set       +2=latitude is set
             int tempLongitude = 0;
             int tempLatitude = 0;
-
+            
             List<Tuple<DateTime, GpsCoordinate>> returnValue = new List<Tuple<DateTime, GpsCoordinate>>();
             foreach (var currentTripData in trip.TripData)
             {

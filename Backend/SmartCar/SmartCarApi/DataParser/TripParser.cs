@@ -10,6 +10,7 @@ using SmartCar.Shared.Model;
 using SmartCar.Shared.Model.Identity;
 using SmartCar.Shared.Rest;
 using SmartCarApi.Extensions;
+using SmartCarApi.Statistics.Basic;
 
 namespace SmartCarApi.DataParser
 {
@@ -35,7 +36,11 @@ namespace SmartCarApi.DataParser
 
             if (tripData.Any())
             {
+                //Split the trips
                 var splitTrips = SplitTrips(tripData);
+
+                //Initially calculate trip data
+                SetBasicData(splitTrips);
 
                 _db.Trips.AddRange(splitTrips);
                 _db.SaveChanges();
@@ -85,6 +90,50 @@ namespace SmartCarApi.DataParser
             return tripData;
         }
 
+        private List<Trip> SplitTrips(IEnumerable<TripData> rawTripDataSource)
+        {
+            var trips = new List<Trip>();
+            var tripDateSource = rawTripDataSource.ToList();
+
+            if (tripDateSource.Any())
+            {
+                var lastMvid = tripDateSource.FirstOrDefault()?.Mvid ?? 0;
+                var lastTimestamp = tripDateSource.FirstOrDefault()?.Timestamp ?? new DateTime();
+                var currentTrip = new Trip { User = _user, TripStart = lastTimestamp };
+
+                foreach (var tripEntry in tripDateSource)
+                {
+                    //If a new mvid is found or the time difference between two consecutive entries is greater than
+                    //the value defined by NewTripSpan, a new trip is created.
+                    if (tripEntry.Mvid != lastMvid || (tripEntry.Timestamp - lastTimestamp).TotalSeconds > NewTripSpan)
+                    {
+                        trips.Add(currentTrip);
+                        currentTrip = new Trip { User = _user, TripStart = tripEntry.Timestamp };
+                    }
+
+                    lastMvid = tripEntry.Mvid;
+                    lastTimestamp = tripEntry.Timestamp;
+
+                    currentTrip.TripData.Add(tripEntry);
+                }
+
+                //Add last active trip
+                trips.Add(currentTrip);
+            }
+
+            return trips;
+        }
+
+        private void SetBasicData(List<Trip> trips)
+        {
+            var statistics = new TripStatistic();
+
+            foreach (var trip in trips)
+            {
+                statistics.CalculateBasicData(trip);    
+            }
+        }
+
         private SignalMap GetSignal(byte[] tripEntry)
         {
             var parsedId = ValueParser.ParseDataId(tripEntry.SubArray(9, 2));
@@ -106,40 +155,6 @@ namespace SmartCarApi.DataParser
         {
             var rawValue = tripEntry.SubArray(11, 4);
             return ValueParser.ParseInt32(rawValue);
-        }
-
-        private List<Trip> SplitTrips(IEnumerable<TripData> rawTripDataSource)
-        {
-            var trips = new List<Trip>();
-            var tripDateSource = rawTripDataSource.ToList();
-
-            if (tripDateSource.Any())
-            {
-                var lastMvid = tripDateSource.FirstOrDefault()?.Mvid ?? 0;
-                var lastTimestamp = tripDateSource.FirstOrDefault()?.Timestamp ?? new DateTime();
-                var currentTrip = new Trip{User = _user, TripStart = lastTimestamp};
-
-                foreach (var tripEntry in tripDateSource)
-                {
-                    //If a new mvid is found or the time difference between two consecutive entries is greater than
-                    //the value defined by NewTripSpan, a new trip is created.
-                    if (tripEntry.Mvid != lastMvid || (tripEntry.Timestamp - lastTimestamp).TotalSeconds > NewTripSpan)
-                    {
-                        trips.Add(currentTrip);
-                        currentTrip = new Trip { User = _user, TripStart = tripEntry.Timestamp };
-                    }
-                    
-                    lastMvid = tripEntry.Mvid;
-                    lastTimestamp = tripEntry.Timestamp;
-
-                    currentTrip.TripData.Add(tripEntry);
-                }
-
-                //Add last active trip
-                trips.Add(currentTrip);
-            }
-
-            return trips;
         }
     }
 }

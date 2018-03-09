@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SmartCar.Shared.Model;
 using SmartCarUi.Extensions;
 using SmartCarUi.Models;
@@ -47,6 +48,54 @@ namespace SmartCarUi.Controllers
             };
             
             return View(tripDetailView);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetGpsTrend([FromBody]dynamic data)
+        {
+            int tripId = (int)data["tripId"];
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/gpstrend/{tripId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return Ok(responseContent);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetSpeedTrendObd([FromBody]dynamic data)
+        {
+            int tripId = (int)data["tripId"];
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/speedtrend/obd/{tripId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return Ok(responseContent);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetSpeedTrendGps([FromBody]dynamic data)
+        {
+            int tripId = (int)data["tripId"];
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/speedtrend/gps/{tripId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return Ok(responseContent);
+            }
+
+            return null;
         }
 
         [HttpPost]

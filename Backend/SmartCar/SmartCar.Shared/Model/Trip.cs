@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,11 +28,13 @@ namespace SmartCar.Shared.Model
 
         public double AvgSpeed { get; set; }//km/h
 
+        public List<TripData> TripData { get; set; }
+
+        [NotMapped]
         public GpsCoordinate StartLocation { get; set; }
 
+        [NotMapped]
         public GpsCoordinate EndLocation { get; set; }
-
-        public List<TripData> TripData { get; set; }
 
         public Trip()
         {

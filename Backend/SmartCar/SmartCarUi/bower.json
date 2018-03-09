@@ -10,7 +10,8 @@
     "popper.js": "v1.13.0-next",
     "font-awesome": "fontawesome#v4.7.0",
     "pikaday": "1.6.1",
-    "moment": "2.20.1"
+    "moment": "2.20.1",
+    "chart.js": "Chart.js#v2.7.2"
   },
   "resolutions": {
     "jquery-validation": "1.17.0",

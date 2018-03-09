@@ -13,6 +13,7 @@ using SmartCar.Shared.Database;
 using SmartCar.Shared.Rest;
 using SmartCarApi.DataParser;
 using SmartCarApi.Extensions;
+using SmartCarApi.Statistics.Basic;
 
 namespace SmartCarApi.Controllers
 {
@@ -49,7 +50,7 @@ namespace SmartCarApi.Controllers
 
             var parser = new TripParser(_repo.DbContext, user);
             var parseResult = parser.ParseLogfile(logfile);
-            
+
             return Ok(JsonConvert.SerializeObject(parseResult));
         }
     }

@@ -7,7 +7,7 @@
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="~/css/template.css">
+    <link rel="stylesheet" href="~/css/template.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
@@ -24,12 +24,6 @@
 
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
-                        <i class="fa fa-fw fa-dashboard"></i>
-                        <span class="nav-link-text">Dashboard</span>
-                    </a>
-                </li>
                 <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Trips">
                     <a class="nav-link" asp-controller="Trip" asp-action="Index">
                         <i class="fa fa-fw fa-suitcase"></i>
@@ -96,10 +90,12 @@
     </div>
 
     <!-- Scripts -->
+    <script src="~/lib/moment/moment.js"></script>
     <script src="~/lib/popper.js/dist/umd/popper.js"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery.easing/js/jquery.easing.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/chart.js/dist/Chart.js"></script>
     <script src="~/js/template.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

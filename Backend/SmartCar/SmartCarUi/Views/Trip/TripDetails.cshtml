@@ -48,25 +48,33 @@
 
 <hr/>
 
+<div class="container">
+    <h3>Speed Trend</h3>
+    <canvas id="speedTrend"></canvas>
+
+</div>
+
 @section Scripts
 {
-    
+    <!-- Gps Map -->
     <script>
-        function initMap() {
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 3,
-                center: {lat: 0, lng: -180},
-                mapTypeId: 'terrain'
-            });
+        function initMap(gpsData) {
+            var map = new google.maps.Map(document.getElementById('map'),
+                {
+                    zoom: 12,
+                    center: { lat: (gpsData[0].Item2._latitude / (1000 * 1000)), lng: (gpsData[0].Item2._longitude / (1000 * 1000)) },
+                    mapTypeId: 'terrain'
+                });
+            
+            var tripCoordinates = [];
 
-            var flightPlanCoordinates = [
-                {lat: 37.772, lng: -122.214},
-                {lat: 21.291, lng: -157.821},
-                {lat: -18.142, lng: 178.431},
-                {lat: -27.467, lng: 153.027}
-            ];
+            for (var i = 0; i < gpsData.length; i++) {
+                var coords = gpsData[i].Item2;
+                tripCoordinates.push({ lat: (coords._latitude/(1000*1000)), lng: (coords._longitude/(1000*1000))});
+            }
+
             var flightPath = new google.maps.Polyline({
-                path: flightPlanCoordinates,
+                path: tripCoordinates,
                 geodesic: true,
                 strokeColor: '#FF0000',
                 strokeOpacity: 1.0,
@@ -75,8 +83,117 @@
 
             flightPath.setMap(map);
         }
+
+        function loadGpsData() {
+            var serviceUrl = '/Trip/GetGpsTrend';
+
+            $.ajax({
+                type: "POST",
+                url: serviceUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedGps,
+                error: errorLoadingGps
+            });
+        }   
+
+        function loadedGps(data, status) {
+            initMap(data);
+        }
+
+        function errorLoadingGps() {
+            alert('Could not load gps data!');
+        }
     </script>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&callback=initMap">
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&callback=loadGpsData">
+
+    </script>
+    
+    <!-- Trends -->
+    <script>
+        var speedChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'Speed Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'km/h'
+                        }
+                    }]
+                }
+            }
+        };
+
+        $(document).ready(function () {
+            var speedTrendCtx = document.getElementById('speedTrend').getContext('2d');
+            window.speedTrend = new Chart(speedTrendCtx, speedChartConfig);
+
+            var speedTrendObdUrl = '/Trip/GetSpeedTrendObd';
+
+            $.ajax({
+                type: "POST",
+                url: speedTrendObdUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedSpeedTrendObd,
+                error: errorLoadingTrend
+            });
+
+            @*var speedTrendGpsUrl = '/Trip/GetSpeedTrendGps';
+
+            $.ajax({
+                type: "POST",
+                url: speedTrendGpsUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedSpeedTrendGps,
+                error: errorLoadingTrend
+            });*@
+        });
+
+        function loadedSpeedTrendObd(data, status) {
+            var obdSpeedData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                obdSpeedData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var speedTrendObd = {
+                label: "Speed OBD",
+                borderColor: "#307FFF",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: obdSpeedData
+            };
+
+            speedChartConfig.data.datasets.push(speedTrendObd);
+            window.speedTrend.update();
+        }
+
+        function loadedSpeedTrendGps(data, status) {
+
+        }
+
+        function errorLoadingTrend() {
+            alert('Could not load trend data');
+        }
+
     </script>
 }

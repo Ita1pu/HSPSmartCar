@@ -17,6 +17,15 @@ namespace View {
             let velocityUnitKmH = $("<div>")
                 .text(Strings.View.Configuration.Switch.VelocityUnit.KmH).appendTo(velocityUnit);
 
+            let temperaturUnit = $("<div>", { class: Var.Style.View.Configuration.switch })
+                .appendTo(this.control);
+
+            let temperaturUnitKelvin = $("<div>")
+                .text(Strings.View.Configuration.Switch.TemperaturUnit.Kelvin).appendTo(temperaturUnit);
+
+            let temperaturUnitCelsius = $("<div>")
+                .text(Strings.View.Configuration.Switch.TemperaturUnit.Celsius).appendTo(temperaturUnit);
+
             let swipeHelp = $("<div>", { class: Var.Style.View.Configuration.switch })
                 .appendTo(this.control);
 
@@ -32,6 +41,14 @@ namespace View {
             }
             else {
                 velocityUnitMpH.addClass(Var.Style.View.Configuration.Switch.enabled);
+            }
+
+            let temperaturUnitVal = Store.get(Settings.Store.temperaturUnit);
+            if (temperaturUnitVal == null || temperaturUnitVal == Settings.Store.TemperaturUnit.Celsius) {
+                temperaturUnitCelsius.addClass(Var.Style.View.Configuration.Switch.enabled);
+            }
+            else {
+                temperaturUnitKelvin.addClass(Var.Style.View.Configuration.Switch.enabled);
             }
 
             let swipeHelpVal = Store.get(Settings.Store.showSwipeHelp);
@@ -59,6 +76,24 @@ namespace View {
             };
             velocityUnitMpH.click(onVelocityUnit);
             velocityUnitKmH.click(onVelocityUnit);
+
+            let onTemperaturUnit = () => {
+                let temperaturUnitVal = Store.get(Settings.Store.temperaturUnit);
+                if (temperaturUnitVal == null || temperaturUnitVal == Settings.Store.TemperaturUnit.Celsius) {
+                    Store.set(Settings.Store.temperaturUnit, Settings.Store.TemperaturUnit.Kelvin);
+
+                    temperaturUnitCelsius.removeClass(Var.Style.View.Configuration.Switch.enabled);
+                    temperaturUnitKelvin.addClass(Var.Style.View.Configuration.Switch.enabled);
+                }
+                else {
+                    Store.set(Settings.Store.temperaturUnit, Settings.Store.TemperaturUnit.Celsius);
+
+                    temperaturUnitCelsius.addClass(Var.Style.View.Configuration.Switch.enabled);
+                    temperaturUnitKelvin.removeClass(Var.Style.View.Configuration.Switch.enabled);
+                }
+            };
+            temperaturUnitCelsius.click(onTemperaturUnit);
+            temperaturUnitKelvin.click(onTemperaturUnit);
 
             let onSwipeHelp = () => {
                 let swipeHelpVal = Store.get(Settings.Store.showSwipeHelp);

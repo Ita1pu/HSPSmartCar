@@ -28,11 +28,22 @@ const Strings = {
                     MpH: "Mp/H",
                     KmH: "Km/H"
                 },
+                TemperaturUnit: {
+                    Celsius: "Celsius",
+                    Kelvin: "Kelvin"
+                },
                 SwipeHelp: {
                     enable: "Enable Swipe Help",
                     disbale: "Disable Swipe Help"
                 }
             }
+        },
+        SimpleList: {
+            velocity: "Velocity",
+            rotSpeed: "rot. Speed",
+            oilTemperatur: "Oil Temp.",
+            gps: "GPS",
+            mobile: " (mob.)"
         }
     }
 }

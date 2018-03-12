@@ -26,6 +26,11 @@ const Settings = {
             MpH: "MpH",
             KmH: "KmH"
         },
+        temperaturUnit: "temperaturUnit",
+        TemperaturUnit: {
+            Celsius: "Celsius",
+            Kelvin: "Kelvin"
+        },
         deviceId: "deviceId",
         Backend: {
             url: "url",

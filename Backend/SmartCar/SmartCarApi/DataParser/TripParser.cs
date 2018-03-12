@@ -42,6 +42,9 @@ namespace SmartCarApi.DataParser
                 //Initially calculate trip data
                 SetBasicData(splitTrips);
 
+                //Assing default vehicle
+                AssignVehicle(splitTrips);
+
                 _db.Trips.AddRange(splitTrips);
                 _db.SaveChanges();
 
@@ -55,6 +58,19 @@ namespace SmartCarApi.DataParser
             }
 
             return new ParseResult{Success = false};
+        }
+
+        private void AssignVehicle(List<Trip> splitTrips)
+        {
+            var vehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == _user.Id && v.IsDefault);
+
+            if (vehicle != null)
+            {
+                foreach (var trip in splitTrips)
+                {
+                    trip.Vehicle = vehicle;
+                }
+            }
         }
 
         private List<TripData> ParseTripData(IFormFile file)

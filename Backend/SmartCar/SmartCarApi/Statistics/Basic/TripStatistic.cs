@@ -36,8 +36,8 @@ namespace SmartCarApi.Statistics.Basic
         public List<Tuple<DateTime, GpsCoordinate>> GetGpsTrend(Trip trip)
         {
             int status = 0; //+1=longitude is set       +2=latitude is set
-            int tempLongitude = 0;
-            int tempLatitude = 0;
+            double tempLongitude = 0;
+            double tempLatitude = 0;
             
             List<Tuple<DateTime, GpsCoordinate>> returnValue = new List<Tuple<DateTime, GpsCoordinate>>();
             foreach (var currentTripData in trip.TripData)
@@ -45,13 +45,13 @@ namespace SmartCarApi.Statistics.Basic
 
                 if (currentTripData.SignalType.SignalName == Signal.GpsLongitude)
                 {
-                    tempLongitude = currentTripData.Value;
+                    tempLongitude = currentTripData.Value / (double)(1000*1000);
                     status += 1;
                 }
 
                 if (currentTripData.SignalType.SignalName == Signal.GpsLatitude)
                 {
-                    tempLatitude = currentTripData.Value;
+                    tempLatitude = currentTripData.Value / (double)(1000 * 1000);
                     status += 2;
                 }
                 
@@ -93,6 +93,12 @@ namespace SmartCarApi.Statistics.Basic
             }
 
             return returnValue;
+        }
+
+        public List<Tuple<DateTime, double>> GetRpmTrend(Trip trip)
+        {
+            return trip.TripData.Where(td => td.SignalType.SignalName == Signal.EngineRpm)
+                .Select(i => new Tuple<DateTime, double>(i.Timestamp, i.Value)).ToList();
         }
     }
 }

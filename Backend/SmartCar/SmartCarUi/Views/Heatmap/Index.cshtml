@@ -1,0 +1,130 @@
+﻿@model RangeViewModel
+
+<h1>Heatmap</h1>
+
+<hr />
+
+<div class="container">
+    <h4>Select Range</h4>
+
+    <div class="form-row">
+        <div class="col">
+            <div class="input-group">
+                <input type="text" class="form-control datepicker-start" id="rangeStart" name="RangeStart" placeholder="Range Start" value="@Model?.RangeStart.ToShortDateString()">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar fa-lg" id="date-trigger-start"></i></span>
+
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="input-group">
+                <input type="text" class="form-control datepicker-end" id="rangeEnd" name="RangeEnd" placeholder="Range End" value="@Model?.RangeEnd.ToShortDateString()">
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar fa-lg" id="date-trigger-end"></i></span>
+                </div>
+            </div>
+        </div>
+        <button type="submit" id="btnShowMap" class="btn btn-primary">Show</button>
+    </div>
+</div>
+
+<hr/>
+
+<div class="container">
+    <p id="statusText" class="lead"></p>
+    <div id="map" style="height: 400px; width: auto"></div>
+</div>
+
+@section Scripts
+{
+    <script src="~/lib/pikaday/pikaday.js"></script>
+    <script src="~/lib/pikaday/plugins/pikaday.jquery.js"></script>
+    <link rel="stylesheet" href="~/lib/pikaday/css/pikaday.css"/>
+
+    <!-- Calendar configuration -->
+    <script>
+        $(function() {
+            $('.datepicker-start').pikaday({
+                firstDay: 1,
+                trigger: document.getElementById('date-trigger-start'),
+                format: 'DD.MM.YYYY'
+            });
+            $('.datepicker-end').pikaday({
+                firstDay: 1,
+                trigger: document.getElementById('date-trigger-end'),
+                format: 'DD.MM.YYYY'
+            });
+        });
+    </script>
+
+    <script>
+        function initMap(gpsData) {
+            var gpsCoordinates = [];
+
+            for (var i = 0; i < gpsData.length; i++) {
+                var coords = gpsData[i];
+                gpsCoordinates.push({
+                    location: new google.maps.LatLng(coords._latitude, coords._longitude),
+                    weight: 10
+                });
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'),
+                {
+                    center: new google.maps.LatLng(gpsData[0]._latitude, gpsData[0]._longitude),
+                    zoom: 13,
+                    mapTypeId: 'terrain'
+                });
+
+            var heatmap = new google.maps.visualization.HeatmapLayer({
+                data: gpsCoordinates,
+                opacity: 1
+            });
+            heatmap.setMap(map);
+        }
+
+        function loadHeatmap() {
+            var serviceUrl = '/Heatmap/GetHeatmap';
+
+            var rangeStart = document.getElementById('rangeStart').value;
+            var rangeEnd = document.getElementById('rangeEnd').value;
+
+            $.ajax({
+                type: "POST",
+                url: serviceUrl,
+                data: JSON.stringify({ 'rangeStart': rangeStart, 'rangeEnd': rangeEnd }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedHeatmapData,
+                error: errorLoadingData
+            });
+        }
+
+        function loadedHeatmapData(data, status) {
+            if (data.length < 1) {
+                $('#statusText').text("Could not load any GPS data for the given range");
+                return;
+            }
+
+            initMap(data);
+            $('#statusText').text("Loaded " + data.length + " GPS points");
+        }
+
+        function errorLoadingData(status) {
+            alert("Couldn't load heatmap data! ".status);
+        }
+
+        function loadedApi() {
+            $("#btnShowMap").on("click",
+                function() {
+                    loadHeatmap();
+                });
+        }
+
+    </script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&libraries=visualization&callback=loadedApi">
+
+    </script>
+}

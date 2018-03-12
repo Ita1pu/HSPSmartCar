@@ -78,9 +78,9 @@
                         <input type="hidden" name="Trips[@tripIndex].Trip.TripId" value="@trip.TripId"/>
                     </td>
                     <td><p>@trip.TripStart.ToString()</p></td>
-                    <td><p>@trip.Distance km</p></td>
-                    <td><p>@trip.Duration.ToString()</p></td>
-                    <td><p>@trip.AvgSpeed km/h</p></td>
+                    <td><p>@Math.Round(trip.Distance, 2) km</p></td>
+                    <td><p>@trip.Duration.ToString(@"hh\:mm\:ss")</p></td>
+                    <td><p>@Math.Round(trip.AvgSpeed, 2) km/h</p></td>
                     <td><p>@trip.Vehicle?.LicencePlate</p></td>
                     <td><a class="btn btn-primary" asp-controller="Trip" asp-action="TripDetails" asp-route-tripId="@trip.TripId">Show Details</a></td>
                 </tr>

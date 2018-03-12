@@ -23,6 +23,10 @@ namespace SmartCarApi.Controllers
         private Repository _repo;
         private ApplicationDbContext _db;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TripController"/> class.
+        /// </summary>
+        /// <param name="dbContext">The database context.</param>
         public TripController(ApplicationDbContext dbContext)
         {
             _repo = new Repository(dbContext);
@@ -98,6 +102,7 @@ namespace SmartCarApi.Controllers
 
             if (trip != null)
             {
+                _db.TripData.RemoveRange(trip.TripData);
                 _db.Trips.Remove(trip);
                 await _db.SaveChangesAsync();
 

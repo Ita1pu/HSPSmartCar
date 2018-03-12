@@ -9,7 +9,7 @@
 
 <hr/>
 
-<div id="map" style="height: 400px; width: auto"></div>
+<div id="map" style="height: 500px; width: auto"></div>
 
 <hr/>
 
@@ -25,21 +25,21 @@
         <div class="col-sm">
             <p style="text-align: center">
                 <i class="fa fa-hourglass fa-lg"></i><br />
-                <span class="font-weight-bold">@Model.Trip.Duration.ToString()</span><br />
+                <span class="font-weight-bold">@Model.Trip.Duration.ToString(@"hh\:mm\:ss")</span><br />
                 <span>Duration</span>
             </p>
         </div>
         <div class="col-sm">
             <p style="text-align: center">
                 <i class="fa fa-truck fa-lg"></i><br />
-                <span class="font-weight-bold">@Model.Trip.Distance km</span><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance, 2) km</span><br />
                 <span>Distance</span>
             </p>
         </div>
         <div class="col-sm">
             <p style="text-align: center">
                 <i class="fa fa-chevron-right fa-lg"></i><br />
-                <span class="font-weight-bold">@Model.Trip.AvgSpeed km/h</span><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.AvgSpeed, 2) km/h</span><br />
                 <span>Average Speed</span>
             </p>
         </div>
@@ -52,6 +52,8 @@
     <h3>Speed Trend</h3>
     <canvas id="speedTrend"></canvas>
 
+    <h3>Rpm Trend</h3>
+    <canvas id="rpmTrend"></canvas>
 </div>
 
 @section Scripts
@@ -59,21 +61,21 @@
     <!-- Gps Map -->
     <script>
         function initMap(gpsData) {
-            var map = new google.maps.Map(document.getElementById('map'),
-                {
-                    zoom: 12,
-                    center: { lat: (gpsData[0].Item2._latitude / (1000 * 1000)), lng: (gpsData[0].Item2._longitude / (1000 * 1000)) },
-                    mapTypeId: 'terrain'
-                });
-            
             var tripCoordinates = [];
 
             for (var i = 0; i < gpsData.length; i++) {
                 var coords = gpsData[i].Item2;
-                tripCoordinates.push({ lat: (coords._latitude/(1000*1000)), lng: (coords._longitude/(1000*1000))});
+                tripCoordinates.push({ lat: (coords._latitude /*/(1000*1000)*/), lng: (coords._longitude /*/(1000*1000)*/)});
             }
 
-            var flightPath = new google.maps.Polyline({
+            var map = new google.maps.Map(document.getElementById('map'),
+                {
+                    zoom: 12,
+                    center: { lat: (gpsData[0].Item2._latitude /*/ (1000 * 1000)*/), lng: (gpsData[0].Item2._longitude /*/ (1000 * 1000)*/) },
+                    mapTypeId: 'terrain'
+                });
+            
+            var tripPath = new google.maps.Polyline({
                 path: tripCoordinates,
                 geodesic: true,
                 strokeColor: '#FF0000',
@@ -81,7 +83,7 @@
                 strokeWeight: 2
             });
 
-            flightPath.setMap(map);
+            tripPath.setMap(map);
         }
 
         function loadGpsData() {
@@ -139,9 +141,39 @@
             }
         };
 
+        var rpmChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'RPM Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'rpm'
+                        }
+                    }]
+                }
+            }
+        };
+
         $(document).ready(function () {
             var speedTrendCtx = document.getElementById('speedTrend').getContext('2d');
             window.speedTrend = new Chart(speedTrendCtx, speedChartConfig);
+
+            var rpmTrendCtx = document.getElementById('rpmTrend').getContext('2d');
+            window.rpmTrend = new Chart(rpmTrendCtx, rpmChartConfig);
 
             var speedTrendObdUrl = '/Trip/GetSpeedTrendObd';
 
@@ -155,7 +187,7 @@
                 error: errorLoadingTrend
             });
 
-            @*var speedTrendGpsUrl = '/Trip/GetSpeedTrendGps';
+            var speedTrendGpsUrl = '/Trip/GetRpmTrend';
 
             $.ajax({
                 type: "POST",
@@ -163,9 +195,9 @@
                 data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: loadedSpeedTrendGps,
+                success: loadedRpmTrend,
                 error: errorLoadingTrend
-            });*@
+            });
         });
 
         function loadedSpeedTrendObd(data, status) {
@@ -185,6 +217,25 @@
 
             speedChartConfig.data.datasets.push(speedTrendObd);
             window.speedTrend.update();
+        }
+
+        function loadedRpmTrend(data, status) {
+            var rpmData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                rpmData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var rpmTrendObd = {
+                label: "Rpm",
+                borderColor: "#FF463F",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: rpmData
+            };
+
+            rpmChartConfig.data.datasets.push(rpmTrendObd);
+            window.rpmTrend.update();
         }
 
         function loadedSpeedTrendGps(data, status) {

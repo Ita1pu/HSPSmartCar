@@ -35,7 +35,7 @@ namespace SmartCarUi
                 .AddOpenIdConnect(options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // cookie middle setup above
-                    options.Authority = "http://localhost:5000"; // Auth Server
+                    options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false; // only for development 
                     options.ClientId = "smartcar_ui"; // client setup in Auth Server
                     options.ClientSecret = "kX6fFG4f4PDt";

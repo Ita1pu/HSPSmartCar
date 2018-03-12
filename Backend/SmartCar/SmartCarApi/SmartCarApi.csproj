@@ -10,8 +10,11 @@
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netcoreapp2.0\SmartCarApi.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Folder Include="Statistics\Advanced\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 

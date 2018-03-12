@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,10 @@ namespace SmartCarApi.Controllers
             _db = dbContext;
         }
 
+        /// <summary>
+        /// Gets the GPS trend.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
         [HttpGet]
         [Route("gpstrend/{tripId}")]
         public IActionResult GetGpsTrend(int tripId)
@@ -37,8 +42,7 @@ namespace SmartCarApi.Controllers
 
             if (user == null) return Unauthorized();
 
-            var trip = _db.Trips.Include(t => t.Vehicle)
-                .Include(t => t.TripData).ThenInclude(d => d.SignalType)
+            var trip = _db.Trips.Include(t => t.Vehicle).Include(t => t.TripData).ThenInclude(d => d.SignalType)
                 .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == tripId);
 
             if (trip != null)
@@ -51,6 +55,10 @@ namespace SmartCarApi.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Gets the speed trend based on OBD data.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
         [HttpGet]
         [Route("speedtrend/obd/{tripId}")]
         public IActionResult GetSpeedTrendObd(int tripId)
@@ -73,6 +81,10 @@ namespace SmartCarApi.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// Gets the speed trend based on GPS data.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
         [HttpGet]
         [Route("speedtrend/gps/{tripId}")]
         public IActionResult GetSpeedTrendGps(int tripId)
@@ -89,6 +101,32 @@ namespace SmartCarApi.Controllers
             {
                 var tripStatistic = new TripStatistic();
                 var speedTrend = tripStatistic.GetSpeedTrendGps(trip);
+                return Ok(JsonConvert.SerializeObject(speedTrend.OrderBy(i => i.Item1)));
+            }
+
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Gets the RPM trend for the given trip.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
+        [HttpGet]
+        [Route("rpmtrend/{tripId}")]
+        public IActionResult GetRpmTrend(int tripId)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var trip = _db.Trips.Include(t => t.Vehicle)
+                .Include(t => t.TripData).ThenInclude(d => d.SignalType)
+                .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == tripId);
+
+            if (trip != null)
+            {
+                var tripStatistic = new TripStatistic();
+                var speedTrend = tripStatistic.GetRpmTrend(trip);
                 return Ok(JsonConvert.SerializeObject(speedTrend.OrderBy(i => i.Item1)));
             }
 

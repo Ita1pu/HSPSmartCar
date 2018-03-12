@@ -58,7 +58,7 @@ namespace SmartCarApi.Controllers
 
             if (user == null) return Unauthorized();
 
-            var existingVehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.Vid == vehicle.Vid);
+            var existingVehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.LicencePlate == vehicle.LicencePlate);
 
             if (existingVehicle == null)
             {

@@ -35,10 +35,12 @@ namespace SmartCarApi
 
             services.AddMvc();
 
+            var authority = Configuration["Authority"];
+
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
                 {
-                    options.Authority = "http://localhost:5000";
+                    options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false;
                     options.ApiName = "smartcar_api";
                 });

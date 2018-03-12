@@ -201,7 +201,79 @@ char ObdDevice::updateVeryFastPids()
             --retVal;
         }
     }
-
+    //Consumption additions
+    pidName = obd::PidNames::EngineLoad;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+    pidName = obd::PidNames::MAFAirFlow;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+    //fuelAirRatios
+    pidName = obd::PidNames::OxySensor01;
+    for(uint8_t i = 0; i < 8; i++){
+      currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName+(unsigned char)i);
+      if (baseLayer->isValidPID(currentPid))
+      {
+          pidArray[retVal].pid = currentPid;
+          pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+          if (queryState == false) //reading of pid value didn't work, neglect last read values
+          {
+            --retVal;
+          }
+      }
+    }
+    pidName = obd::PidNames::OxySensor11;
+    for(uint8_t i = 0; i < 8; i++){
+      currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName+(unsigned char)i);
+      if (baseLayer->isValidPID(currentPid))
+      {
+          pidArray[retVal].pid = currentPid;
+          pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+          if (queryState == false) //reading of pid value didn't work, neglect last read values
+          {
+            --retVal;
+          }
+      }
+    }
+    //get factors for the equivalence ratios and airflow
+    pidName = obd::PidNames::TestEquipConf1;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
+    pidName = obd::PidNames::TestEquipConf2;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        pidArray[retVal].pid = currentPid;
+        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
+        if (queryState == false) //reading of pid value didn't work, neglect last read values
+        {
+            --retVal;
+        }
+    }
     //Serial.println(retVal);
     if (retVal > maxLengthPidArray)
     {
@@ -391,6 +463,45 @@ void ObdDevice::identifyMaxPidArrayLength()
     if (baseLayer->isValidPID(currentPid))
     {
         ++tempCnt;
+    }
+    //Consumption addition
+    pidName = obd::PidNames::EngineLoad;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        ++tempCnt;
+    }
+    pidName = obd::PidNames::MAFAirFlow;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if (baseLayer->isValidPID(currentPid))
+    {
+        ++tempCnt;
+    }
+    //fuelAirRatios
+    pidName = obd::PidNames::OxySensor01;
+    for(uint8_t i = 0; i < 8; i++){
+      currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName + (unsigned char)i);
+      if(baseLayer->isValidPID(currentPid)){
+        ++tempCnt;
+      }
+    }
+    pidName = obd::PidNames::OxySensor11;
+    for(uint8_t i = 0; i < 8; i++){
+      currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName + (unsigned char)i);
+      if(baseLayer->isValidPID(currentPid)){
+        ++tempCnt;
+      }
+    }
+    //factor equivalence ratios
+    pidName = obd::PidNames::TestEquipConf1;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if(baseLayer->isValidPID(currentPid)){
+      ++tempCnt;
+    }
+    pidName = obd::PidNames::TestEquipConf2;
+    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
+    if(baseLayer->isValidPID(currentPid)){
+      ++tempCnt;
     }
     maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 

@@ -3,12 +3,14 @@
 
 namespace obd
 {
-    enum PidNames {EngineCoolantTemp, EngineRpm, VehicleSpeed, RunTimeSineEngineStart, DistTraveledWithMalfuncIndicaLamp,
-    FuelTankLvlInput, AbsBarometricPressure, AmbientAirTemp, FuelType, EthanolPercent, RelativAcceleratorPedalPos,
+    enum PidNames {EngineLoad, EngineCoolantTemp, EngineRpm, VehicleSpeed, MAFAirFlow, RunTimeSineEngineStart, DistTraveledWithMalfuncIndicaLamp,
+    OxySensor01, OxySensor02, OxySensor03, OxySensor04, OxySensor05, OxySensor06, OxySensor07, OxySensor08,
+    FuelTankLvlInput, AbsBarometricPressure, OxySensor11, OxySensor12, OxySensor13, OxySensor14, OxySensor15, OxySensor16,
+    OxySensor17, OxySensor18, AmbientAirTemp, TestEquipConf1, TestEquipConf2, FuelType, EthanolPercent, RelativAcceleratorPedalPos,
     EngineOilTemp, EngineFuelRate, DriverTorqueDemandEngine, ActualTorqueEngine, EngineTorqueRef, EngineRunTime};
 
-    const PROGMEM unsigned char PidNumbers[] = {0x5, 0x0C, 0x0D, 0x1F, 0x21, 0x2F, 0x33, 0x46, 0x51, 0x52, 0x5A, 0x5C, 0x5E,
-        0x61, 0x62, 0x63, 0x7F};
+    const PROGMEM unsigned char PidNumbers[] = {0x04, 0x05, 0x0C, 0x0D, 0x10, 0x1F, 0x21, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B,
+      0x2F, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B, 0x46, 0x4F, 0x50, 0x51, 0x52, 0x5A, 0x5C, 0x5E, 0x61, 0x62, 0x63, 0x7F};
 
     //    const PROGMEM unsigned char PidNumbers[] = {0x5, 0x0C, 0x0D, 0x21, 0x7F};
 

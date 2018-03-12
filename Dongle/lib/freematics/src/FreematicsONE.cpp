@@ -197,6 +197,24 @@ int COBDSPI::normalizeData(byte pid, char* data)
 	case PID_AIR_FUEL_EQUIV_RATIO: // 0~200
 		result = (long)getLargeValue(data) * 200 / 65536;
 		break;
+  case 0x24: //lambda sounds
+  case 0x25:
+  case 0x26:
+  case 0x27:
+  case 0x28:
+  case 0x29:
+  case 0x2A:
+  case 0x2B:
+  case 0x34:
+  case 0x35:
+  case 0x36:
+  case 0x37:
+  case 0x38:
+  case 0x39:
+  case 0x3A:
+  case 0x3B:
+    result = ((long)getLargeValue(data) * 20000)/ 65536; //returns air/fuel ratio 0 - 20000 (fixed point float with 4 decimals)
+    break;
 	default:
 		result = getSmallValue(data);
 	}

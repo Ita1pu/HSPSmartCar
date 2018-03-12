@@ -164,12 +164,17 @@ uint64_t LocationTimeService::GetEpochMs(){
 
 bool LocationTimeService::RenewGPSData(){
   bool retVal = _coProc->gpsGetData(&_gData);
+  uint32_t tmpTime = _gData.time;
+  uint32_t tmpDate = _gData.date;
   //Satellite count has to be between 4 and 14 (theoretical minimum and maximum) for a good result
   if(_gData.sat > 14 && _gData.sat < 4){
     //invalidate gps location
     _gData.lat = 9999;
     _gData.lng = 9999;
     _gData.alt = 9999;
+    //restore date and time
+    _gData.time = tmpTime;
+    _gData.date = tmpDate;
     retVal = false;
   }else{
     clockDeviation = 0;

@@ -25,6 +25,8 @@ let files: string[] = [
     "view/configuration/configuration-logging",
     "view/configuration/configuration",
     "view/simple-list",
+    "view/speedo",
+    "view/speedo-compare",
 
     "dongle/bluetooth",
 

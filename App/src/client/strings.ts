@@ -44,6 +44,15 @@ const Strings = {
             oilTemperatur: "Oil Temp.",
             gps: "GPS",
             mobile: " (mob.)"
+        },
+        Speedo: {
+            velocity: "Velocity",
+            oil: "Oil",
+            rotSpeed: "rot. Speed"
+        },
+        SpeedoCompare: {
+            car: "Car",
+            mobile: "Mobile"
         }
     }
 }

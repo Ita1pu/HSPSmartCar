@@ -72,7 +72,18 @@ namespace Var {
                         }
                     }
                 }
-            }
+            },
+            simpleList: "view-simple-list",
+            SimpleList: {
+                table: "view-simple-list-table",
+                Table: {
+                    entry: "view-simple-list-table-entry",
+                    label: "view-simple-list-table-label",
+                    value: "view-simple-list-table-value"
+                }
+            },
+            speedo: "view-speedo",
+            speedoCompare: "view-speedo-compare"
         },
     }
 

@@ -1,13 +1,14 @@
-
-// TODO falls read or write fehlschlägt und dannach isConnected = false => NoConnectionPanel anzeigen (nur wenn selectedPanel != 0)
-
 namespace Dongle {
     declare let ble: any;
     
     export let bluetooth: Bluetooth = null;
 
     export class Bluetooth { 
+        private notificationCallbacks: ((buffer: Uint8Array, text: string) => void)[] = null;
+
         private constructor() {
+            this.notificationCallbacks = [];
+
             this.connect();
         }
 
@@ -70,7 +71,21 @@ namespace Dongle {
 
                             ble.connect(deviceId, () => {
                                 Logging.push("Bluetooth connect succeeded!");
-        
+
+                                ble.startNotification(deviceId, "ffe0", "ffe1", (data: any) => {                
+                                    var buffer = new Uint8Array(data);  
+                                    var text = String.fromCharCode.apply(null, new Uint8Array(data));
+            
+                                    for (let notificationCallback of this.notificationCallbacks) {
+                                        notificationCallback(buffer, text);
+                                    }
+                                }, (error: any) => {
+                                    Logging.push("Bluetooth notification error: " + error);
+            
+                                    if (failure != null)
+                                        failure();
+                                });
+
                                 DisplayFeature.noConnectionPanel.hide();
         
                                 if (success != null)
@@ -112,6 +127,22 @@ namespace Dongle {
             ble.stopScan();
         }
 
+        public addNotification(callback: (buffer: Uint8Array, text: string) => void) {
+            this.notificationCallbacks.push(callback);
+        }
+
+        public removeNotification(callback: (buffer: Uint8Array, text: string) => void) {
+            let index = this.notificationCallbacks.indexOf(callback);
+
+            if (index > -1) {
+                this.notificationCallbacks.splice(index, 1);
+            }
+        }
+
+        public removeNotifications() {
+            this.notificationCallbacks = [];
+        }
+
         private enable(success: () => void, failure: () => void) {
             ble.isEnabled(
                 () => {
@@ -125,7 +156,7 @@ namespace Dongle {
 
                     success();
                 }, (error: any) => {
-                    Logging.push("Bluetooth error: " + error);
+                    Logging.push("Bluetooth enable error: " + error);
 
                     failure();
                 });

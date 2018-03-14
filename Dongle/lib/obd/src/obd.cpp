@@ -251,29 +251,7 @@ char ObdDevice::updateVeryFastPids()
           }
       }
     }
-    //get factors for the equivalence ratios and airflow
-    pidName = obd::PidNames::TestEquipConf1;
-    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
-    if (baseLayer->isValidPID(currentPid))
-    {
-        pidArray[retVal].pid = currentPid;
-        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
-        if (queryState == false) //reading of pid value didn't work, neglect last read values
-        {
-            --retVal;
-        }
-    }
-    pidName = obd::PidNames::TestEquipConf2;
-    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
-    if (baseLayer->isValidPID(currentPid))
-    {
-        pidArray[retVal].pid = currentPid;
-        pidArray[retVal++].value = getValueOfPid(currentPid, queryState);
-        if (queryState == false) //reading of pid value didn't work, neglect last read values
-        {
-            --retVal;
-        }
-    }
+    
     //Serial.println(retVal);
     if (retVal > maxLengthPidArray)
     {
@@ -492,17 +470,7 @@ void ObdDevice::identifyMaxPidArrayLength()
         ++tempCnt;
       }
     }
-    //factor equivalence ratios
-    pidName = obd::PidNames::TestEquipConf1;
-    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
-    if(baseLayer->isValidPID(currentPid)){
-      ++tempCnt;
-    }
-    pidName = obd::PidNames::TestEquipConf2;
-    currentPid = pgm_read_byte_near(obd::PidNumbers+(unsigned char)pidName);
-    if(baseLayer->isValidPID(currentPid)){
-      ++tempCnt;
-    }
+
     maxLengthPidArray = (tempCnt > maxLengthPidArray) ? tempCnt : maxLengthPidArray;
 
     //>>>>>>>>normal pids<<<<<<<<<<<<

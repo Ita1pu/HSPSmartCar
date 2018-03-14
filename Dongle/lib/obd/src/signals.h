@@ -100,6 +100,9 @@ namespace obd
 //    const PROGMEM unsigned char EngineTorqueRef        =            (0x63);
 
 
+/**
+  PIDs 0x4F und 0x50 Contain correction factors for airflow sensor and lambda sounds; Polling category: F (once)
+ */
 //todo: special case....
     /**
         Full name: Engine run time, Range: todo: not clear yet but 13bytes, Polling category: C (normal)

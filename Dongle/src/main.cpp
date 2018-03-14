@@ -111,6 +111,15 @@ void setup()
     if(pidSucc){
       p.create_logging_entry(locSrv.GetEpochMs(), obd::FuelType, pidRetVal);
     }
+    //Correction factors
+    pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf1, pidSucc);
+    if(pidSucc){
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf1, pidRetVal);
+    }
+    pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf2, pidSucc);
+    if(pidSucc){
+      p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf2, pidRetVal);
+    }
     //initialize flag timer for Main loop
     locSrv.StartFlagTimer();
 }

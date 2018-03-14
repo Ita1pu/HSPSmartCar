@@ -32,7 +32,7 @@
         <div class="col-sm">
             <p style="text-align: center">
                 <i class="fa fa-truck fa-lg"></i><br />
-                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance, 2) km</span><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance/1000, 2) km</span><br />
                 <span>Distance</span>
             </p>
         </div>
@@ -65,13 +65,13 @@
 
             for (var i = 0; i < gpsData.length; i++) {
                 var coords = gpsData[i].Item2;
-                tripCoordinates.push({ lat: (coords._latitude /*/(1000*1000)*/), lng: (coords._longitude /*/(1000*1000)*/)});
+                tripCoordinates.push(new google.maps.LatLng(coords._latitude, coords._longitude));
             }
 
             var map = new google.maps.Map(document.getElementById('map'),
                 {
                     zoom: 12,
-                    center: { lat: (gpsData[0].Item2._latitude /*/ (1000 * 1000)*/), lng: (gpsData[0].Item2._longitude /*/ (1000 * 1000)*/) },
+                    center: new google.maps.LatLng(gpsData[0].Item2._latitude, gpsData[0].Item2._longitude),
                     mapTypeId: 'terrain'
                 });
             
@@ -187,11 +187,23 @@
                 error: errorLoadingTrend
             });
 
-            var speedTrendGpsUrl = '/Trip/GetRpmTrend';
+            var speedTrendGpsUrl = '/Trip/GetSpeedTrendGps';
 
             $.ajax({
                 type: "POST",
                 url: speedTrendGpsUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedSpeedTrendGps,
+                error: errorLoadingTrend
+            });
+
+            var rpmTrendUrl = '/Trip/GetRpmTrend';
+
+            $.ajax({
+                type: "POST",
+                url: rpmTrendUrl,
                 data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -219,6 +231,25 @@
             window.speedTrend.update();
         }
 
+        function loadedSpeedTrendGps(data, status) {
+            var gpsSpeedData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                gpsSpeedData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var speedTrendGps = {
+                label: "Speed GPS",
+                borderColor: "#00FFFF",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: gpsSpeedData
+            };
+
+            speedChartConfig.data.datasets.push(speedTrendGps);
+            window.speedTrend.update();
+        }
+
         function loadedRpmTrend(data, status) {
             var rpmData = [];
 
@@ -237,11 +268,7 @@
             rpmChartConfig.data.datasets.push(rpmTrendObd);
             window.rpmTrend.update();
         }
-
-        function loadedSpeedTrendGps(data, status) {
-
-        }
-
+        
         function errorLoadingTrend() {
             alert('Could not load trend data');
         }

@@ -64,10 +64,7 @@
 
             for (var i = 0; i < gpsData.length; i++) {
                 var coords = gpsData[i];
-                gpsCoordinates.push({
-                    location: new google.maps.LatLng(coords._latitude, coords._longitude),
-                    weight: 10
-                });
+                gpsCoordinates.push(new google.maps.LatLng(coords._latitude, coords._longitude));
             }
 
             var map = new google.maps.Map(document.getElementById('map'),

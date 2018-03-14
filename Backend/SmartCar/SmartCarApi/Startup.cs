@@ -30,7 +30,7 @@ namespace SmartCarApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"))
+                options.UseMySql(Configuration.GetConnectionString("DefaultConnection"), b => b.MaxBatchSize(1024))
             );
 
             services.AddMvc();

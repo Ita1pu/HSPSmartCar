@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using SmartCar.Shared.Model;
 using SmartCar.Shared.Model.Identity;
 
@@ -27,12 +28,12 @@ namespace SmartCar.Shared.Database
         public DbSet<TripData> TripData { get; set; }
         public DbSet<SignalMap> SignalMap { get; set; }
         #endregion
-
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
         }
-
+        
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<AppUser>(i => {
@@ -55,8 +56,6 @@ namespace SmartCar.Shared.Database
                 i.ToTable("RoleClaims");
                 i.HasKey(x => x.Id);
             });
-
-
         }
     }
 }

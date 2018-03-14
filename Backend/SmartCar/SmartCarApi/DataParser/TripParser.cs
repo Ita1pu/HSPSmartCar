@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -44,10 +45,10 @@ namespace SmartCarApi.DataParser
 
                 //Assing default vehicle
                 AssignVehicle(splitTrips);
-
+                
                 _db.Trips.AddRange(splitTrips);
                 _db.SaveChanges();
-
+                
                 var result = new ParseResult
                 {
                     Success = true,

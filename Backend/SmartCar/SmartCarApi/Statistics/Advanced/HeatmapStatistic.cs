@@ -21,13 +21,13 @@ namespace SmartCarApi.Statistics.Advanced
 
                 foreach (var tripEntry in trip.TripData.OrderBy(td => td.Timestamp))
                 {
-                    if (tripEntry.SignalType.SignalName == Signal.GpsLongitude)
+                    if (tripEntry?.SignalType?.SignalName == Signal.GpsLongitude)
                     {
                         tempLongitude = tripEntry.Value / (double)(1000 * 1000);
                         status += 1;
                     }
 
-                    if (tripEntry.SignalType.SignalName == Signal.GpsLatitude)
+                    if (tripEntry?.SignalType?.SignalName == Signal.GpsLatitude)
                     {
                         tempLatitude = tripEntry.Value / (double)(1000 * 1000);
                         status += 2;

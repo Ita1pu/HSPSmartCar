@@ -11,7 +11,6 @@ namespace SmartCarApi.Statistics.Basic
     public class TripStatistic
     {
         public TripStatistic()
-            //eventuell trip im konstruktor übergeben... aber haben wir nicht so designed
         {
         
         }
@@ -26,12 +25,11 @@ namespace SmartCarApi.Statistics.Basic
                 trip.Distance += trace[i].Item2.GetDistance(trace[i + 1].Item2);
             }
 
-            trip.AvgSpeed = (trip.Distance/1000) / Math.Max(trip.Duration.Hours, 1);
+            trip.AvgSpeed = trip.Distance / Math.Max(trip.Duration.TotalSeconds, 1) * 3.6;
 
             trip.StartLocation = trace[0].Item2;
             trip.EndLocation = trace[trace.Count - 1].Item2;
         }
-
         
         public List<Tuple<DateTime, GpsCoordinate>> GetGpsTrend(Trip trip)
         {
@@ -40,16 +38,16 @@ namespace SmartCarApi.Statistics.Basic
             double tempLatitude = 0;
             
             List<Tuple<DateTime, GpsCoordinate>> returnValue = new List<Tuple<DateTime, GpsCoordinate>>();
-            foreach (var currentTripData in trip.TripData)
+            foreach (var currentTripData in trip.TripData.OrderBy(td => td.Timestamp))
             {
 
-                if (currentTripData.SignalType.SignalName == Signal.GpsLongitude)
+                if (currentTripData?.SignalType?.SignalName == Signal.GpsLongitude)
                 {
                     tempLongitude = currentTripData.Value / (double)(1000*1000);
                     status += 1;
                 }
 
-                if (currentTripData.SignalType.SignalName == Signal.GpsLatitude)
+                if (currentTripData?.SignalType?.SignalName == Signal.GpsLatitude)
                 {
                     tempLatitude = currentTripData.Value / (double)(1000 * 1000);
                     status += 2;
@@ -65,13 +63,12 @@ namespace SmartCarApi.Statistics.Basic
             return returnValue;
         }
         
-
         public List<Tuple<DateTime, double>> GetSpeedTrendObd(Trip trip)
         {
             List<Tuple<DateTime, double>> returnValue = new List<Tuple<DateTime, double>>();
             foreach (var currentTripData in trip.TripData)
             {
-                if (currentTripData.SignalType.SignalName == Signal.VehicleSpeed)
+                if (currentTripData?.SignalType?.SignalName == Signal.VehicleSpeed)
                 {
                     returnValue.Add(Tuple.Create<DateTime, double>(currentTripData.Timestamp, currentTripData.Value));
                 }
@@ -88,7 +85,7 @@ namespace SmartCarApi.Statistics.Basic
             {
                 double distance = trace[i].Item2.GetDistance(trace[i + 1].Item2);
                 TimeSpan timeSpan = trace[i + 1].Item1- trace[i].Item1;
-                double speed = (distance / 1000) / timeSpan.Hours;
+                double speed = (distance / 1000) / timeSpan.TotalHours;
                 returnValue.Add(Tuple.Create<DateTime, double>(trace[i].Item1, speed));
             }
 
@@ -97,7 +94,7 @@ namespace SmartCarApi.Statistics.Basic
 
         public List<Tuple<DateTime, double>> GetRpmTrend(Trip trip)
         {
-            return trip.TripData.Where(td => td.SignalType.SignalName == Signal.EngineRpm)
+            return trip.TripData.Where(td => td?.SignalType?.SignalName == Signal.EngineRpm)
                 .Select(i => new Tuple<DateTime, double>(i.Timestamp, i.Value)).ToList();
         }
     }

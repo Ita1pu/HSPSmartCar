@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -34,10 +35,10 @@ namespace SmartCarUi.Controllers
             {
                 var postStream = new MemoryStream();
                 await logfile.CopyToAsync(postStream);
-
+                
                 content.Add(new ByteArrayContent(postStream.ToArray()), "logfile", logfile.FileName);
                 var response = await client.PostAsync("http://localhost:5001/api/upload/logfile", content);
-
+                
                 if (response.IsSuccessStatusCode)
                 {
                     var responseContent = await response.Content.ReadAsStringAsync();

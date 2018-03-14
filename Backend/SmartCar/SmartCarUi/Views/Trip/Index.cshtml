@@ -78,7 +78,7 @@
                         <input type="hidden" name="Trips[@tripIndex].Trip.TripId" value="@trip.TripId"/>
                     </td>
                     <td><p>@trip.TripStart.ToString()</p></td>
-                    <td><p>@Math.Round(trip.Distance, 2) km</p></td>
+                    <td><p>@Math.Round(trip.Distance/1000, 2) km</p></td>
                     <td><p>@trip.Duration.ToString(@"hh\:mm\:ss")</p></td>
                     <td><p>@Math.Round(trip.AvgSpeed, 2) km/h</p></td>
                     <td><p>@trip.Vehicle?.LicencePlate</p></td>

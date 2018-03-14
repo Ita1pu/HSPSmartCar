@@ -26,7 +26,15 @@ namespace SmartCarApi.Statistics.Basic
                 trip.Distance += trace[i].Item2.GetDistance(trace[i + 1].Item2);
             }
 
-            trip.AvgSpeed = (trip.Distance/1000) / Math.Max(trip.Duration.Hours, 1);
+            if (trip.Duration.TotalHours != 0)
+            {
+                trip.AvgSpeed = (trip.Distance / 1000) / trip.Duration.TotalHours;
+            }
+            else
+            {
+                trip.AvgSpeed = 0;
+            }
+
 
             trip.StartLocation = trace[0].Item2;
             trip.EndLocation = trace[trace.Count - 1].Item2;
@@ -45,13 +53,13 @@ namespace SmartCarApi.Statistics.Basic
 
                 if (currentTripData.SignalType.SignalName == Signal.GpsLongitude)
                 {
-                    tempLongitude = currentTripData.Value / (double)(1000*1000);
+                    tempLongitude = currentTripData.Value;
                     status += 1;
                 }
 
                 if (currentTripData.SignalType.SignalName == Signal.GpsLatitude)
                 {
-                    tempLatitude = currentTripData.Value / (double)(1000 * 1000);
+                    tempLatitude = currentTripData.Value;
                     status += 2;
                 }
                 

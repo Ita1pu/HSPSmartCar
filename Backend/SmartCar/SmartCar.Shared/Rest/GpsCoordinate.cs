@@ -8,9 +8,41 @@ namespace SmartCar.Shared.Rest
 {
     public class GpsCoordinate
     {
-        public double _latitude { get; set; }
+        private double _latitude;
+        private double _longitude;
 
-        public double _longitude { get; set; }
+        public double Latitude
+        {
+            get { return _latitude; }
+            set
+            {
+                if (value <-90 || value > 90)
+                {
+                    _latitude = value / 1000000;
+                }
+                else
+                {
+                    _latitude = value;
+                }
+            }
+
+        }
+
+        public double Longitude
+        {
+            get { return _longitude; }
+            set
+            {
+                if (value <-180 || value > 180)
+                {
+                    _longitude = value / 1000000;
+                }
+                else
+                {
+                    _longitude = value;
+                }
+            }
+        }
 
         public GpsCoordinate()
         {
@@ -20,8 +52,8 @@ namespace SmartCar.Shared.Rest
 
         public GpsCoordinate(double Latitude, double Longitude)
         {
-            _latitude = Latitude;
-            _longitude = Longitude;
+            this.Latitude = Latitude;
+            this.Longitude = Longitude;
         }
 
         public double GetDistance(GpsCoordinate other) //returens distance between given and the current gpsCoordinate in m after Haversine Formula
@@ -31,10 +63,10 @@ namespace SmartCar.Shared.Rest
             double equatorialEarthRadius = 6378.1370D;
             double degree2radian = (Math.PI / 180D);
 
-            double diffLongitude = (this._longitude - other._longitude) * degree2radian;
-            double diffLatitude = (this._latitude - other._latitude) * degree2radian;
+            double diffLongitude = (this.Longitude - other.Longitude) * degree2radian;
+            double diffLatitude = (this.Latitude - other.Latitude) * degree2radian;
 
-            double a = Math.Pow(Math.Sin(diffLatitude / 2), 2) + Math.Cos(this._latitude * degree2radian)* Math.Cos(other._latitude * degree2radian) * 
+            double a = Math.Pow(Math.Sin(diffLatitude / 2), 2) + Math.Cos(this.Latitude * degree2radian)* Math.Cos(other.Latitude * degree2radian) * 
                 Math.Pow(Math.Sin(diffLongitude / 2), 2);
 
             double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
@@ -47,7 +79,7 @@ namespace SmartCar.Shared.Rest
 
         public override string ToString()
         {
-            return string.Format("{0},{1}", _latitude, _longitude);
+            return string.Format("{0},{1}", Latitude, Longitude);
         }
     }
 

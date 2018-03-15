@@ -34,9 +34,11 @@ namespace SmartCarApi.Statistics.Basic
                 trip.AvgSpeed = 0;
             }
 
-
-            trip.StartLocation = trace[0].Item2;
-            trip.EndLocation = trace[trace.Count - 1].Item2;
+            if (trace.Count >= 2)
+            {
+                trip.StartLocation = trace[0].Item2;
+                trip.EndLocation = trace[trace.Count - 1].Item2;
+            }
         }
         
         public List<Tuple<DateTime, GpsCoordinate>> GetGpsTrend(Trip trip)

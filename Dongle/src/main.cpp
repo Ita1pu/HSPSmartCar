@@ -39,6 +39,30 @@ inline void btLog(uint16_t pid, uint32_t value){
   Serial.print(value);
   Serial.print(';');
 }
+inline void logCategoryE(){
+  bool pidSucc = false;
+  int32_t pidRetVal = 0;
+  //EthanolPercent
+  pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, pidSucc);
+  if(pidSucc){
+    p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
+  }
+  //FuelType
+  pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
+  if(pidSucc){
+    p.create_logging_entry(locSrv.GetEpochMs(), obd::FuelType, pidRetVal);
+  }
+  //Correction factors
+  pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf1, pidSucc);
+  if(pidSucc){
+    p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf1, pidRetVal);
+  }
+  pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf2, pidSucc);
+  if(pidSucc){
+    p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf2, pidRetVal);
+  }
+}
+
 //function to upload Data to smartphone
 void uploadBT();
 
@@ -98,28 +122,7 @@ void setup()
     pidCollection = obdDev->getPidArray();
 
     //Log Category E
-    bool pidSucc = false;
-    int32_t pidRetVal = 0;
-    //EthanolPercent
-    pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, pidSucc);
-    if(pidSucc){
-      p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
-    }
-    //Log Category F
-    //FuelType
-    pidRetVal = obdDev->getValueOfPid(obd::FuelType, pidSucc);
-    if(pidSucc){
-      p.create_logging_entry(locSrv.GetEpochMs(), obd::FuelType, pidRetVal);
-    }
-    //Correction factors
-    pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf1, pidSucc);
-    if(pidSucc){
-      p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf1, pidRetVal);
-    }
-    pidRetVal = obdDev->getValueOfPid(obd::TestEquipConf2, pidSucc);
-    if(pidSucc){
-      p.create_logging_entry(locSrv.GetEpochMs(), obd::TestEquipConf2, pidRetVal);
-    }
+    logCategoryE();
     //initialize flag timer for Main loop
     locSrv.StartFlagTimer();
 }
@@ -227,11 +230,8 @@ void loop()
         }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
       }
       locSrv.StartFlagTimer();
-      //EthanolPercent
-      uint32_t pidRetVal = obdDev->getValueOfPid(obd::EthanolPercent, success);
-      if(success){
-        p.create_logging_entry(locSrv.GetEpochMs(), obd::EthanolPercent, pidRetVal);
-      }
+      //log Category E
+      logCategoryE();
     }
   }
 }

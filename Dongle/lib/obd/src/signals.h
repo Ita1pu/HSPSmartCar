@@ -59,7 +59,7 @@ namespace obd
 //    const PROGMEM unsigned char AmbientAirTemp         =            (0x46);
 
     /**
-        Full name: Fuel type, Range: https://en.wikipedia.org/wiki/OBD-II_PIDs#Fuel_Type_Coding, Size: 1 byte, Polling category: F (only in new vehicle)
+        Full name: Fuel type, Range: https://en.wikipedia.org/wiki/OBD-II_PIDs#Fuel_Type_Coding, Size: 1 byte, Polling category: E (on startup)
     */
 //    const PROGMEM unsigned char FuelType             =              (0x51);
 
@@ -101,7 +101,7 @@ namespace obd
 
 
 /**
-  PIDs 0x4F und 0x50 Contain correction factors for airflow sensor and lambda sounds; Polling category: F (once)
+  PIDs 0x4F und 0x50 Contain correction factors for airflow sensor and lambda sounds; Polling category: F (on startup)
  */
 //todo: special case....
     /**

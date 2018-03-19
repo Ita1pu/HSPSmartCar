@@ -146,7 +146,7 @@ namespace Dongle {
         private enable(success: () => void, failure: () => void) {
             ble.isEnabled(
                 () => {
-                    Logging.push("Bluetooth already enabled!");
+                    //Logging.push("Bluetooth already enabled!");
 
                     success();
                 }, 

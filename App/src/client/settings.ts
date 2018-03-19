@@ -9,6 +9,8 @@ const Settings = {
 
     swipeDistance: 100,
 
+    gpsTimeout: 500,
+
     Backend: {
         clientId: "smartcar_app",
         secret: "tZop4xbZ9wV"

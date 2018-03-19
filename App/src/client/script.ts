@@ -30,6 +30,8 @@ let files: string[] = [
 
     "dongle/bluetooth",
 
+    "mobile/gps",
+
     "index"
     
 ];    

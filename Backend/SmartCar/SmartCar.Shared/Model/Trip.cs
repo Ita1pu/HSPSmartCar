@@ -28,6 +28,7 @@ namespace SmartCar.Shared.Model
 
         public double AvgSpeed { get; set; }//km/h
 
+        public double FuelConsumption { get; set; }//l/100km
         public List<TripData> TripData { get; set; }
 
         [NotMapped]

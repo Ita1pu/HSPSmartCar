@@ -73,7 +73,7 @@ namespace SmartCarApi.Statistics.Basic
             return returnValue;
         }
         
-        public List<Tuple<DateTime, double>> GetSpeedTrendObd(Trip trip)
+        public List<Tuple<DateTime, double>> GetSpeedTrendObd(Trip trip)// km/h
         {
             List<Tuple<DateTime, double>> returnValue = new List<Tuple<DateTime, double>>();
             foreach (var currentTripData in trip.TripData)

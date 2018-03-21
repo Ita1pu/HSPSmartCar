@@ -73,8 +73,8 @@ namespace Dongle {
                                 Logging.push("Bluetooth connect succeeded!");
 
                                 ble.startNotification(deviceId, "ffe0", "ffe1", (data: any) => {                
-                                    var buffer = new Uint8Array(data);  
-                                    var text = String.fromCharCode.apply(null, new Uint8Array(data));
+                                    let buffer = new Uint8Array(data);  
+                                    let text = String.fromCharCode.apply(null, new Uint8Array(data));
             
                                     for (let notificationCallback of this.notificationCallbacks) {
                                         notificationCallback(buffer, text);
@@ -141,6 +141,24 @@ namespace Dongle {
 
         public removeNotifications() {
             this.notificationCallbacks = [];
+        }
+
+        public write(strData: string) {
+            let data = new Uint8Array(strData.length);
+
+            for (let i = 0; i < strData.length; i++) {
+                data[i] = strData.charCodeAt(i);
+            }
+
+            let deviceId = Store.get(Settings.Store.deviceId);
+
+            if (deviceId != null) {
+                ble.write(deviceId, "ffe0", "ffe1", data.buffer, () => {
+                    Logging.push("Bluetooth written.");
+                }, (error: any) => {
+                    Logging.push("Bluetooth write failed: " + error);
+                });
+            }
         }
 
         private enable(success: () => void, failure: () => void) {

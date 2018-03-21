@@ -4,7 +4,7 @@ namespace Mobile {
     export class GPS { 
         private currentPositionCallbacks: ((position: Position) => void)[] = null;
 
-        private running: boolean = false;
+        private watchID: number = null;
 
         private constructor() {
             this.currentPositionCallbacks = [];
@@ -20,8 +20,10 @@ namespace Mobile {
         public addCallback(callback: (position: Position) => void) {
             this.currentPositionCallbacks.push(callback);
 
-            if (this.running == false) {
-                this.running = true;
+            if (this.watchID == null) {
+                // IF it the watch not already started -> Start it.
+                Logging.push("GPS watch started!");
+
                 this.getCurrentPosition();
             }
         }
@@ -32,10 +34,29 @@ namespace Mobile {
             if (index > -1) {
                 this.currentPositionCallbacks.splice(index, 1);
             }
+
+            if (this.currentPositionCallbacks.length == 0 && this.watchID != null) {
+                // IF there are no more callbacks left and the watch is still running -> Stop it.
+                Logging.push("GPS watch stopped!");
+
+                navigator.geolocation.clearWatch(this.watchID);
+                this.watchID = null;
+            }
         }
 
         private getCurrentPosition() {
-            navigator.geolocation.getCurrentPosition((position: Position) => {
+            this.watchID = navigator.geolocation.watchPosition((position: Position) => {
+                Logging.push("GPS: " + position.coords.latitude + ", " + position.coords.longitude + " | " + position.coords.speed);
+
+                for (let notificationCallback of this.currentPositionCallbacks) {
+                    notificationCallback(position);
+                }
+            }, (error: PositionError) => {
+                Logging.push("GPS error: " + error.message);
+            }, { maximumAge: 10000, timeout: 5000, enableHighAccuracy: true });
+
+
+            /*navigator.geolocation.getCurrentPosition((position: Position) => {
                 for (let notificationCallback of this.currentPositionCallbacks) {
                     notificationCallback(position);
                 }
@@ -55,7 +76,7 @@ namespace Mobile {
                 enableHighAccuracy: true,
                 timeout: Infinity,
                 maximumAge: 10000
-            });
+            });*/
         }
     }
 }

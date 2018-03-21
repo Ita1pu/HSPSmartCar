@@ -37,7 +37,7 @@ inline void btLog(uint16_t pid, uint32_t value){
   Serial.print(pid);
   Serial.print(':');
   Serial.print(value);
-  Serial.print(';');
+  Serial.println(';');
 }
 inline void logCategoryE(){
   bool pidSucc = false;

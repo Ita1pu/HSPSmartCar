@@ -130,7 +130,6 @@ stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_nam
   this->_file_system->getCurrentFile().write(file_path);
   this->_file_system->getCurrentFile().write("\n");
   this->_file_system->getCurrentFile().close();
-  Serial.println(file_path);
   if (!(this->_file_system->exists(folder)))//Check if folder for MVID already exists
   {
     //Folder does not exist

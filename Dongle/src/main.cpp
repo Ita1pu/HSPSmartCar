@@ -131,7 +131,7 @@ void loop()
 {
   //TODO:check for mode
   if(currentMode.mode == UPLOAD){
-    //uploadBT();
+    uploadBT();
     delay(200);
     //when finished uploading
     currentMode.mode = LOGGING;
@@ -237,5 +237,6 @@ void loop()
 }
 
 void uploadBT(){
+  //Not implemented yet; 23-03-2018
   return;
 }

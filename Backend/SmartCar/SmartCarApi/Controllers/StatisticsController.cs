@@ -64,5 +64,12 @@ namespace SmartCarApi.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpGet]
+        [Route("summary/{year}/{vehicleId}")]
+        public IActionResult GetTripSummary(int year, int vehicleId)
+        {
+            return Ok();
+        }
     }
 }

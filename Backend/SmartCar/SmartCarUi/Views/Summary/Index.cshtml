@@ -1,15 +1,51 @@
-﻿
-@{
-    Layout = null;
+﻿@model TripSummaryViewModel
+
+<h1>Trip Summary</h1>
+
+<hr/>
+
+<div class="container">
+    <h4>Select Parameters</h4>
+
+    <form method="post" asp-controller="Summary" asp-action="CalculateSummary">
+        <div class="form-row">
+            <div class="col">
+                <select name="year" class="form-control">
+                    @if (Model.QueryYears != null)
+                    {
+                        foreach (var year in Model.QueryYears)
+                        {
+                            if (year == DateTime.Now.Year)
+                            {
+                                <option value="@year" selected>@year</option>
+                            }
+                            else
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <select name="vehicleId" class="form-control">
+                    @if (Model.Vehicles != null)
+                    {
+                        foreach (var vehicle in Model.Vehicles)
+                        {
+                            <option value="@vehicle.VehicleId">@vehicle.LicencePlate</option>
+                        }
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Show</button>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+@if (Model.Summary != null)
+{
+
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>

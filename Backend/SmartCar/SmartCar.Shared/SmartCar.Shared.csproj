@@ -194,6 +194,7 @@
     <Compile Include="Model\TripData.cs" />
     <Compile Include="Model\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rest\TripSummary.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

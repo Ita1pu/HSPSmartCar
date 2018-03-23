@@ -5,8 +5,19 @@ using namespace bluetooth;
    * @brief Uploads a Single entry via bluetooth
    *
    */
-  void BtUploader::upload_entry(){
-    return;
+  uint8_t BtUploader::upload_entry(){
+    uint8_t entry[SIZE_OF_LOGGING_ENTRY];
+    uint8_t i = 0;
+    if(this->_p->get_next_entry(&this->_position, 0, this->upload_file_date, entry) == 0){
+      for(i = 0; i < SIZE_OF_LOGGING_ENTRY;i++){
+        Serial.print(entry[i]);
+      }
+      Serial.print("\n");
+      return NO_ERROR;
+    }
+    else{
+      return UNDEFINED_ERROR;
+    }
   }
 
   /**
@@ -21,8 +32,8 @@ using namespace bluetooth;
    * @brief Writes to a Log-file wich data has been uploaded already
    *
    */
-  void BtUploader::log_upload_postion(){
-    this->_p->log_bt_upload_position(this->_current_car, this->_current_file, this->_postition);
+  void BtUploader::log_upload_position(){
+    this->_p->log_bt_upload_position(this->_current_car, this->_current_file, this->_position);
   }
 
   /**
@@ -30,6 +41,14 @@ using namespace bluetooth;
    *
    */
   void BtUploader::upload_bt(){
+    uint8_t uploaded = 0;
+
+    while(uploaded <= this->upload_size && this->upload_entry() == 0){
+      uploaded++;
+    }
+
+    Serial.print(uploaded);
+    Serial.println(" entries uploaded");
     return;
   }
 
@@ -38,49 +57,58 @@ using namespace bluetooth;
   }
 
   BtUploader::~BtUploader(){
-    this->log_upload_postion();
+    this->log_upload_position();
   }
 
   void BtUploader::read_upload_size_and_date(){
     uint8_t i = 0;
-    uint8_t in[IN_BUFFER] = {0};
+    uint8_t in[IN_BUFFER_SIZE] = {0};
+    this->upload_file_date[0] = '2';
+    this->upload_file_date[1] = '3';
+    this->upload_file_date[2] = '0';
+    this->upload_file_date[3] = '2';
+    this->upload_file_date[4] = '1';
+    this->upload_file_date[5] = '8';
+    this->upload_file_date[6] = '.';
+    this->upload_file_date[7] = 'L';
+    this->upload_file_date[8] = 'O';
+    this->upload_file_date[9] = 'G';
+    this->upload_file_date[10] = 0;
 
     //Recive Request like: "##<size>"
-    Serial.readBytes(in, IN_BUFFER);
+    Serial.readBytes(in, IN_BUFFER_SIZE);
 
-    while(i < IN_BUFFER){
+    while(i < IN_BUFFER_SIZE){
       if(in[i] == '#' and in[i+1] == '#'){
         Serial.print("##");
         Serial.println(in[i+2]);
-        upload_size = in[i+2];
+        this->upload_size = in[i+2];
         break;
       }
       i++;
     }
-    in[IN_BUFFER] = {0}; //Clear buffer
+    in[IN_BUFFER_SIZE] = {0}; //Clear buffer
     delay(MAX_RESPONSE_DELAY);
-    Serial.readBytes(in, IN_BUFFER);//Read date like ;;20101999
+    Serial.readBytes(in, IN_BUFFER_SIZE);//Read date like ;;20101999
 
-    while ( i < IN_BUFFER){
+    while ( i < IN_BUFFER_SIZE){
       if(in[i] == ';' and in[i+1] == ';'){
-        if (i <= IN_BUFFER - 10){
-          this->date[0] = in[i+2];
-          this->date[1] = in[i+3];
-          this->date[2] = in[i+4];
-          this->date[3] = in[i+5];
-          this->date[4] = in[i+6];
-          this->date[5] = in[i+7];
-          this->date[6] = in[i+8];
-          this->date[7] = in[i+9];
-          this->date[8] = 0;
+        if (i <= IN_BUFFER_SIZE - 10){
+          this->upload_file_date[0] = in[i+2];
+          this->upload_file_date[1] = in[i+3];
+          this->upload_file_date[2] = in[i+4];
+          this->upload_file_date[3] = in[i+5];
+          this->upload_file_date[4] = in[i+6];
+          this->upload_file_date[5] = in[i+7];
           Serial.print(";;");
-          Serial.println(this->date);
+          Serial.println(this->upload_file_date);
           break;
         }
         else{
-          Serial.println("No date received starting with oldest one");
+          Serial.println(this->upload_file_date);
         }
       }
       i++;
     }
+    this->_current_car = 0;
   }

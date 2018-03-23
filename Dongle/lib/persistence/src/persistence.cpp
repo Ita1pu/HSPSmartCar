@@ -222,3 +222,22 @@ void Persistence::log_bt_upload_position(uint8_t car, char *date, uint16_t posit
   this->_file_system->getCurrentFile().write(buf, SIZE_OF_BT_UPLOAD_LOG_ENTRY);
   this->_file_system->getCurrentFile().close();
 }
+
+uint8_t Persistence::get_next_entry(uint16_t *position, uint8_t mvid, char *log_file, uint8_t *entry){
+  uint8_t i = 0;
+  char file_path[SIZE_OF_FILE_PATH] = "";
+
+  sprintf(file_path, "%x/", mvid);
+  strcat(file_path, log_file);
+
+  this->_file_system->open_file(file_path, 'r');
+  this->_file_system->getCurrentFile().seek(*position * SIZE_OF_LOGGING_ENTRY);
+  if(this->_file_system->getCurrentFile().read(entry, SIZE_OF_LOGGING_ENTRY) != -1){
+    i++;
+  }
+  else{
+    return UNDEFINED_ERROR;
+  }
+  *position = *position + 1;
+  return 0;
+}

@@ -45,6 +45,7 @@ using namespace gps;
 #define SIZE_OF_MVID_COUNTER          1
 //Folder name is the hex value of MVID_COUNTER + String-termination
 #define SIZE_OF_MVID_FOLDER_NAME      (SIZE_OF_MVID_COUNTER * 2) + 1
+#define SIZE_OF_FILE_PATH             16
 #if SIZE_OF_MVID_COUNTER == 1
   #define MVID_TYPE uint8_t
   #define MVID_MAX  0xFF
@@ -77,6 +78,7 @@ class Persistence{
                               uint16_t data_id, uint32_t data_value);
     stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file
     stdRetVal close_logging_file();
+    uint8_t get_next_entry(uint16_t *position, uint8_t mvid, char *log_file, uint8_t *entry);
     /**
      * @brief writes the last uploaded file and its postition to the Bt-logfile
      *

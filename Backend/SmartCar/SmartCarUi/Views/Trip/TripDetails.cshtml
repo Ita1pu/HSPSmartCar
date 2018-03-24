@@ -32,7 +32,7 @@
         <div class="col-sm">
             <p style="text-align: center">
                 <i class="fa fa-truck fa-lg"></i><br />
-                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance/1000, 2) km</span><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance / 1000, 2) km</span><br />
                 <span>Distance</span>
             </p>
         </div>
@@ -43,6 +43,13 @@
                 <span>Average Speed</span>
             </p>
         </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-flask fa-lg"></i><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.FuelConsumption, 2) km/h</span><br />
+                <span>Fuel Consumption</span>
+            </p>
+        </div>
     </div>
 </div>
 
@@ -51,6 +58,9 @@
 <div class="container">
     <h3>Speed Trend</h3>
     <canvas id="speedTrend"></canvas>
+    
+    <h3>Fuel Consumption</h3>
+    <canvas id="fuelTrend"></canvas>
 
     <h3>Rpm Trend</h3>
     <canvas id="rpmTrend"></canvas>
@@ -168,12 +178,42 @@
             }
         };
 
+        var fuelChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'Fuel Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'l/100km'
+                        }
+                    }]
+                }
+            }
+        };
+
         $(document).ready(function () {
             var speedTrendCtx = document.getElementById('speedTrend').getContext('2d');
             window.speedTrend = new Chart(speedTrendCtx, speedChartConfig);
 
             var rpmTrendCtx = document.getElementById('rpmTrend').getContext('2d');
             window.rpmTrend = new Chart(rpmTrendCtx, rpmChartConfig);
+
+            var fuelTrendCtx = document.getElementById('fuelTrend').getContext('2d');
+            window.fuelTrend = new Chart(fuelTrendCtx, fuelChartConfig);
 
             var speedTrendObdUrl = '/Trip/GetSpeedTrendObd';
 
@@ -208,6 +248,18 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: loadedRpmTrend,
+                error: errorLoadingTrend
+            });
+
+            var fuelTrendUrl = '/Trip/GetFuelTrend';
+
+            $.ajax({
+                type: "POST",
+                url: fuelTrendUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedFuelTrend,
                 error: errorLoadingTrend
             });
         });
@@ -268,7 +320,26 @@
             rpmChartConfig.data.datasets.push(rpmTrendObd);
             window.rpmTrend.update();
         }
-        
+
+        function loadedFuelTrend(data, status) {
+            var fuelData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                fuelData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var fuelTrend = {
+                label: "l/100km",
+                borderColor: "#000000",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: fuelData
+            };
+
+            fuelChartConfig.data.datasets.push(fuelTrend);
+            window.fuelTrend.update();
+        }
+
         function errorLoadingTrend() {
             alert('Could not load trend data');
         }

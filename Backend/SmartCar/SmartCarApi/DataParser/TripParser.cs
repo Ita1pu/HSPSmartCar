@@ -40,11 +40,11 @@ namespace SmartCarApi.DataParser
                 //Split the trips
                 var splitTrips = SplitTrips(tripData);
 
-                //Initially calculate trip data
-                SetBasicData(splitTrips);
-
                 //Assing default vehicle
                 AssignVehicle(splitTrips);
+
+                //Initially calculate trip data
+                SetBasicData(splitTrips);
                 
                 _db.Trips.AddRange(splitTrips);
                 _db.SaveChanges();

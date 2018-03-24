@@ -69,7 +69,18 @@ namespace SmartCarApi.Controllers
         [Route("summary/{year}/{vehicleId}")]
         public IActionResult GetTripSummary(int year, int vehicleId)
         {
-            return Ok();
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var trips = _db.Trips.Include(t => t.Vehicle)
+                .Where(t => t.TripStart.Year == year && t.Vehicle.VehicleId == vehicleId)
+                .ToList();
+            
+            var summaryStatistic = new SummaryStatistic();
+            var statistic = summaryStatistic.CalculateTripSummary(trips);
+
+            return Ok(JsonConvert.SerializeObject(statistic));
         }
     }
 }

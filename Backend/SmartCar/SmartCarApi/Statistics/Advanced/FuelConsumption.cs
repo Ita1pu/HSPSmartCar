@@ -9,145 +9,151 @@ namespace SmartCarApi.Statistics.Advanced
 {
     public class FuelConsumption
     {
-        private double _AirFuelRatio; //otto 14.7       //diesel 14.5
-        private double _FuelDensity; //otto 747.5 g/l   //diesel 832.5 g/l
-        private bool _IsDiesel;
-        private int _CorrectionFactorOxiSensor=0;
-        private int _CorrectionFactorAirFlow = 0;
+        private readonly double _airFuelRatio; //otto 14.7       //diesel 14.5
+        private readonly double _fuelDensity; //otto 747.5 g/l   //diesel 832.5 g/l
 
-        List<Tuple<DateTime, double>> _FuelRateInLproH = new List<Tuple<DateTime, double>>();
+        private int _correctionFactorOxiSensor=0;
+        private int _correctionFactorAirFlow = 0;
 
-        List<Tuple<DateTime, Signal, int>> _OxySensorDataComplete = new List<Tuple<DateTime, Signal, int>>();
-        List<Tuple<DateTime, double>> _OxySensorDataRefined = new List<Tuple<DateTime, double>>();
-        List<Tuple<DateTime, double>> _AirMass = new List<Tuple<DateTime, double>>();
+        List<Tuple<DateTime, double>> _fuelRateInLproH = new List<Tuple<DateTime, double>>();
 
-        List<Tuple<DateTime, double>> _EngineLoad = new List<Tuple<DateTime, double>>();
-        List<Tuple<DateTime, double>> _EngineRPM = new List<Tuple<DateTime, double>>();
+        List<Tuple<DateTime, Signal, int>> _oxySensorDataComplete = new List<Tuple<DateTime, Signal, int>>();
+        List<Tuple<DateTime, double>> _oxySensorDataRefined = new List<Tuple<DateTime, double>>();
+        List<Tuple<DateTime, double>> _airMass = new List<Tuple<DateTime, double>>();
+
+        List<Tuple<DateTime, double>> _engineLoad = new List<Tuple<DateTime, double>>();
+        List<Tuple<DateTime, double>> _engineRPM = new List<Tuple<DateTime, double>>();
 
 
-        public FuelConsumption(bool IsDisel=true)
+        public FuelConsumption(bool isDiesel=true)
         {
-            _IsDiesel = IsDisel;
-
-            if (IsDisel == true)
+            if (isDiesel)
             {
-                _AirFuelRatio = 15.5;
-                _FuelDensity = 832.5;
+                _airFuelRatio = 15.5;
+                _fuelDensity = 832.5;
             }
             else
             {
-                _AirFuelRatio = 14.7;
-                _FuelDensity = 747.5;
+                _airFuelRatio = 14.7;
+                _fuelDensity = 747.5;
             }
         }
 
-        public List<Tuple<DateTime,double>> CalcFuelConsumption(Trip trip, List<Tuple<DateTime, double>> _SpeedTrend=null)//returns list with date und l/h
+        public List<Tuple<DateTime,double>> CalcFuelConsumption(Trip trip, List<Tuple<DateTime, double>> speedTrend=null)//returns list with date und l/h
         {
-            Prepair();
-            ExtractNeededInformations(trip);
-
-            if (_FuelRateInLproH.Count == 0)//got fuelrate NOT over obd calc it 
+            try
             {
-                RefineOxyInformations();
+                Prepair();
+                ExtractNeededInformations(trip);
 
-                if (_SpeedTrend == null)
+                if (_fuelRateInLproH.Count == 0) //got fuelrate NOT over obd calc it 
                 {
-                    TripStatistic _TripStatistic = new TripStatistic();
-                    _SpeedTrend = _TripStatistic.GetSpeedTrendObd(trip);
+                    RefineOxyInformations();
+
+                    if (speedTrend == null)
+                    {
+                        TripStatistic tripStatistic = new TripStatistic();
+                        speedTrend = tripStatistic.GetSpeedTrendObd(trip);
+                    }
+
+                    _fuelRateInLproH = CalcFuelRate();
                 }
 
-                _FuelRateInLproH = CalcFuelRate();
+                var fuelRateInLpro100Km = new List<Tuple<DateTime, double>>();
+                double summForAverage = 0;
+
+                for (int i = 0; i < Math.Min(_fuelRateInLproH.Count, speedTrend.Count); ++i)
+                {
+                    double tmp;
+                    if (speedTrend[i].Item2 < 2
+                    ) //to filter out to small values and 0 values that will destroy the calculation
+                    {
+                        tmp = 0;
+                    }
+                    else
+                    {
+                        tmp = _fuelRateInLproH[i].Item2 * 100 / speedTrend[i].Item2; //convert from l/h in l/100km
+                    }
+
+                    summForAverage += tmp;
+                    fuelRateInLpro100Km.Add(new Tuple<DateTime, double>(_fuelRateInLproH[i].Item1, tmp));
+                }
+
+                trip.FuelConsumption = summForAverage / Math.Min(_fuelRateInLproH.Count, speedTrend.Count);
+
+                return _fuelRateInLproH;
             }
-
-            var _FuelRateInLpro100km = new List<Tuple<DateTime, double>>();
-            double _SummForAverage = 0;
-
-            for (int i = 0; i < Math.Min(_FuelRateInLproH.Count, _SpeedTrend.Count); ++i)
+            catch (Exception)
             {
-                double tmp;
-                if (_SpeedTrend[i].Item2 < 2)//to filter out to small values and 0 values that will destroy the calculation
-                {
-                    tmp = 0;
-                }
-                else
-                {
-                    tmp = _FuelRateInLproH[i].Item2 * 100 / _SpeedTrend[i].Item2;//convert from l/h in l/100km
-                }
-                _SummForAverage += tmp;
-                _FuelRateInLpro100km.Add(new Tuple<DateTime, double>(_FuelRateInLproH[i].Item1, tmp));
+                return default(List<Tuple<DateTime,double>>);
             }
-
-            trip.FuelConsumption = _SummForAverage / Math.Min(_FuelRateInLproH.Count, _SpeedTrend.Count);
-
-            return _FuelRateInLproH;
-            
         }
 
         private void ExtractNeededInformations(Trip trip)
         {
-            foreach (var _tripData in trip.TripData.OrderBy(td => td.Timestamp))
+            foreach (var tripData in trip.TripData.OrderBy(td => td.Timestamp))
             {
-                if (_tripData?.SignalType?.SignalName == Signal.EngineFuelRate)
+                if (tripData.SignalType?.SignalName == Signal.EngineFuelRate)
                 {
-                    _FuelRateInLproH.Add(new Tuple<DateTime, double>(_tripData.Timestamp, _tripData.Value));
+                    _fuelRateInLproH.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value));
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.TestEquipConf1)
+                if (tripData.SignalType?.SignalName == Signal.TestEquipConf1)
                 {
-                    _CorrectionFactorOxiSensor = _tripData.Value;
+                    _correctionFactorOxiSensor = tripData.Value;
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.OxySensor01 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor02 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor03 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor04 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor05 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor06 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor07 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor08 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor11 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor12 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor13 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor14 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor15 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor16 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor17 ||
-                    _tripData?.SignalType?.SignalName == Signal.OxySensor18)
+                if (tripData.SignalType?.SignalName == Signal.OxySensor01 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor02 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor03 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor04 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor05 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor06 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor07 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor08 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor11 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor12 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor13 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor14 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor15 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor16 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor17 ||
+                    tripData.SignalType?.SignalName == Signal.OxySensor18)
                 {
-                    _OxySensorDataComplete.Add(new Tuple<DateTime, Signal, int>(_tripData.Timestamp, _tripData.SignalType.SignalName, _tripData.Value));
+                    _oxySensorDataComplete.Add(new Tuple<DateTime, Signal, int>(tripData.Timestamp, tripData.SignalType.SignalName, tripData.Value));
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.MAFAirFlow)
+                if (tripData.SignalType?.SignalName == Signal.MAFAirFlow)
                 {
-                    if (_CorrectionFactorAirFlow==0)
+                    if (_correctionFactorAirFlow==0)
                     {
-                        _AirMass.Add(new Tuple<DateTime, double>(_tripData.Timestamp, _tripData.Value * (1/1000)));
+                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value * (1/1000)));
                     }
                     else
                     {
-                        _AirMass.Add(new Tuple<DateTime, double>(_tripData.Timestamp, _tripData.Value*(1000* _CorrectionFactorAirFlow)));
+                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value*(1000* _correctionFactorAirFlow)));
                     }
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.TestEquipConf2)
+                if (tripData.SignalType?.SignalName == Signal.TestEquipConf2)
                 {
-                    _CorrectionFactorAirFlow = _tripData.Value;
+                    _correctionFactorAirFlow = tripData.Value;
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.EngineLoad)
+                if (tripData.SignalType?.SignalName == Signal.EngineLoad)
                 {
-                    _EngineLoad.Add(new Tuple<DateTime, double>(_tripData.Timestamp, _tripData.Value));
+                    _engineLoad.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value));
                     continue;
                 }
 
-                if (_tripData?.SignalType?.SignalName == Signal.EngineRpm)
+                if (tripData.SignalType?.SignalName == Signal.EngineRpm)
                 {
-                    _EngineRPM.Add(new Tuple<DateTime, double>(_tripData.Timestamp, _tripData.Value));
+                    _engineRPM.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value));
                     continue;
                 }
             }
@@ -157,72 +163,72 @@ namespace SmartCarApi.Statistics.Advanced
         {
             int bigCnt = 0;
             int tempSum = 0;
-
+            
             //summ up multiple oxy sensors
             do
             {
                 int smallCnt = 1;
 
-                Signal first = _OxySensorDataComplete[bigCnt].Item2;
-                tempSum = 0x0000FFFF & _OxySensorDataComplete[bigCnt].Item3;
+                Signal first = _oxySensorDataComplete[bigCnt].Item2;
+                tempSum = 0x0000FFFF & _oxySensorDataComplete[bigCnt].Item3;
 
-                while (bigCnt + smallCnt < _OxySensorDataComplete.Count && _OxySensorDataComplete[bigCnt + smallCnt].Item2 != first)
+                while (bigCnt + smallCnt < _oxySensorDataComplete.Count && _oxySensorDataComplete[bigCnt + smallCnt].Item2 != first)
                 {
                     //first 2 bytes are killed because they are wrong thanks to parsing from freematics
-                    tempSum += 0x0000FFFF & _OxySensorDataComplete[bigCnt + smallCnt].Item3;
+                    tempSum += 0x0000FFFF & _oxySensorDataComplete[bigCnt + smallCnt].Item3;
                     smallCnt++;
                 }
-                _OxySensorDataRefined.Add(new Tuple<DateTime, double>(_OxySensorDataComplete[bigCnt].Item1, tempSum));
+                _oxySensorDataRefined.Add(new Tuple<DateTime, double>(_oxySensorDataComplete[bigCnt].Item1, tempSum));
                 bigCnt += smallCnt;
             }
-            while (bigCnt < _OxySensorDataComplete.Count);
+            while (bigCnt < _oxySensorDataComplete.Count);
 
             //correct scaling of sensor
             List<Tuple<DateTime, double>> tempArry = new List<Tuple<DateTime, double>>();
-            foreach (var item in _OxySensorDataRefined)
+            foreach (var item in _oxySensorDataRefined)
             {
-                if (_CorrectionFactorOxiSensor == 0)
+                if (_correctionFactorOxiSensor == 0)
                 {
                     double tmp = item.Item2 * ((double)2 / 65535);
                     tempArry.Add(new Tuple<DateTime, double>(item.Item1, tmp));
                 }
                 else
                 {
-                    double tmp = item.Item2 * ((double)_CorrectionFactorOxiSensor / 65535);
+                    double tmp = item.Item2 * ((double)_correctionFactorOxiSensor / 65535);
                     tempArry.Add(new Tuple<DateTime, double>(item.Item1, tmp));
                 }
             }
-            _OxySensorDataRefined = tempArry;
+            _oxySensorDataRefined = tempArry;
         }
 
         private void Prepair()
         {
             //clean up form last trip
-            _CorrectionFactorOxiSensor = 0;
-            _CorrectionFactorAirFlow = 0;
+            _correctionFactorOxiSensor = 0;
+            _correctionFactorAirFlow = 0;
 
-            _FuelRateInLproH.Clear();
+            _fuelRateInLproH.Clear();
 
-            _OxySensorDataComplete.Clear();
-            _OxySensorDataRefined.Clear();
-            _AirMass.Clear();
+            _oxySensorDataComplete.Clear();
+            _oxySensorDataRefined.Clear();
+            _airMass.Clear();
 
-            _EngineLoad.Clear();
-            _EngineRPM.Clear();
+            _engineLoad.Clear();
+            _engineRPM.Clear();
         }
 
         private List<Tuple<DateTime, double>> CalcFuelRate()
         {
             List<Tuple<DateTime, double>> returnValue = new List<Tuple<DateTime, double>>();
 
-            if (_AirMass.Count == 0)
+            if (_airMass.Count == 0)
             {
                 CalcAirFlow();
             }
 
-            for (int i = 0; i < Math.Min(_OxySensorDataRefined.Count, _AirMass.Count); ++i)
+            for (int i = 0; i < Math.Min(_oxySensorDataRefined.Count, _airMass.Count); ++i)
             {
-                returnValue.Add(new Tuple<DateTime, double>(_AirMass[i].Item1, 3600 * _AirMass[i].Item2 / (_OxySensorDataRefined[i].Item2 * _AirFuelRatio * _FuelDensity)));
+                returnValue.Add(new Tuple<DateTime, double>(_airMass[i].Item1, 3600 * _airMass[i].Item2 / (_oxySensorDataRefined[i].Item2 * _airFuelRatio * _fuelDensity)));
             }
             return returnValue;
         }
@@ -234,11 +240,11 @@ namespace SmartCarApi.Statistics.Advanced
             Func<double, double> LoadFull = x => 100;
             Func<double, double> LoadIdle = x => 0.000264901 * x + 25.5728;
 
-            for(int i=0; i<Math.Min(_EngineLoad.Count, _EngineRPM.Count); ++i)
+            for(int i=0; i<Math.Min(_engineLoad.Count, _engineRPM.Count); ++i)
             {
-                double rpm = _EngineRPM[i].Item2;
-                double tmp = AfIdle(rpm) + (AfFull(rpm) - AfIdle(rpm)) / (LoadFull(rpm) - LoadIdle(rpm)) * (_EngineLoad[i].Item2 -LoadIdle(rpm));
-                _AirMass.Add(new Tuple<DateTime, double>(_EngineRPM[i].Item1, tmp));
+                double rpm = _engineRPM[i].Item2;
+                double tmp = AfIdle(rpm) + (AfFull(rpm) - AfIdle(rpm)) / (LoadFull(rpm) - LoadIdle(rpm)) * (_engineLoad[i].Item2 -LoadIdle(rpm));
+                _airMass.Add(new Tuple<DateTime, double>(_engineRPM[i].Item1, tmp));
             }
         }
     }

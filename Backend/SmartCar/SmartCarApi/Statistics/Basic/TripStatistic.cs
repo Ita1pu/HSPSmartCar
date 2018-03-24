@@ -4,40 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using SmartCar.Shared.Model;
 using SmartCar.Shared.Rest;
+using SmartCarApi.Statistics.Advanced;
 
 
 namespace SmartCarApi.Statistics.Basic
 {
     public class TripStatistic
     {
-        public TripStatistic()
-        {
-        
-        }
-
         public void CalculateBasicData(Trip trip)
         {
+            //Set duration
             trip.Duration = trip.TripData[trip.TripData.Count-1].Timestamp - trip.TripData[0].Timestamp;
 
+            //Calculate distance
             List<Tuple<DateTime, GpsCoordinate>> trace = GetGpsTrend(trip);
             for (int i=0; i<trace.Count-1; ++i)
             {
                 trip.Distance += trace[i].Item2.GetDistance(trace[i + 1].Item2);
             }
+            
+            //Calculate average speed
+            trip.AvgSpeed = trip.Duration.TotalHours > 0 ? (trip.Distance / 1000) / trip.Duration.TotalHours : 0;
 
-            if (trip.Duration.TotalHours != 0)
-            {
-                trip.AvgSpeed = (trip.Distance / 1000) / trip.Duration.TotalHours;
-            }
-            else
-            {
-                trip.AvgSpeed = 0;
-            }
-
+            //Set start and end location
             if (trace.Count >= 2)
             {
                 trip.StartLocation = trace[0].Item2;
                 trip.EndLocation = trace[trace.Count - 1].Item2;
+            }
+
+            //Calculate fuel consumption
+            if (trip.Vehicle != null)
+            {
+                var speedTrend = GetSpeedTrendGps(trip);
+                var fuelCalculator = new FuelConsumption(trip.Vehicle.FuelType == FuelType.Diesel);
+                var consumption = fuelCalculator.CalcFuelConsumption(trip, speedTrend);
+                
+                trip.FuelConsumption = consumption.Any() ? consumption.Sum(c => c.Item2) / consumption.Count : 0;
             }
         }
         

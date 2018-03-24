@@ -115,6 +115,22 @@ namespace SmartCarUi.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> GetFuelTrend([FromBody]dynamic data)
+        {
+            int tripId = (int)data["tripId"];
+            var client = await ApiTools.GetAuthenticatedClient(HttpContext);
+            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/fueltrend/{tripId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseContent = await response.Content.ReadAsStringAsync();
+                return Ok(responseContent);
+            }
+
+            return null;
+        }
+
+        [HttpPost]
         public async Task<IActionResult> ModifyTrips(TripsActionModel actionView)
         {
             switch (actionView.Action)

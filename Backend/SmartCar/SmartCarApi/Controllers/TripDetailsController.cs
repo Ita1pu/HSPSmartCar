@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SmartCar.Shared.Database;
 using SmartCarApi.Extensions;
+using SmartCarApi.Statistics.Advanced;
 using SmartCarApi.Statistics.Basic;
 
 namespace SmartCarApi.Controllers
@@ -128,6 +129,36 @@ namespace SmartCarApi.Controllers
                 var tripStatistic = new TripStatistic();
                 var speedTrend = tripStatistic.GetRpmTrend(trip);
                 return Ok(JsonConvert.SerializeObject(speedTrend.OrderBy(i => i.Item1)));
+            }
+
+            return NotFound();
+        }
+
+        /// <summary>
+        /// Gets the fuel trend for the given trip.
+        /// </summary>
+        /// <param name="tripId">The trip identifier.</param>
+        [HttpGet]
+        [Route("fueltrend/{tripId}")]
+        public IActionResult GetFuelTrend(int tripId)
+        {
+            var user = _repo.GetUser(User);
+
+            if (user == null) return Unauthorized();
+
+            var trip = _db.Trips.Include(t => t.Vehicle)
+                .Include(t => t.TripData).ThenInclude(d => d.SignalType)
+                .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == tripId);
+
+            if (trip != null)
+            {
+                var tripStatistic = new TripStatistic();
+                var fuelConsumption = new FuelConsumption();
+                var speedTrend = tripStatistic.GetSpeedTrendGps(trip);
+
+                var consumption = fuelConsumption.CalcFuelConsumption(trip, speedTrend);
+
+                return Ok(JsonConvert.SerializeObject(consumption.OrderBy(c => c.Item1)));
             }
 
             return NotFound();

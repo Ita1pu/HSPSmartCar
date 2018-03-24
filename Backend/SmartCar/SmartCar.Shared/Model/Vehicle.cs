@@ -9,6 +9,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SmartCar.Shared.Model
 {
+    public enum FuelType
+    {
+        Petrol,
+        Diesel
+    }
+
     public class Vehicle
     {
         [Key]
@@ -25,5 +31,7 @@ namespace SmartCar.Shared.Model
         public string Model { get; set; }
 
         public bool IsDefault { get; set; }
+
+        public FuelType FuelType { get; set; }
     }
 }

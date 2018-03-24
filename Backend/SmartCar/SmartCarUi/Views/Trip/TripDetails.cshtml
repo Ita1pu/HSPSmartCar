@@ -65,13 +65,13 @@
 
             for (var i = 0; i < gpsData.length; i++) {
                 var coords = gpsData[i].Item2;
-                tripCoordinates.push(new google.maps.LatLng(coords._latitude, coords._longitude));
+                tripCoordinates.push(new google.maps.LatLng(coords.Latitude, coords.Longitude));
             }
 
             var map = new google.maps.Map(document.getElementById('map'),
                 {
                     zoom: 12,
-                    center: new google.maps.LatLng(gpsData[0].Item2._latitude, gpsData[0].Item2._longitude),
+                    center: new google.maps.LatLng(gpsData[0].Item2.Latitude, gpsData[0].Item2.Longitude),
                     mapTypeId: 'terrain'
                 });
             

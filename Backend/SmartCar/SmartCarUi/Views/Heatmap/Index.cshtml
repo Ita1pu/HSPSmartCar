@@ -32,7 +32,7 @@
 
 <div class="container">
     <p id="statusText" class="lead"></p>
-    <div id="map" style="height: 400px; width: auto"></div>
+    <div id="mapContainer" style="height: 400px; width: auto"></div>
 </div>
 
 @section Scripts
@@ -63,12 +63,12 @@
 
             for (var i = 0; i < gpsData.length; i++) {
                 var coords = gpsData[i];
-                gpsCoordinates.push(new google.maps.LatLng(coords._latitude, coords._longitude));
+                gpsCoordinates.push(new google.maps.LatLng(coords.Latitude, coords.Longitude));
             }
 
-            var map = new google.maps.Map(document.getElementById('map'),
+            var map = new google.maps.Map(document.getElementById('mapContainer'),
                 {
-                    center: new google.maps.LatLng(gpsData[0]._latitude, gpsData[0]._longitude),
+                    center: new google.maps.LatLng(gpsData[0].Latitude, gpsData[0].Longitude),
                     zoom: 13,
                     mapTypeId: 'terrain'
                 });
@@ -119,8 +119,6 @@
         }
 
     </script>
-
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&libraries=visualization&callback=loadedApi">
-
-    </script>
+    
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&libraries=visualization&callback=loadedApi"></script>
 }

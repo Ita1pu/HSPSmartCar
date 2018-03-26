@@ -165,11 +165,15 @@ void loop()
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, locSrv.GetLatitude());
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, locSrv.GetLongitude());
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsAltitude, locSrv.GetAltitude());
+        }else{
+          //reset coprocessor if gps congests communication
+          currentMode.mode = SLEEP;
+          locSrv.StopFlagTimer();
+          locSrv.UnInit();
         }
         //log fast OBD data
         //no fast pids selected
       }
-
       //log normal / Category C
       if(currentMode.currentLoopCount%30 == 2){
         pidLen = obdDev->updateNormalPids();
@@ -200,8 +204,8 @@ void loop()
         Serial.print(F("Sl!"));
         locSrv.StopFlagTimer();
         locSrv.UnInit();
-        obdDev->uninit();
-        coproc.enterLowPowerMode();
+        //obdDev->uninit();
+        //coproc.enterLowPowerMode();
       }
       currentMode.currentLoopCount++;
       //cycle every ~5 minutes
@@ -211,13 +215,13 @@ void loop()
   }else{
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
-    coproc.leaveLowPowerMode();
-    obdDev->initialize();
+    //coproc.leaveLowPowerMode();
+    //obdDev->initialize();
     Serial.println(F("Cs"));
     delay(50);
     if(!obdDev->getClamp15State()){
       //if Car is still off
-      coproc.enterLowPowerMode();
+      //coproc.enterLowPowerMode();
     }else{
       currentMode.currentLoopCount = 0;
       currentMode.mode = LOGGING;

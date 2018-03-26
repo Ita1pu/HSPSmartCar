@@ -11,7 +11,11 @@ namespace SmartCarApi.Statistics.Advanced
     {
         public TripSummary CalculateTripSummary(List<Trip> trips)
         {
-            return null;
+            var summary = new TripSummary();
+
+
+
+            return summary;
         }
     }
 }

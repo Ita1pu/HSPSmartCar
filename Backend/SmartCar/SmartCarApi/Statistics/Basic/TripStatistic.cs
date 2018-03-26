@@ -36,11 +36,11 @@ namespace SmartCarApi.Statistics.Basic
             //Calculate fuel consumption
             if (trip.Vehicle != null)
             {
-                var speedTrend = GetSpeedTrendGps(trip);
+                var speedTrend = GetSpeedTrendObd(trip);
                 var fuelCalculator = new FuelConsumption(trip.Vehicle.FuelType == FuelType.Diesel);
-                var consumption = fuelCalculator.CalcFuelConsumption(trip, speedTrend);
-                
-                trip.FuelConsumption = consumption.Any() ? consumption.Sum(c => c.Item2) / consumption.Count : 0;
+
+                //Calculates and sets the average consumption
+                fuelCalculator.CalcFuelConsumption(trip, speedTrend);
             }
         }
         

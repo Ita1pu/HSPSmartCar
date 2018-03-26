@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using SmartCar.Shared.Database;
 using SmartCar.Shared.Model;
 using SmartCarApi.Extensions;
+using SmartCarApi.Statistics.Advanced;
+using SmartCarApi.Statistics.Basic;
 
 namespace SmartCarApi.Controllers
 {
@@ -124,8 +126,9 @@ namespace SmartCarApi.Controllers
 
             if (user == null) return Unauthorized();
 
-            var dbTrip = _db.Trips.Include(t => t.Vehicle).Include(t => t.TripData)
-                .FirstOrDefault(t => t.User.Id == user.Id && t.TripId == trip.TripId);
+            var dbTrip = _db.Trips.Include(t => t.Vehicle)
+                .Where(t => t.User.Id == user.Id && t.TripId == trip.TripId)
+                .Include(t => t.TripData).ThenInclude(td => td.SignalType).FirstOrDefault();
 
             var dbVehicle =
                 _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.VehicleId == trip.Vehicle.VehicleId);
@@ -133,12 +136,22 @@ namespace SmartCarApi.Controllers
             if (dbTrip != null)
             {
                 dbTrip.Vehicle = dbVehicle;
+                RecalculateFuelConsumption(dbTrip);
+
                 await _db.SaveChangesAsync();
 
                 return Ok();
             }
 
             return NotFound();
+        }
+
+        private void RecalculateFuelConsumption(Trip trip)
+        {
+            var tripStatistic = new TripStatistic();
+            var fuelConsumption = new FuelConsumption(trip.Vehicle?.FuelType == FuelType.Diesel);
+            var speedTrend = tripStatistic.GetSpeedTrendObd(trip);
+            fuelConsumption.CalcFuelConsumption(trip, speedTrend);
         }
     }
 }

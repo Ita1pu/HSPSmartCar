@@ -65,6 +65,11 @@ namespace SmartCarApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Calculates the thrip summary for the given year and vehicle.
+        /// </summary>
+        /// <param name="year">The year the summary shall be calculated for.</param>
+        /// <param name="vehicleId">The vehicle identifier.</param>
         [HttpGet]
         [Route("summary/{year}/{vehicleId}")]
         public IActionResult GetTripSummary(int year, int vehicleId)

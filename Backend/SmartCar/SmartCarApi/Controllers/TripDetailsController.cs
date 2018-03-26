@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SmartCar.Shared.Database;
+using SmartCar.Shared.Model;
 using SmartCarApi.Extensions;
 using SmartCarApi.Statistics.Advanced;
 using SmartCarApi.Statistics.Basic;
@@ -153,8 +154,8 @@ namespace SmartCarApi.Controllers
             if (trip != null)
             {
                 var tripStatistic = new TripStatistic();
-                var fuelConsumption = new FuelConsumption();
-                var speedTrend = tripStatistic.GetSpeedTrendGps(trip);
+                var fuelConsumption = new FuelConsumption(trip.Vehicle?.FuelType == FuelType.Diesel);
+                var speedTrend = tripStatistic.GetSpeedTrendObd(trip);
 
                 var consumption = fuelConsumption.CalcFuelConsumption(trip, speedTrend);
 

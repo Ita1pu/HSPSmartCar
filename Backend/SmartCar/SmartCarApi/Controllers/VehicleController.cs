@@ -142,8 +142,11 @@ namespace SmartCarApi.Controllers
 
             var vehicle = _db.Vehicles.FirstOrDefault(v => v.Owner.Id == user.Id && v.VehicleId == vehicleId);
 
-            if (vehicle != null) 
+            if (vehicle != null)
             {
+                //Remove vehicle from referenced trips
+                await _db.Trips.Where(t => t.Vehicle.VehicleId == vehicle.VehicleId).ForEachAsync(t => t.Vehicle = null);
+
                 _db.Vehicles.Remove(vehicle);
                 await _db.SaveChangesAsync();
 

@@ -85,7 +85,7 @@ namespace SmartCarApi.Statistics.Advanced
             }
             catch (Exception)
             {
-                return default(List<Tuple<DateTime,double>>);
+                return new List<Tuple<DateTime,double>>();
             }
         }
 
@@ -130,11 +130,11 @@ namespace SmartCarApi.Statistics.Advanced
                 {
                     if (_correctionFactorAirFlow==0)
                     {
-                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value * (1/1000)));
+                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value * (1/1000d)));
                     }
                     else
                     {
-                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value*(1000* _correctionFactorAirFlow)));
+                        _airMass.Add(new Tuple<DateTime, double>(tripData.Timestamp, tripData.Value*(1000d* _correctionFactorAirFlow)));
                     }
                     continue;
                 }

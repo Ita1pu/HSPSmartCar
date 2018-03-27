@@ -66,14 +66,14 @@ namespace View {
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                            longitude = SimpleList.lastInstance.gps.text().split(", ")[1];
                             
-                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000).toPrecision(4)  + ", " + longitude);
+                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000).toPrecision(6)  + ", " + longitude);
                     }
                     else if (pid == Settings.PIDs.longitude) {
                         let latitude = "-";
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                             latitude = SimpleList.lastInstance.gps.text().split(", ")[0];
 
-                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000).toPrecision(4));
+                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000).toPrecision(6));
                     }
                     else if (pid == Settings.PIDs.coolantTemperatur) {
                         SimpleList.lastInstance.oilTemperatur.text((parseInt(value) - 40) + " °C");
@@ -93,8 +93,8 @@ namespace View {
 
         private onNewPosition(position: Position) {
             SimpleList.lastInstance.gpsMobile.text(
-                position.coords.latitude.toPrecision(4) + ", " + 
-                position.coords.longitude.toPrecision(4));
+                position.coords.latitude.toPrecision(6) + ", " + 
+                position.coords.longitude.toPrecision(6));
 
             if (position.coords.speed != null) 
                 SimpleList.lastInstance.velocityMobile.text(position.coords.speed);

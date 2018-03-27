@@ -66,34 +66,24 @@ namespace View {
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                            longitude = SimpleList.lastInstance.gps.text().split(", ")[1];
                             
-                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000)  + ", " + longitude);
+                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000).toPrecision(4)  + ", " + longitude);
                     }
                     else if (pid == Settings.PIDs.longitude) {
                         let latitude = "-";
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                             latitude = SimpleList.lastInstance.gps.text().split(", ")[0];
 
-                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000));
+                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000).toPrecision(4));
                     }
                     else if (pid == Settings.PIDs.coolantTemperatur) {
-                        SimpleList.lastInstance.oilTemperatur.text(value + " °C");
+                        SimpleList.lastInstance.oilTemperatur.text((parseInt(value) - 40) + " °C");
                     }
                     else if (pid == Settings.PIDs.rpm) {
-                        SimpleList.lastInstance.rotSpeed.text(value);
+                        SimpleList.lastInstance.rotSpeed.text((parseInt(value) * 0.25) + " U/min");
                     }
                     else if (pid == Settings.PIDs.velocity) {
                         SimpleList.lastInstance.velocity.text(value + " Km/H");
                     }
-
-                    // TODO spaltenbreite fest!!!
-
-                    // velocity und temperatur und rot speed | ist das °C und Km/h oder was muss normalisiert werden
-                    // velocity (mob) runden und ist das km/h???
-                    // gps runden mobile sowol als gps (mobile zeigt aktuell 1 zahl hintern komma mehr an)
-
-                    // speedo 
-
-                    // speedo-compare
                 } 
             }            
 
@@ -102,7 +92,9 @@ namespace View {
         }
 
         private onNewPosition(position: Position) {
-            SimpleList.lastInstance.gpsMobile.text(position.coords.latitude + ", " + position.coords.longitude);
+            SimpleList.lastInstance.gpsMobile.text(
+                position.coords.latitude.toPrecision(4) + ", " + 
+                position.coords.longitude.toPrecision(4));
 
             if (position.coords.speed != null) 
                 SimpleList.lastInstance.velocityMobile.text(position.coords.speed);

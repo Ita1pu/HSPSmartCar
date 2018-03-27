@@ -3,12 +3,18 @@ namespace View {
     declare let LinearGauge: any;
 
     export class Speedo extends View {
+        public static lastInstance: Speedo = null;
+
         private velocity: JQuery = null;
         private rotSpeed: JQuery = null;
         private oilTemperatur: JQuery = null
 
+        private lastNotification: string = "";
+
         public constructor(control: JQuery) {
-            super(control);            
+            super(control);   
+            
+            Speedo.lastInstance = this;
 
             this.control.addClass(Var.Style.View.speedo);
 
@@ -21,28 +27,50 @@ namespace View {
             this.drawRotSpeed();
             this.drawOilTemperatur();
 
-            // <--- DEBUG
-            DisplayFeature.noConnectionPanel.hide();
-
-            setTimeout(() => {
-                this.velocity.value = 33.2;
-                this.rotSpeed.value = 47;
-                this.oilTemperatur.value = 75;
-            }, 1000);
-            // <--- END
-
-            // Dongle.bluetooth.addNotification(this.onNotification); // TODO wieder rein
+            Dongle.bluetooth.addNotification(this.onNotification); 
         }
 
         public destroy() {
             super.destroy();
 
-            //Dongle.bluetooth.removeNotification(this.onNotification); // TODO wieder rein
+            Dongle.bluetooth.removeNotification(this.onNotification); 
+
+            Speedo.lastInstance = null;
         }
 
         private onNotification(buffer: Uint8Array, text: string) {
-            Logging.push("onData: " +  buffer + " - " + JSON.stringify(buffer) + " - " + text); // TODO only debug  
-            this.control.html(this.control.html() + "<br />" + text); // TODO only debug
+            let entries = (Speedo.lastInstance.lastNotification + text).split(";");
+
+            for (let entry of entries) {
+                let pidValue = entry.split(":");
+
+                if (pidValue.length == 2) {
+                    let value = pidValue[1];
+
+                    let pids = pidValue[0].split("#");
+
+                    let pid;
+                    if (pids.length == 2) {
+                        pid = pids[1];
+                    }
+                    else {
+                        pid = pids[0];
+                    }
+
+                    if (pid == Settings.PIDs.coolantTemperatur) {
+                        Speedo.lastInstance.oilTemperatur.value = parseInt(value) - 40;
+                    }
+                    else if (pid == Settings.PIDs.rpm) {
+                        Speedo.lastInstance.rotSpeed.value = parseInt(value) * 0.25;
+                    }
+                    else if (pid == Settings.PIDs.velocity) {
+                        Speedo.lastInstance.velocity.value = parseInt(value);
+                    }
+                } 
+            }            
+
+            if (entries.length > 0)
+                Speedo.lastInstance.lastNotification = entries[entries.length - 1];
         }
 
         private drawVelocity() {

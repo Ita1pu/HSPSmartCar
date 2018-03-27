@@ -20,6 +20,10 @@ void Persistence::init(LocationTimeService *clock, File_System_Handler *file_sys
 }
 
 
+File_System_Handler* Persistence::getFile_System(){
+  return this->_file_system;
+}
+
 stdRetVal Persistence::GetInitStatus()
 {
   return this->_initStatus;
@@ -214,25 +218,16 @@ void Persistence::log_bt_upload_position(uint8_t car, char *date, uint16_t posit
   buf[12] = (uint8_t) position >> 8;
   buf[13] = (uint8_t) position;
   buf[14] = 0;
-  for(i = 0; i< SIZE_OF_BT_UPLOAD_LOG_ENTRY; i++){
-    Serial.print(buf[i]);
-  }
 
   this->_file_system->open_file("BT.LOG", 'w');
   this->_file_system->getCurrentFile().write(buf, SIZE_OF_BT_UPLOAD_LOG_ENTRY);
   this->_file_system->getCurrentFile().close();
 }
 
-uint8_t Persistence::get_next_entry(uint16_t *position, uint8_t mvid, char *log_file, uint8_t *entry){
+uint8_t Persistence::get_next_entry(uint16_t *position, File *open_file, uint8_t *entry){
   uint8_t i = 0;
-  char file_path[SIZE_OF_FILE_PATH] = "";
-
-  sprintf(file_path, "%x/", mvid);
-  strcat(file_path, log_file);
-
-  this->_file_system->open_file(file_path, 'r');
-  this->_file_system->getCurrentFile().seek(*position * SIZE_OF_LOGGING_ENTRY);
-  if(this->_file_system->getCurrentFile().read(entry, SIZE_OF_LOGGING_ENTRY) != -1){
+  open_file->seek(*position * SIZE_OF_LOGGING_ENTRY);
+  if(open_file->read(entry, SIZE_OF_LOGGING_ENTRY) != 0){
     i++;
   }
   else{

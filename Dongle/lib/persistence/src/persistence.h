@@ -78,7 +78,7 @@ class Persistence{
                               uint16_t data_id, uint32_t data_value);
     stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file
     stdRetVal close_logging_file();
-    uint8_t get_next_entry(uint16_t *position, uint8_t mvid, char *log_file, uint8_t *entry);
+    uint8_t get_next_entry(uint16_t *position, File *open_file, uint8_t *entry);
     /**
      * @brief writes the last uploaded file and its postition to the Bt-logfile
      *
@@ -86,6 +86,7 @@ class Persistence{
     void log_bt_upload_position(uint8_t car, char *date, uint16_t position);
     /*Getter*/
     stdRetVal GetInitStatus();
+    File_System_Handler* getFile_System();
     /*Setter*/
   protected:
   private:

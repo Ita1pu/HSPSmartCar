@@ -41,13 +41,13 @@ const Strings = {
         SimpleList: {
             velocity: "Velocity",
             rotSpeed: "rot. Speed",
-            oilTemperatur: "Oil Temp.",
+            oilTemperatur: "Coolant Temp.",
             gps: "GPS",
             mobile: " (mob.)"
         },
         Speedo: {
             velocity: "Velocity",
-            oil: "Oil",
+            oil: "Coolant Temp.",
             rotSpeed: "rot. Speed"
         },
         SpeedoCompare: {

@@ -10,6 +10,8 @@ namespace View {
         private oilTemperatur: JQuery = null;
         private gps: JQuery = null;
         private gpsMobile: JQuery = null;
+
+        private lastNotification: string = "";
         
         public constructor(control: JQuery) {
             super(control);
@@ -41,17 +43,62 @@ namespace View {
         }
 
         private onNotification(buffer: Uint8Array, text: string) {
-             // TODO not working, not in same scope
-            
-            Logging.push("onData: " +  buffer + " - " + JSON.stringify(buffer) + " - " + text); // TODO only debug  
-            this.control.html(this.control.html() + "<br />" + text); // TODO only debug
+            let entries = (SimpleList.lastInstance.lastNotification + text).split(";");
 
-            // <--- DEBUG
-            SimpleList.lastInstance.velocity.text("30 Km/H");
-            SimpleList.lastInstance.rotSpeed.text("40");
-            SimpleList.lastInstance.oilTemperatur.text("40 °C");
-            SimpleList.lastInstance.gps.text("41.40338, 2.17403");
-            // <--- END
+            for (let entry of entries) {
+                let pidValue = entry.split(":");
+
+                if (pidValue.length == 2) {
+                    let value = pidValue[1];
+
+                    let pids = pidValue[0].split("#");
+
+                    let pid;
+                    if (pids.length == 2) {
+                        pid = pids[1];
+                    }
+                    else {
+                        pid = pids[0];
+                    }
+
+                    if (pid == Settings.PIDs.latitude) {
+                        let longitude = "-";
+                        if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
+                           longitude = SimpleList.lastInstance.gps.text().split(", ")[1];
+                            
+                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000)  + ", " + longitude);
+                    }
+                    else if (pid == Settings.PIDs.longitude) {
+                        let latitude = "-";
+                        if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
+                            latitude = SimpleList.lastInstance.gps.text().split(", ")[0];
+
+                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000));
+                    }
+                    else if (pid == Settings.PIDs.coolantTemperatur) {
+                        SimpleList.lastInstance.oilTemperatur.text(value + " °C");
+                    }
+                    else if (pid == Settings.PIDs.rpm) {
+                        SimpleList.lastInstance.rotSpeed.text(value);
+                    }
+                    else if (pid == Settings.PIDs.velocity) {
+                        SimpleList.lastInstance.velocity.text(value + " Km/H");
+                    }
+
+                    // TODO spaltenbreite fest!!!
+
+                    // velocity und temperatur und rot speed | ist das °C und Km/h oder was muss normalisiert werden
+                    // velocity (mob) runden und ist das km/h???
+                    // gps runden mobile sowol als gps (mobile zeigt aktuell 1 zahl hintern komma mehr an)
+
+                    // speedo 
+
+                    // speedo-compare
+                } 
+            }            
+
+            if (entries.length > 0)
+                SimpleList.lastInstance.lastNotification = entries[entries.length - 1];
         }
 
         private onNewPosition(position: Position) {
@@ -60,7 +107,7 @@ namespace View {
             if (position.coords.speed != null) 
                 SimpleList.lastInstance.velocityMobile.text(position.coords.speed);
             else
-                SimpleList.lastInstance.velocityMobile.text("Not supported!");
+                SimpleList.lastInstance.velocityMobile.text("0");
         }
 
         private addTableRow(text: string): JQuery {

@@ -16,6 +16,14 @@ const Settings = {
         secret: "tZop4xbZ9wV"
     },
 
+    PIDs: {
+        latitude: "240",
+        longitude: "241",
+        rpm: "12",
+        velocity: "13",
+        coolantTemperatur: "5"
+    },
+
     Store: {
         selectedView: "selectedView",
         showSwipeHelp: "showSwipeHelp",

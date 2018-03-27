@@ -147,7 +147,7 @@ void loop()
         for(char i = 0; i < pidLen; i++){
           p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
           //bluetooth logging
-          if(pidCollection[i].pid == obd::EngineRpm || pidCollection[i].pid == obd::VehicleSpeed){
+          if(pidCollection[i].pid == PID_RPM || pidCollection[i].pid == PID_SPEED){
             btLog(pidCollection[i].pid, pidCollection[i].value);
           }
         }
@@ -165,6 +165,10 @@ void loop()
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLatitude, locSrv.GetLatitude());
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsLongitude, locSrv.GetLongitude());
           p.create_logging_entry(locSrv.GetEpochMs(), obd::GpsAltitude, locSrv.GetAltitude());
+          //bt log of GPS data
+          btLog(obd::GpsLatitude, locSrv.GetLatitude());
+          btLog(obd::GpsLongitude, locSrv.GetLongitude());
+          btLog(obd::GpsAltitude, locSrv.GetAltitude());
         }else{
           //reset coprocessor if gps congests communication
           currentMode.mode = SLEEP;
@@ -181,7 +185,9 @@ void loop()
           for(char i = 0; i < pidLen; i++){
             p.create_logging_entry(locSrv.GetEpochMs(), pidCollection[i].pid, pidCollection[i].value);
             //btLog for temperatures
-            if(pidCollection[i].pid == obd::EngineCoolantTemp || pidCollection[i].pid == obd::AmbientAirTemp || pidCollection[i].pid == obd::EngineOilTemp){
+            if(pidCollection[i].pid == PID_COOLANT_TEMP
+              || pidCollection[i].pid == PID_AMBIENT_TEMP
+              || pidCollection[i].pid == PID_ENGINE_OIL_TEMP){
               btLog(pidCollection[i].pid, pidCollection[i].value);
             }
           }

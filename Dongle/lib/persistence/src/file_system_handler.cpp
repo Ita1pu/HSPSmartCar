@@ -57,6 +57,9 @@ stdRetVal File_System_Handler::rmFile( char *file_path){
 stdRetVal File_System_Handler::open_file(char *file_path, char mode){
   /*Dont use filenames longer than 10 chars for writng..*/
   uint8_t intMode = 0,i = 0;
+  if(this->current_file){
+    this->current_file.close();  
+  }
   switch (mode) {
     case 'w':
       intMode = FILE_WRITE;

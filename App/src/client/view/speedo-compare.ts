@@ -12,6 +12,8 @@ namespace View {
         public constructor(control: JQuery) {
             super(control);
 
+            SpeedoCompare.lastInstance = this;
+
             this.control.addClass(Var.Style.View.speedoCompare);
 
             if(this.control.width() > this.control.height() / 2) {

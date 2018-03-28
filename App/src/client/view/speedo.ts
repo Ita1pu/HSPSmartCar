@@ -58,10 +58,10 @@ namespace View {
                     }
 
                     if (pid == Settings.PIDs.coolantTemperatur) {
-                        Speedo.lastInstance.oilTemperatur.value = parseInt(value) - 40;
+                        Speedo.lastInstance.oilTemperatur.value = parseInt(value);
                     }
                     else if (pid == Settings.PIDs.rpm) {
-                        Speedo.lastInstance.rotSpeed.value = parseInt(value) * 0.25 / 100;
+                        Speedo.lastInstance.rotSpeed.value = parseInt(value) / 100;
                     }
                     else if (pid == Settings.PIDs.velocity) {
                         Speedo.lastInstance.velocity.value = parseInt(value);

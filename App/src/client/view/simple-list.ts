@@ -66,20 +66,20 @@ namespace View {
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                            longitude = SimpleList.lastInstance.gps.text().split(", ")[1];
                             
-                        SimpleList.lastInstance.gps.text((parseInt(value) / 1000000).toPrecision(6)  + ", " + longitude);
+                        SimpleList.lastInstance.gps.text(Math.round(parseInt(value) / 1000) / 1000  + ", " + longitude);
                     }
                     else if (pid == Settings.PIDs.longitude) {
                         let latitude = "-";
                         if (SimpleList.lastInstance.gps.text().split(", ").length == 2)
                             latitude = SimpleList.lastInstance.gps.text().split(", ")[0];
 
-                        SimpleList.lastInstance.gps.text(latitude + ", " + (parseInt(value) / 1000000).toPrecision(6));
+                        SimpleList.lastInstance.gps.text(latitude + ", " + Math.round(parseInt(value) / 1000) / 1000);
                     }
                     else if (pid == Settings.PIDs.coolantTemperatur) {
-                        SimpleList.lastInstance.oilTemperatur.text((parseInt(value) - 40) + " °C");
+                        SimpleList.lastInstance.oilTemperatur.text(value + " °C"); // TODO - 40
                     }
                     else if (pid == Settings.PIDs.rpm) {
-                        SimpleList.lastInstance.rotSpeed.text((parseInt(value) * 0.25) + " U/min");
+                        SimpleList.lastInstance.rotSpeed.text(Math.round(parseInt(value)) + " U/min");
                     }
                     else if (pid == Settings.PIDs.velocity) {
                         SimpleList.lastInstance.velocity.text(value + " Km/H");
@@ -93,11 +93,11 @@ namespace View {
 
         private onNewPosition(position: Position) {
             SimpleList.lastInstance.gpsMobile.text(
-                position.coords.latitude.toPrecision(6) + ", " + 
-                position.coords.longitude.toPrecision(6));
+                Math.round(position.coords.latitude * 1000) / 1000 + ", " + 
+                Math.round(position.coords.longitude * 1000) / 1000);
 
             if (position.coords.speed != null) 
-                SimpleList.lastInstance.velocityMobile.text(position.coords.speed);
+                SimpleList.lastInstance.velocityMobile.text(Math.round(position.coords.speed));
             else
                 SimpleList.lastInstance.velocityMobile.text("0");
         }

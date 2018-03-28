@@ -78,7 +78,7 @@ function getVarName(input) {
 }
 
 function renameVariables(callback = null) {
-    var stream = gulp.src(['src/client/variables.js']);
+    /*var stream = gulp.src(['src/client/variables.js']);
 
     stream = stream.pipe(replace(/[:][ ]["][^"]*["]/g, (input) => 
         { return ": \"" + getVarName(input.split("\"")[1]) + "\""; })) 
@@ -89,7 +89,9 @@ function renameVariables(callback = null) {
     counter = [0];
 
     if (callback != null)
-        stream.on("end", () => { callback(); });
+        stream.on("end", () => { callback(); });*/
+
+    callback();
 }
 
 function obfuscate(callback = null) {
@@ -108,24 +110,24 @@ function obfuscate(callback = null) {
 
     stream = stream.pipe(addsrc.prepend('src/client/variables.js'))   
     stream = stream.pipe(addsrc.prepend('node_modules/jquery/dist/jquery.min.js'))   
-    stream = stream.pipe(addsrc.prepend('src/client/authentication/cryptojs.js'))   
+    stream = stream.pipe(addsrc.prepend('src/client/resources/lib/gauge.min.js'))   
     stream = stream.pipe(concat('script.js'));    
 
     stream = stream.pipe(insert.prepend('(function () {'));
     stream = stream.pipe(insert.append('})();'));
 
-    stream = stream.pipe(jsObfuscator({
+    /*stream = stream.pipe(jsObfuscator({
         compact: false,
         disableConsoleOutput: true,
         rotateStringArray: true,
         selfDefending: true,
         stringArray: true,
         unicodeEscapeSequence: true
-    }));
+    }));*/
 
-    stream = stream.pipe(uglifyjs('script.js', { mangle: false }));
+    //stream = stream.pipe(uglifyjs('script.js', { mangle: false }));
 
-    stream = stream.pipe(replace(/_0x[0123456789abcdefx]*/g, (input) => { return getVarName(input); }));
+    //stream = stream.pipe(replace(/_0x[0123456789abcdefx]*/g, (input) => { return getVarName(input); }));
 
     stream = stream.pipe(gulp.dest("build/tmp/client"));
 
@@ -136,7 +138,14 @@ function obfuscate(callback = null) {
 function merge(callback = null) {
     var stream = gulp.src(['build/tmp/client/script.js'])
 
-    stream = stream.pipe(insert.prepend('<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml"><head><title>ALF UA</title><meta http-equiv="Content-Type" content="text/html;charset=UTF-8" /><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" /><script type="text/javascript">'))
+    stream = stream.pipe(insert.prepend(
+        '<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml">' + 
+        '<head><title>HSPSmartCar</title>' + 
+        '<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />' +
+        '<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />' + 
+        '<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">' + 
+        '<script type="text/javascript" src="cordova.js"></script>' +
+        '<script type="text/javascript">'))
     stream = stream.pipe(insert.append('</script><style type="text/css">'))
     stream = stream.pipe(addsrc.append('src/client/style.css')) 
     stream = stream.pipe(concat('client.html'))                                   

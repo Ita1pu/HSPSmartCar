@@ -1,0 +1,149 @@
+.#{$view_configuration} {
+    position: absolute;
+
+    left: 0px;
+    top: 0px;
+
+    width: 100%;
+    height: calc(100% - 30px);
+
+    overflow-y: scroll;
+
+    font-size: 14px;
+}
+
+.#{$view_configuration} > div:first-child {
+    margin-top: 5px;
+}
+
+.#{$view_configuration} > div:last-child {
+    margin-bottom: 5px;
+}
+
+.#{$view_configuration_header} {
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    background-color: $color_bg_header;
+
+    color: black;
+
+    text-align: center;
+
+    font-size: 16px
+}
+
+.#{$view_configuration_button} {
+    margin: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    background-color: $color_bg_blue;
+
+    border-style: solid;
+    border-width: 1px 5px 1px 5px;
+    border-color: $color_bg_blue;
+
+    text-align: center;
+}
+
+.#{$view_configuration_button}:active {
+    background-color: $color_bg_blue_light;
+
+    border-color: $color_bg_dark;
+}
+
+.#{$view_configuration_button_test} {
+    position: relative;
+}
+
+.#{$view_configuration_button_test} > div {
+    position: absolute;
+
+    width: 15px;
+    height: 15px;
+
+    margin-left: 25px;
+    margin-top: 0px;
+
+    background-color: $color_bg_dark_light;
+
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: $color_border_gray;
+}
+
+.#{$view_configuration_button_test_good} > div {
+    background-color: $color_bg_enabled;
+}
+
+.#{$view_configuration_button_test_bad} > div {
+    background-color: $color_bg_disabled;
+}   
+
+.#{$view_configuration_button_test_progress} > div {
+    @extend .#{$img_loading};
+
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 100% auto;
+}
+
+.#{$view_configuration_switch} {
+    margin: 5px;
+    margin-left: 20px;
+    margin-right: 20px;
+
+    background-color: $color_bg_dark_light;
+
+    border-style: solid;
+    border-width: 3px;
+    border-color: $color_bg_dark_light;
+    border-radius: 20px;    
+}
+
+.#{$view_configuration_switch} > div:first-child  {
+    float: right;
+}
+
+.#{$view_configuration_switch} > div {
+    width: 50%;
+
+    margin-left: 3px;
+    margin-right: 3px;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+
+    text-align: center;
+}
+
+.#{$view_configuration_switch_enabled} {
+    background-color: $color_bg_blue;
+
+    border-radius: 20px;   
+}
+
+.#{$view_configuration_logging} {
+    margin-left: 20px;
+    margin-right: 20px;
+    
+    border-style: solid;
+    border-width: 1px;
+    border-color: $color_bg_blue;
+}
+
+.#{$view_configuration_logging} > div {
+    background-color: $color_bg_dark_light;
+
+    margin: 5px;
+    
+    padding: 5px;
+
+    overflow-x: auto;
+    white-space: pre-wrap;
+}

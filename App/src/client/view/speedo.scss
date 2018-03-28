@@ -1,0 +1,9 @@
+.#{$view_speedo} {
+    position: absolute;
+
+    height: 100%;
+    height: calc(100% - 30px);
+    width: 100%;
+
+    overflow: auto;
+}

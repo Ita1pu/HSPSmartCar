@@ -7,3 +7,19 @@ $img_dir: "src/client/resources/images/";
 .#{$img_error} { 
     background-image: url(inline-image($img_dir + "error.png"));
 }
+
+.#{$img_disconnected} {
+    background-image: url(inline-image($img_dir + "disconnected.png"));
+}
+
+.#{$img_loading} {
+    background-image: url(inline-image($img_dir + "loading.svg"));
+}
+
+.#{$img_close_black} {
+    background-image: url(inline-image($img_dir + "close-black.svg"));
+}
+
+.#{$img_close_red} {
+    background-image: url(inline-image($img_dir + "close-red.svg"));
+}

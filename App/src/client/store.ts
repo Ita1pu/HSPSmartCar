@@ -22,6 +22,13 @@ namespace Store {
         }
     }
 
+    export function clear(key: string) {
+        try {
+            localStorage.removeItem(key);
+        }
+        catch(ex) { }
+    }
+
     export function getSession(key: string): string {
         try {
             return sessionStorage.getItem(key);

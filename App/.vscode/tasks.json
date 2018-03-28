@@ -38,6 +38,37 @@
                 "install"
             ],
             "isShellCommand": true 
+        },
+        {
+			"taskName": "Run on Android Device",
+			"showOutput": "always",
+            "command": "${workspaceRoot}/node_modules/.bin/cordova",
+            "args": [
+                "run",
+                "android",
+                "--device"
+            ],
+            "isShellCommand": true 
+        },
+        {
+			"taskName": "Run on Android Emulator",
+			"showOutput": "always",
+            "command": "${workspaceRoot}/node_modules/.bin/cordova",
+            "args": [
+                "emulate",
+                "android"
+            ],
+            "isShellCommand": true 
+        },
+        {
+			"taskName": "Run on Windows",
+			"showOutput": "always",
+            "command": "${workspaceRoot}/node_modules/.bin/cordova",
+            "args": [
+                "run",
+                "windows"
+            ],
+            "isShellCommand": true 
         }
     ],
     "command": "${workspaceRoot}/node_modules/.bin/gulp",

@@ -2,9 +2,6 @@ namespace DisplayFeature {
     export let errorPanel: ErrorPanel = null;
 
     export class ErrorPanel { 
-        private static readonly DEFAULT_TEXT = 
-            "<br /><br />See \"Configuration → Logging\" for more informations!";
-
         protected control: JQuery = null; 
         
         private imageDiv: JQuery = null;
@@ -40,7 +37,7 @@ namespace DisplayFeature {
                 this.textDiv.text(msg.getMessage()[0]);
             } 
 
-            this.textDiv.html(this.textDiv.html() + ErrorPanel.DEFAULT_TEXT);
+            this.textDiv.html(this.textDiv.html() + "<br /><br />" + S(Strings.ErrorPanel.defaultText));
             
             this.control.show();
 

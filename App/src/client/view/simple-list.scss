@@ -1,0 +1,32 @@
+.#{$view_simpleList} {
+    position: absolute;
+
+    height: 100%;
+    height: calc(100% - 30px);
+    width: 100%;
+
+    overflow: auto;
+}
+
+.#{$view_simpleList_table} {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 14px;
+}
+
+.#{$view_simpleList_table_entry}:nth-child(even) {
+    background-color: $color_bg_dark_light;
+}
+
+.#{$view_simpleList_table_label} {
+    padding: 5px;
+
+    width: 100px;
+}
+
+.#{$view_simpleList_table_value} {
+    padding: 5px;
+}
+

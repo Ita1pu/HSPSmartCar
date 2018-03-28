@@ -1,4 +1,60 @@
 const Strings = {
+    ErrorPanel: {
+        defaultText: "See \"Configuration → Logging\" for more informations!"
+    },
+    noConnectionPanel: "No connection to dongle!",
+    View: {
+        Configuration: {
+            Header: {
+                dataTransfer: "Data Transfer",
+                connectionToDongle: "Connection to Dongle",
+                connectionToBackground: "Connection to Backend",
+                appSettings: "App Settings",
+                logging: "Logging"
+            },
+            Button: {
+                DataTransfer: {
+                    download: "Download from Dongle",
+                    upload: "Upload to Backend",
+                    clearBuffer: "Clear Buffer"
+                },
+                connect: "Connect",
+                test: "Test",
+                disconnect: "Disconnect",
+                load: "Load"
+            },
+            Switch: {
+                VelocityUnit: {
+                    MpH: "Mp/H",
+                    KmH: "Km/H"
+                },
+                TemperaturUnit: {
+                    Celsius: "Celsius",
+                    Kelvin: "Kelvin"
+                },
+                SwipeHelp: {
+                    enable: "Enable Swipe Help",
+                    disbale: "Disable Swipe Help"
+                }
+            }
+        },
+        SimpleList: {
+            velocity: "Velocity",
+            rotSpeed: "rot. Speed",
+            oilTemperatur: "Coolant Temp.",
+            gps: "GPS",
+            mobile: " (mob.)"
+        },
+        Speedo: {
+            velocity: "Velocity",
+            oil: "Coolant Temp.",
+            rotSpeed: "rot. Speed"
+        },
+        SpeedoCompare: {
+            car: "Car",
+            mobile: "Mobile"
+        }
+    }
 }
 
 let currentLanguage: string = null;

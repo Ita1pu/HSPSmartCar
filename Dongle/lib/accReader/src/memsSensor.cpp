@@ -12,6 +12,8 @@ bool MemsSensor::memsInit(){
     }else{
       return false;
     }
+  }else{
+    return false;
   }
 }
 

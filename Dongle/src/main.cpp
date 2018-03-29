@@ -21,14 +21,13 @@ gps::LocationTimeService locSrv = gps::LocationTimeService(&coproc);
 
 obd::ObdDevice* obdDev;
 
-ourTypes::vid current_vid;
 SDLib::SDClass SD;
 persistence::File_System_Handler file_system;
 persistence::Persistence p;
 
 persistence::stdRetVal success = 0;
-ProgrammMode currentMode;
-
+ourTypes::ProgrammMode currentMode;
+ourTypes::vid current_vid;
 ourTypes::pidData* pidCollection;
 
 //btLog function
@@ -109,11 +108,7 @@ void setup()
     do{
       success = obdDev->initialize();
       if(success != 0x01){
-        //wait until car is started for the first time
-        coproc.enterLowPowerMode();
         delay(INACT_TIME_MS);
-        coproc.leaveLowPowerMode();
-        delay(50);
       }else{
         break;
       }
@@ -222,15 +217,13 @@ void loop()
     //currentMode.mode == SLEEP
     delay(INACT_TIME_MS);
     //coproc.leaveLowPowerMode();
-    //obdDev->initialize();
+    obdDev->initialize();
     Serial.println(F("Cs"));
     delay(50);
     if(!obdDev->getClamp15State()){
       //if Car is still off
       //coproc.enterLowPowerMode();
     }else{
-      currentMode.currentLoopCount = 0;
-      currentMode.mode = LOGGING;
       bool success = locSrv.Initialize(GPS_BAUD_RATE);
       if(success != false){
         do{
@@ -239,6 +232,8 @@ void loop()
         //wait for GPS signal to be sane; sat Counter must be in [4; 14] which are the theoretical numbers of visible navigation satellites
         }while(locSrv.GetSat() < 4 || locSrv.GetSat() > 14);
       }
+      currentMode.currentLoopCount = 0;
+      currentMode.mode = LOGGING;
       locSrv.StartFlagTimer();
       //log Category E
       logCategoryE();

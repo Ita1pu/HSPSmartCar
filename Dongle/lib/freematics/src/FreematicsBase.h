@@ -96,7 +96,7 @@
 #define PIN_GPS_POWER 15
 #endif
 
-#define GPS_READ_TIMEOUT 75 /* ms */
+#define GPS_READ_TIMEOUT 200 /* ms */
 #define GPS_INIT_TIMEOUT 1000 /* ms */
 
 typedef enum {

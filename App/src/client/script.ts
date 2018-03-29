@@ -15,9 +15,22 @@ let files: string[] = [
     "display-feature/swipe-help",
     "display-feature/view-circles",
 
+    "dialog/dialog",
+
     "view/view",
-    "view/configuration",
+    "view/configuration/configuration-appSettings",
+    "view/configuration/configuration-backend",
+    "view/configuration/configuration-data",
+    "view/configuration/configuration-dongle",
+    "view/configuration/configuration-logging",
+    "view/configuration/configuration",
     "view/simple-list",
+    "view/speedo",
+    "view/speedo-compare",
+
+    "dongle/bluetooth",
+
+    "mobile/gps",
 
     "index"
     

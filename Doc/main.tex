@@ -1,0 +1,160 @@
+\documentclass[numbers=noenddot, a4paper, 12pt, headsepline, footsepline]{scrreprt}
+
+% Deutsche Umlaute
+\usepackage[utf8]{inputenc}
+
+% deutsche Silbentrennung
+\usepackage[ngerman]{babel}
+
+%anführungszeichen
+\usepackage[autostyle=true,german=quotes]{csquotes}
+
+% Einbinden von Bildern
+\usepackage{graphicx}
+
+% Mathematische Pakete
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{latexsym}
+\usepackage{morefloats}
+\usepackage{geometry} 
+
+
+\usepackage{standalone}
+
+% better looking tables
+\usepackage{ifthen}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+
+% ausgabe von quelltext
+\usepackage{textcomp}
+\usepackage{listings}
+
+%einbinden von pdf seiten
+\usepackage{pdfpages}
+
+\lstset{
+	%	backgroundcolor=\color{lbcolor},
+	tabsize=4,    
+	%	rulecolor=,
+	language=[GNU]C++,
+	basicstyle=\scriptsize,
+	upquote=true,
+	%aboveskip={1.5\baselineskip},
+	columns=fixed,
+	showstringspaces=false,
+	extendedchars=false,
+	breaklines=true,
+	%prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	%frame=single,
+	numbers=none,
+	showtabs=false,
+	showspaces=false,
+	showstringspaces=false,
+	identifierstyle=\ttfamily,
+	language=C++,
+	basicstyle=\ttfamily,
+	keywordstyle=\color{blue}\ttfamily,
+	stringstyle=\color{red}\ttfamily,
+	commentstyle=\color[rgb]{0,.7,0}\ttfamily,
+	morecomment=[l][\color{magenta}]{\#},
+	%\lstdefinestyle{C++}{language=C++,style=numbers}’,
+}
+\lstset{
+	basicstyle=\renewcommand{\baselinestretch}{.9}\ttfamily,
+	xleftmargin=.5cm,
+	language=C++,
+	numbers=left,
+	stringstyle=\color{black}\ttfamily,
+	keywordstyle=\color{black}\ttfamily,
+	numberstyle=\tiny}
+
+
+% coolere referenzen
+\usepackage[german]{fancyref}
+
+%literatur mittels biber
+\usepackage[backend=biber,
+			style=alphabetic
+			%citestyle=alphabetic 
+			]{biblatex}
+
+%\ExecuteBibliographyOptions{
+%	sorting=nyt, %Sortierung Autor, Titel, Jahr
+%	bibwarn=true, %Probleme mit den Daten, die Backend betreffen anzeigen
+%}
+\addbibresource{literatur.bib}
+
+%querformat seiten
+\usepackage{lscape}
+
+%überschrift des Kapitel auf jeder Seite
+\pagestyle{headings}
+
+%lange tabellen mit seitenumbruch
+\usepackage{longtable}
+
+%abkürzungsverzeichnis
+\usepackage{acronym}
+
+%um links im pdf zu haben mit denen man hin und her springen kann
+\usepackage{hyperref}
+
+%%text farbig hinterlegen
+%\usepackage{color}
+
+%%um text durch, unter, über... streichen zu können
+%\usepackage{ulem}
+
+%um in tabellen zellen diagonal teilen zu können
+%\usepackage{diagbox}
+
+
+\begin{document}
+
+%einbinden titelblatt
+\include{./TeX_files/titelblatt}
+
+
+%arabische zahlen für seiten
+\pagenumbering{arabic}
+
+% Inhaltsverzeichnis anzeigen
+%\parskip am schluss anpassen, so dass ein zweiseitiges inhaltsverzeichnis gut umgebrochen wird
+{\parskip=+5mm \tableofcontents}
+
+\include{./TeX_files/introduction}
+\include{./TeX_files/chapter01}% Warum haben wir es getan
+\include{./TeX_files/chapter02}% Wie haben wir es getan + aufgetretene Probleme
+\include{./TeX_files/chapter03}% Was haben wir getestet
+\include{./TeX_files/chapter04}% Was kann man jetzt mit unserer Grundlage weiterhin machen
+
+
+
+
+
+
+\newpage
+\listoffigures
+\lstlistoflistings
+\listoftables
+\include{./TeX_files/abkuerzungen}
+\printbibliography
+
+\newpage
+\appendix
+
+
+
+
+
+
+
+
+
+
+\end{document}

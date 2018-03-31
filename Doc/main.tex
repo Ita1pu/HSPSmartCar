@@ -117,7 +117,7 @@
 \begin{document}
 
 %einbinden titelblatt
-\include{./TeX_files/titelblatt}
+\include{./tex/titelblatt}
 
 
 %arabische zahlen für seiten
@@ -127,22 +127,18 @@
 %\parskip am schluss anpassen, so dass ein zweiseitiges inhaltsverzeichnis gut umgebrochen wird
 {\parskip=+5mm \tableofcontents}
 
-\include{./TeX_files/introduction}
-\include{./TeX_files/chapter01}% Warum haben wir es getan
-\include{./TeX_files/chapter02}% Wie haben wir es getan + aufgetretene Probleme
-\include{./TeX_files/chapter03}% Was haben wir getestet
-\include{./TeX_files/chapter04}% Was kann man jetzt mit unserer Grundlage weiterhin machen
-
-
-
-
-
+\include{./tex/einleitung}
+\include{./tex/01_UseCases}
+\include{./tex/02_SystemDesign}
+\include{./tex/03_Implementation}
+\include{./tex/04_Test}
+\include{./tex/05_Ausblick}
 
 \newpage
 \listoffigures
 \lstlistoflistings
 \listoftables
-\include{./TeX_files/abkuerzungen}
+\include{./tex/abkuerzungen}
 \printbibliography
 
 \newpage

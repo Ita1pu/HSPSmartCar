@@ -46,9 +46,3 @@
 	title = {FAQs | FAQ | Forschung (Aral Website)}
 }
 
-@misc{gpsPrecision,
-	address = {https://wiki.openstreetmap.org/wiki/DE:Genauigkeit\_von\_GPS-Daten\#Verbesserung\_durch\_WAAS.2C\_EGNOS.2C\_MSAS},
-	howpublished = {online},
-	title = {Genauigkeit von GPS-Daten - OpenStreetMap Wiki}
-}
-

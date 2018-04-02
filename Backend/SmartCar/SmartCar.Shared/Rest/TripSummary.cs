@@ -8,11 +8,11 @@ namespace SmartCar.Shared.Rest
 {
     public class SummaryEntry
     {
-        public TimeSpan TimeDriven { get; set; }
+        public TimeSpan TimeDriven { get; set; } = new TimeSpan();
 
-        public double TotalDistance { get; set; }
+        public double TotalDistance { get; set; } = 0;
 
-        public double AvgFuelConsumption { get; set; }
+        public double AvgFuelConsumption { get; set; } = 0;
     }
 
     public class TripSummary
@@ -20,5 +20,7 @@ namespace SmartCar.Shared.Rest
         public Dictionary<string, SummaryEntry> Summary { get; set; }
 
         public List<Tuple<string, double>> DistanceHistogram { get; set; }
+
+        public List<Tuple<string, double>> TimeHistogram { get; set; }
     }
 }

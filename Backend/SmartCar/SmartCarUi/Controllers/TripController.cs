@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SmartCar.Shared.Model;
@@ -15,6 +16,13 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class TripController : Controller
     {
+        private IConfiguration _configuration;
+
+        public TripController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {

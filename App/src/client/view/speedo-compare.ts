@@ -68,7 +68,7 @@ namespace View {
 
         private onNewPosition(position: Position) {
             if (position.coords.speed != null) 
-                SpeedoCompare.lastInstance.velocityMobile.value = position.coords.speed;
+                SpeedoCompare.lastInstance.velocityMobile.value = position.coords.speed * 3.6;
             else
                 SpeedoCompare.lastInstance.velocityMobile.value = 0;
         }

@@ -1,0 +1,39 @@
+﻿@model SmartCar.Shared.Rest.ParseResult
+
+<h1>Dataupload</h1>
+
+@if (Model != null)
+{
+    if (Model.Success)
+    {
+        <div class="alert alert-success" role="alert">
+            Successfull parsed logfile. @Model.ParsedTrips trips found.
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            Parsing of the uploaded logfile failed.
+        </div>
+    }
+}       
+
+<div class="card">
+    <div class="card-header">
+        <h4>Upload a logfile</h4>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data" asp-controller="Upload" asp-action="UploadLogfile">
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="file" name="logfile"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10">
+                    <input type="submit" class="btn btn-primary" value="Upload"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

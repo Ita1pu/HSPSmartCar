@@ -31,6 +31,5 @@
   },
   "_source": "https://github.com/FezVrasta/popper.js.git",
   "_target": "v1.13.0-next",
-  "_originalSource": "popper.js",
-  "_direct": true
+  "_originalSource": "popper.js"
 }

@@ -9,9 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SmartCar.Shared.Database;
 using SmartCarIdentity.Database;
-using SmartCarIdentity.Identity;
-using SmartCarIdentity.Models.Identity;
 
 namespace SmartCarIdentity
 {

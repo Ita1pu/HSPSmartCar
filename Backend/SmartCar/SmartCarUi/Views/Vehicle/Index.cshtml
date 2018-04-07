@@ -1,0 +1,105 @@
+﻿@using SmartCar.Shared.Model
+@model IEnumerable<Vehicle>
+
+<h1>Vehicles</h1>
+
+<!-- Print result message if it exists -->
+@if (ViewBag.ResultMessage != null)
+{
+    if (ViewBag.Successful)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.ResultMessage
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ResultMessage
+        </div>
+    }
+}
+
+<hr />
+
+<!-- Add vehicles -->
+<div class="container">
+    <h4>Add Vehicle</h4>
+
+    <form method="post" asp-controller="Vehicle" asp-action="AddVehicle">
+        <div class="form-row">
+            <div class="col">
+                <input type="text" class="form-control" name="Brand" placeholder="Brand">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" name="Model" placeholder="Model">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" name="LicencePlate" placeholder="Licence Plate">
+            </div>
+            <div class="col">
+                <select name="FuelType" class="form-control">
+                    <option value="Petrol">Petrol</option>
+                    <option value="Diesel">Diesel</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+<div class="container">
+    <div class="row m-0">
+        <a class="btn btn-primary" asp-controller="Vehicle" asp-action="ResetDefaultVehicle">Reset Default</a>
+    </div>
+</div>
+
+<hr />
+
+<!-- Show Vehicles -->
+<div class="container">
+    @if (Model != null)
+    {
+        <div class="card-deck">
+            @foreach (var vehicle in Model)
+            {
+                <div class="card card-body m-3" style="max-width: 300px;">
+                    @if (vehicle.IsDefault)
+                    {
+                        <div class="flex-row" style="position: absolute; right: 20px">
+                            <img src="images/check.png" class="float-right" />
+                        </div>
+                    }
+
+                    <img src="images/carIcon.png" class="mx-auto m-2" height="72" width="72" />
+
+                    <div class="text-center">
+                        <p class="card-text"><span style="font-size: 16pt; font-weight: bold">@vehicle.Brand</span> @vehicle.Model</p>
+                    </div>
+
+                    <p class="card-text">
+                        Licence Plate: @vehicle.LicencePlate<br />
+                        Fuel Type: @vehicle.FuelType
+                    </p>
+
+                    <div>
+                        <a class="btn btn-danger btn-sm removeLink" asp-controller="Vehicle" asp-action="RemoveVehicle" asp-route-vehicleId="@vehicle.VehicleId">Remove</a>
+                        <a class="btn btn-danger btn-sm" asp-controller="Vehicle" asp-action="SetDefaultVehicle" asp-route-vehicleId="@vehicle.VehicleId">Set Default</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts{ 
+    <script>
+        $( document ).ready(function() {
+            $(".removeLink").on('click', function (e) {
+                return confirm("Do you realy want to remove the vehicle?");
+            });
+        });
+    </script>
+}

@@ -1,0 +1,8 @@
+﻿@if (User.Identity.IsAuthenticated)
+{
+    var userName = User.Claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "";
+
+    <a class="nav-link" asp-controller="Home" asp-action="Logout">
+        <i class="fa fa-fw fa-sign-out"></i>@userName
+    </a>
+}

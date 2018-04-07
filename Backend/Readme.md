@@ -14,9 +14,11 @@ Offers a webinterface to the users to watch the processed data that is calculate
 ## Setup
 To run the backend on your local machine, execute the following steps:
 1. Checkout the backend project from [Backend](https://github.com/Itiapu/HSPSmartCar/tree/master/Backend).
-2. Open a shell and navigate to Backend/SmartCar
-3. Run `docker-compose up`
-4. The startup of the identity server will fail because of timing problems. Simply restart the dock container manually.
+2. Open the Visual Studio solution and build it in release mode.
+3. Add `127.0.0.1 identity.smartcar.com` to your host file.
+4. Open a shell and navigate to Backend/SmartCar
+5. Run `docker-compose up`
+6. The startup of the identity server will fail because of timing problems. Simply restart the dock container manually.
 
 ### Dependencies
 The following software should be installed on the target:
@@ -25,4 +27,9 @@ The following software should be installed on the target:
 *Already included in windows installation.*
 - (Kitematics) 
 *Useful to manage your running containers if you are setting up a developement environment on windows.*
+
+## Documentation
+### Rest API
+The SmartCar API is documented by an automatically generated using [Swagger](https://swagger.io/) for asp.net core applications.
+The documentation is accessible when the Web API server is running under the address http://<api_ip>:<api_port>/swagger.
 

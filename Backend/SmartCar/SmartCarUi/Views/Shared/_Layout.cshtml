@@ -3,80 +3,79 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - SmartCarUi</title>
+    <title>SmartCarUi</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="~/css/template.css">
+    <link rel="stylesheet" href="~/css/template.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body class="fixed-nav sticky-footer bg-dark" id="page-top">
     <!-- Navigation-->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
     
-    <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-        <img src="~/icon.png" class="icon-banner">
-        Smart Car
-    </a>
-    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+        <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+            <img src="~/icon.png" class="icon-banner">
+            Smart Car
+        </a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-    <div class="collapse navbar-collapse" id="navbarResponsive">
-        <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-                <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
-                    <i class="fa fa-fw fa-dashboard"></i>
-                    <span class="nav-link-text">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Upload">
-                <a class="nav-link" href="#">
-                    <i class="fa fa-fw fa-car"></i>
-                    <span class="nav-link-text">Upload Data</span>
-                </a>
-            </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Statistics">
-                <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseStatistic" data-parent="#exampleAccordion">
-                    <i class="fa fa-fw fa-area-chart"></i>
-                    <span class="nav-link-text">Statistics</span>
-                </a>
-                <ul class="sidenav-second-level collapse" id="collapseStatistic">
-                    <li>
-                        <a href="login.html">Overview</a>
-                    </li>
-                    <li>
-                        <a href="register.html">Heat Map</a>
-                    </li>
-                    <li>
-                        <a href="forgot-password.html">Fuel Consumption</a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Link">
-                <a class="nav-link" href="#">
-                    <i class="fa fa-fw fa-link"></i>
-                    <span class="nav-link-text">Link</span>
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav sidenav-toggler">
-            <li class="nav-item">
-                <a class="nav-link text-center" id="sidenavToggler">
-                    <i class="fa fa-fw fa-angle-left"></i>
-                </a>
-            </li>
-        </ul>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Trips">
+                    <a class="nav-link" asp-controller="Trip" asp-action="Index">
+                        <i class="fa fa-fw fa-suitcase"></i>
+                        <span class="nav-link-text">Trips</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Upload">
+                    <a class="nav-link" asp-controller="Vehicle" asp-action="Index">
+                        <i class="fa fa-fw fa-car"></i>
+                        <span class="nav-link-text">Vehicles</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Upload">
+                    <a class="nav-link" asp-controller="Upload" asp-action="Index">
+                        <i class="fa fa-fw fa-upload"></i>
+                        <span class="nav-link-text">Upload Data</span>
+                    </a>
+                </li>
+                <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Statistics">
+                    <a class="nav-link nav-link-collapse collapsed" data-toggle="collapse" href="#collapseStatistic" data-parent="#exampleAccordion">
+                        <i class="fa fa-fw fa-area-chart"></i>
+                        <span class="nav-link-text">Statistics</span>
+                    </a>
+                    <ul class="sidenav-second-level collapse" id="collapseStatistic">
+                        <li>
+                            <a asp-controller="Summary" asp-action="Index">Summary</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Heatmap" asp-action="Index">Heatmap</a>
+                        </li>
+                        <!-- Enable later -->
+                        <!--<li>
+                            <a href="#">Fuel Consumption</a>
+                        </li>-->
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav sidenav-toggler">
+                <li class="nav-item">
+                    <a class="nav-link text-center" id="sidenavToggler">
+                        <i class="fa fa-fw fa-angle-left"></i>
+                    </a>
+                </li>
+            </ul>
 
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-                <a class="nav-link" data-toggle="modal" data-target="#exampleModal">
-                    <i class="fa fa-fw fa-sign-out"></i>Logout
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    @Html.Partial("_Authentication")
+                </li>
+            </ul>
+        </div>
+    </nav>
 
     <div class="content-wrapper">
         <div class="container-fluid">
@@ -85,17 +84,19 @@
         <footer class="sticky-footer">
             <div class="container">
                 <div class="text-center">
-                    <small>Copyright © Your Website 2017</small>
+                    <small>SmartCar</small>
                 </div>
             </div>
         </footer>
     </div>
 
     <!-- Scripts -->
+    <script src="~/lib/moment/moment.js"></script>
     <script src="~/lib/popper.js/dist/umd/popper.js"></script>
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/jquery.easing/js/jquery.easing.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/chart.js/dist/Chart.js"></script>
     <script src="~/js/template.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 

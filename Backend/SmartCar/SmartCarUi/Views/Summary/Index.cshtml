@@ -1,0 +1,204 @@
+﻿@using Microsoft.CodeAnalysis.CSharp.Syntax
+@model TripSummaryViewModel
+
+<h1>Trip Summary</h1>
+
+<hr />
+
+<div class="container">
+    <h4>Select Parameters</h4>
+
+    <form method="post" asp-controller="Summary" asp-action="CalculateSummary">
+        <div class="form-row">
+            <div class="col">
+                <select name="year" class="form-control">
+                    @if (Model.QueryYears != null)
+                    {
+                        foreach (var year in Model.QueryYears)
+                        {
+                            if (year == DateTime.Now.Year)
+                            {
+                                <option value="@year" selected>@year</option>
+                            }
+                            else
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <select name="vehicleId" class="form-control">
+                    @if (Model.Vehicles != null)
+                    {
+                        foreach (var vehicle in Model.Vehicles)
+                        {
+                            <option value="@vehicle.VehicleId">@vehicle.LicencePlate</option>
+                        }
+                    }
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Show</button>
+        </div>
+    </form>
+</div>
+
+<hr />
+
+@if (Model.Summary != null)
+{
+    <h2>Overview</h2>
+
+    <div class="container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total Time Driven</th>
+                    <th>Total Distance</th>
+                    <th>Average Fuel Consumption</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Summary.Summary.Any())
+                {
+                    foreach (var summaryMonth in Model.Summary.Summary.Keys)
+                    {
+                        <tr>
+                            <td>@summaryMonth</td>
+                            <td>@Model.Summary.Summary[summaryMonth].TimeDriven.ToString(@"hh\:mm\:ss")</td>
+                            <td>@Math.Round(Model.Summary.Summary[summaryMonth].TotalDistance / 1000, 2) km</td>
+                            <td>@Math.Round(Model.Summary.Summary[summaryMonth].AvgFuelConsumption, 2) l/100km</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4"><p class="lead">No Data Found!</p></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <br />
+
+    <h2>Charts</h2>
+    <div class="container">
+        <ul class="nav nav-tabs" id="chartTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="distance-tab" data-toggle="tab" href="#distance" role="tab" aria-controls="distance" aria-selected="true">Distance</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="time-tab" data-toggle="tab" href="#time" role="tab" aria-controls="time" aria-selected="false">Time</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="chartTabsContent">
+            <div class="tab-pane fade show active" id="distance" role="tabpanel" aria-labelledby="distance-tab">
+                <canvas id="distanceTrend"></canvas>
+            </div>
+            <div class="tab-pane fade" id="time" role="tabpanel" aria-labelledby="time-tab">
+                <canvas id="timeTrend"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    @section Scripts
+        {
+    <script>
+        var distanceModelData = @Html.Raw(Json.Serialize(Model.Summary.DistanceHistogram));
+        var timeModelData = @Html.Raw(Json.Serialize(Model.Summary.TimeHistogram));
+
+        var distanceChartCtx = document.getElementById("distanceTrend").getContext('2d');
+        var distanceChart = new Chart(distanceChartCtx, {
+            type: 'bar',
+            data: {
+                labels: getDistanceLabels(),
+                datasets: [{
+                    label: 'Distance per month',
+                    data: getDistanceData(),
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+
+        var timeChartCtx = document.getElementById("timeTrend").getContext('2d');
+        var timeChart = new Chart(timeChartCtx, {
+            type: 'bar',
+            data: {
+                labels: getTimeLabels(),
+                datasets: [{
+                    label: 'Minutes per month',
+                    data: getTimeData(),
+                    borderWidth: 1,
+                    backgroundColor: 'rgba(0, 255, 255, 0.5)',
+                    borderColor: 'rgba(0, 255, 255, 1)'
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+
+        function getDistanceLabels() {
+            var labels = [];
+
+            for (var i = 0; i < distanceModelData.length; i++) {
+                labels.push(distanceModelData[i].item1);
+            }
+
+            return labels;
+        }
+
+        function getDistanceData() {
+            var data = [];
+
+            for (var i = 0; i < distanceModelData.length; i++) {
+                data.push(Math.round(distanceModelData[i].item2 / 1000, 2));
+            }
+
+            return data;
+        }
+
+        function getTimeLabels() {
+            var labels = [];
+
+            for (var i = 0; i < timeModelData.length; i++) {
+                labels.push(timeModelData[i].item1);
+            }
+
+            return labels;
+        }
+
+        function getTimeData() {
+            var data = [];
+
+            for (var i = 0; i < timeModelData.length; i++) {
+                data.push(Math.round(timeModelData[i].item2, 2));
+            }
+
+            return data;
+        }
+    </script>
+    }
+}

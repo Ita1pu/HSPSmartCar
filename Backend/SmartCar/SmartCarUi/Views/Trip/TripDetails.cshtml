@@ -1,0 +1,348 @@
+﻿@model TripViewModel
+    
+<div class="container">
+    <div class="row">
+        <a class="fa fa-chevron-circle-left fa-2x" asp-controller="Trip" asp-action="Index" style="text-decoration: none; color: inherit; margin-right: 20px; margin-top:10px"></a>
+        <h1>Trip Details</h1>
+    </div>
+</div>
+
+<hr/>
+
+<div id="map" style="height: 500px; width: auto"></div>
+
+<hr/>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-clock-o fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.TripStart.ToString()</span><br />
+                <span>Start Time</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-hourglass fa-lg"></i><br />
+                <span class="font-weight-bold">@Model.Trip.Duration.ToString(@"hh\:mm\:ss")</span><br />
+                <span>Duration</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-truck fa-lg"></i><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.Distance / 1000, 2) km</span><br />
+                <span>Distance</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-chevron-right fa-lg"></i><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.AvgSpeed, 2) km/h</span><br />
+                <span>Average Speed</span>
+            </p>
+        </div>
+        <div class="col-sm">
+            <p style="text-align: center">
+                <i class="fa fa-flask fa-lg"></i><br />
+                <span class="font-weight-bold">@Math.Round(Model.Trip.FuelConsumption, 2) l/100km</span><br />
+                <span>Fuel Consumption</span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<hr/>
+
+<div class="container">
+    <h3>Speed Trend</h3>
+    <canvas id="speedTrend"></canvas>
+    
+    <h3>Fuel Consumption</h3>
+    <canvas id="fuelTrend"></canvas>
+
+    <h3>Rpm Trend</h3>
+    <canvas id="rpmTrend"></canvas>
+</div>
+
+@section Scripts
+{
+    <!-- Gps Map -->
+    <script>
+        function initMap(gpsData) {
+            var tripCoordinates = [];
+
+            for (var i = 0; i < gpsData.length; i++) {
+                var coords = gpsData[i].Item2;
+                tripCoordinates.push(new google.maps.LatLng(coords.Latitude, coords.Longitude));
+            }
+
+            var map = new google.maps.Map(document.getElementById('map'),
+                {
+                    zoom: 12,
+                    center: new google.maps.LatLng(gpsData[0].Item2.Latitude, gpsData[0].Item2.Longitude),
+                    mapTypeId: 'terrain'
+                });
+            
+            var tripPath = new google.maps.Polyline({
+                path: tripCoordinates,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2
+            });
+
+            tripPath.setMap(map);
+        }
+
+        function loadGpsData() {
+            var serviceUrl = '/Trip/GetGpsTrend';
+
+            $.ajax({
+                type: "POST",
+                url: serviceUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedGps,
+                error: errorLoadingGps
+            });
+        }   
+
+        function loadedGps(data, status) {
+            initMap(data);
+        }
+
+        function errorLoadingGps() {
+            alert('Could not load gps data!');
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyASodb9xqIA8rmp2H13pMDM8AP7NVblqhU&callback=loadGpsData">
+
+    </script>
+    
+    <!-- Trends -->
+    <script>
+        var speedChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'Speed Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'km/h'
+                        }
+                    }]
+                }
+            }
+        };
+
+        var rpmChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'RPM Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'rpm'
+                        }
+                    }]
+                }
+            }
+        };
+
+        var fuelChartConfig = {
+            type: 'line',
+            options: {
+                title: {
+                    text: 'Fuel Trend'
+                },
+                scales: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            tooltipFormat: 'll HH:mm'
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Time'
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'l/100km'
+                        }
+                    }]
+                }
+            }
+        };
+
+        $(document).ready(function () {
+            var speedTrendCtx = document.getElementById('speedTrend').getContext('2d');
+            window.speedTrend = new Chart(speedTrendCtx, speedChartConfig);
+
+            var rpmTrendCtx = document.getElementById('rpmTrend').getContext('2d');
+            window.rpmTrend = new Chart(rpmTrendCtx, rpmChartConfig);
+
+            var fuelTrendCtx = document.getElementById('fuelTrend').getContext('2d');
+            window.fuelTrend = new Chart(fuelTrendCtx, fuelChartConfig);
+
+            var speedTrendObdUrl = '/Trip/GetSpeedTrendObd';
+
+            $.ajax({
+                type: "POST",
+                url: speedTrendObdUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedSpeedTrendObd,
+                error: errorLoadingTrend
+            });
+
+            var speedTrendGpsUrl = '/Trip/GetSpeedTrendGps';
+
+            $.ajax({
+                type: "POST",
+                url: speedTrendGpsUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedSpeedTrendGps,
+                error: errorLoadingTrend
+            });
+
+            var rpmTrendUrl = '/Trip/GetRpmTrend';
+
+            $.ajax({
+                type: "POST",
+                url: rpmTrendUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedRpmTrend,
+                error: errorLoadingTrend
+            });
+
+            var fuelTrendUrl = '/Trip/GetFuelTrend';
+
+            $.ajax({
+                type: "POST",
+                url: fuelTrendUrl,
+                data: JSON.stringify({ 'tripId': @Model.Trip.TripId }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: loadedFuelTrend,
+                error: errorLoadingTrend
+            });
+        });
+
+        function loadedSpeedTrendObd(data, status) {
+            var obdSpeedData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                obdSpeedData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var speedTrendObd = {
+                label: "Speed OBD",
+                borderColor: "#307FFF",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: obdSpeedData
+            };
+
+            speedChartConfig.data.datasets.push(speedTrendObd);
+            window.speedTrend.update();
+        }
+
+        function loadedSpeedTrendGps(data, status) {
+            var gpsSpeedData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                gpsSpeedData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var speedTrendGps = {
+                label: "Speed GPS",
+                borderColor: "#00FFFF",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: gpsSpeedData
+            };
+
+            speedChartConfig.data.datasets.push(speedTrendGps);
+            window.speedTrend.update();
+        }
+
+        function loadedRpmTrend(data, status) {
+            var rpmData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                rpmData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var rpmTrendObd = {
+                label: "Rpm",
+                borderColor: "#FF463F",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: rpmData
+            };
+
+            rpmChartConfig.data.datasets.push(rpmTrendObd);
+            window.rpmTrend.update();
+        }
+
+        function loadedFuelTrend(data, status) {
+            var fuelData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                fuelData.push({ x: data[i].Item1, y: data[i].Item2 });
+            }
+
+            var fuelTrend = {
+                label: "l/100km",
+                borderColor: "#000000",
+                backgroundColor: "rgba(0, 0, 0, 0.0)",
+                radius: "0",
+                data: fuelData
+            };
+
+            fuelChartConfig.data.datasets.push(fuelTrend);
+            window.fuelTrend.update();
+        }
+
+        function errorLoadingTrend() {
+            alert('Could not load trend data');
+        }
+
+    </script>
+}

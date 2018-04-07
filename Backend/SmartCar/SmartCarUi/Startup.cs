@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,11 +36,12 @@ namespace SmartCarUi
                 .AddOpenIdConnect(options =>
                 {
                     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // cookie middle setup above
-                    options.Authority = "http://localhost:5000"; // Auth Server
+                    options.Authority = Configuration["Authority"];
                     options.RequireHttpsMetadata = false; // only for development 
                     options.ClientId = "smartcar_ui"; // client setup in Auth Server
                     options.ClientSecret = "kX6fFG4f4PDt";
                     options.ResponseType = "code id_token"; // means Hybrid flow (id + access token)
+                    options.Scope.Add("smartcar_api");
                     options.GetClaimsFromUserInfoEndpoint = true;
                     options.SaveTokens = true;
                 });
@@ -50,6 +52,12 @@ namespace SmartCarUi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var cultureInfo = new CultureInfo("de-DE");
+            cultureInfo.NumberFormat.CurrencySymbol = "€";
+
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

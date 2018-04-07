@@ -35,6 +35,11 @@
     <div id="mapContainer" style="height: 400px; width: auto"></div>
 </div>
 
+<div class="container">
+    <p id="responseText"></p>
+</div>
+
+
 @section Scripts
 {
     <script src="~/lib/pikaday/pikaday.js"></script>
@@ -108,7 +113,9 @@
         }
 
         function errorLoadingData(status) {
-            alert("Couldn't load heatmap data! ".status);
+            alert("Couldn't load heatmap data! ");
+
+            document.getElementById('responseText').innerHTML = status.responseText;
         }
 
         function loadedApi() {

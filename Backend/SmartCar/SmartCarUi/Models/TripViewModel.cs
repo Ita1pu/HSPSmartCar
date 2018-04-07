@@ -9,7 +9,5 @@ namespace SmartCarUi.Models
     public class TripViewModel
     {
         public Trip Trip { get; set; }
-
-
     }
 }

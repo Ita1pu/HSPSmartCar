@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SmartCar.Shared.Model;
 using SmartCar.Shared.Rest;
@@ -18,6 +19,13 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class VehicleController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public VehicleController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public async Task<IActionResult> Index()
         {
             //Set result from previous operation
@@ -38,7 +46,7 @@ namespace SmartCarUi.Controllers
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
             var content = ApiTools.GetHttpContent(vehicle);
 
-            var response = await client.PostAsync("http://localhost:5001/api/vehicle", content);
+            var response = await client.PostAsync($"{_configuration["Api"]}/api/vehicle", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -58,7 +66,7 @@ namespace SmartCarUi.Controllers
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
 
-            var response = await client.DeleteAsync("http://localhost:5001/api/vehicle/" + vehicleId);
+            var response = await client.DeleteAsync($"{_configuration["Api"]}/api/vehicle/" + vehicleId);
 
             if (response.IsSuccessStatusCode)
             {
@@ -79,7 +87,7 @@ namespace SmartCarUi.Controllers
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
             var content = ApiTools.GetHttpContent(new Vehicle{VehicleId =  vehicleId});
 
-            var response = await client.PutAsync("http://localhost:5001/api/vehicle/setDefault", content);
+            var response = await client.PutAsync($"{_configuration["Api"]}/api/vehicle/setDefault", content);
             
             return RedirectToAction("Index");
         }
@@ -88,7 +96,7 @@ namespace SmartCarUi.Controllers
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
 
-            var response = await client.PutAsync("http://localhost:5001/api/vehicle/resetDefault", null);
+            var response = await client.PutAsync($"{_configuration["Api"]}/api/vehicle/resetDefault", null);
 
             return RedirectToAction("Index");
         }
@@ -97,7 +105,7 @@ namespace SmartCarUi.Controllers
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
 
-            var response = await client.GetAsync("http://localhost:5001/api/vehicle");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/vehicle");
 
             if (response.IsSuccessStatusCode)
             {

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SmartCar.Shared;
 using SmartCar.Shared.Rest;
@@ -21,6 +22,13 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class UploadController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public UploadController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -37,7 +45,7 @@ namespace SmartCarUi.Controllers
                 await logfile.CopyToAsync(postStream);
                 
                 content.Add(new ByteArrayContent(postStream.ToArray()), "logfile", logfile.FileName);
-                var response = await client.PostAsync("http://localhost:5001/api/upload/logfile", content);
+                var response = await client.PostAsync($"{_configuration["Api"]}/api/upload/logfile", content);
                 
                 if (response.IsSuccessStatusCode)
                 {

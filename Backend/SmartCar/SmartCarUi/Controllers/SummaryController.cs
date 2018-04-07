@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using SmartCar.Shared.Model;
 using SmartCar.Shared.Rest;
@@ -15,6 +16,13 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class SummaryController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public SummaryController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public async Task<IActionResult> Index()
         {
             var vehicles = await GetVehicles();
@@ -47,7 +55,7 @@ namespace SmartCarUi.Controllers
         private async Task<List<Vehicle>> GetVehicles()
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync("http://localhost:5001/api/vehicle");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/vehicle");
 
             if (response.IsSuccessStatusCode)
             {
@@ -63,7 +71,7 @@ namespace SmartCarUi.Controllers
         private async Task<TripSummary> GetSummary(int year, int vehicleId)
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/statistics/summary/{year}/{vehicleId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/statistics/summary/{year}/{vehicleId}");
 
             if (response.IsSuccessStatusCode)
             {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using SmartCarUi.Extensions;
 using SmartCarUi.Models;
 
@@ -12,6 +13,13 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class HeatmapController : Controller
     {
+        private readonly IConfiguration _configuration;
+
+        public HeatmapController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public IActionResult Index()
         {
             var autoRange = new RangeViewModel
@@ -29,8 +37,13 @@ namespace SmartCarUi.Controllers
             var rangeStart = DateTime.Parse(data["rangeStart"].ToString());
             var rangeEnd = DateTime.Parse(data["rangeEnd"].ToString());
 
+            var requestUri =
+                $"{_configuration["Api"]}/api/statistics/heatmap/{rangeStart.ToShortDateString()}/{rangeEnd.ToShortDateString()}";
+
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/statistics/heatmap/{rangeStart.ToShortDateString()}/{rangeEnd.ToShortDateString()}");
+            var response =
+                await client.GetAsync(
+                    $"{_configuration["Api"]}/api/statistics/heatmap/{rangeStart.ToShortDateString()}/{rangeEnd.ToShortDateString()}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -38,7 +51,7 @@ namespace SmartCarUi.Controllers
                 return Ok(responseContent);
             }
 
-            return null;
+            return BadRequest();
         }
     }
 }

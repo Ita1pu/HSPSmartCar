@@ -16,7 +16,7 @@ namespace SmartCarUi.Controllers
     [Authorize]
     public class TripController : Controller
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public TripController(IConfiguration configuration)
         {
@@ -28,10 +28,10 @@ namespace SmartCarUi.Controllers
         {
             var tripView = new TripsViewModel
             {
-                RangeStart = DateTime.Parse("01.01." + DateTime.Now.Year),
-                RangeEnd = DateTime.Parse("31.12." + DateTime.Now.Year)
+                RangeStart = new DateTime(DateTime.Now.Year, 1, 1),
+                RangeEnd = new DateTime(DateTime.Now.Year, 12, 31),
             };
-            
+
             tripView.Trips = await GetTrips(tripView.RangeStart, tripView.RangeEnd);
             tripView.Vehicles = await GetVehicles();
 
@@ -44,7 +44,7 @@ namespace SmartCarUi.Controllers
             tripsView.Trips = await GetTrips(tripsView.RangeStart, tripsView.RangeEnd);
             return View("Index", tripsView);
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> TripDetails(int tripId)
         {
@@ -54,7 +54,7 @@ namespace SmartCarUi.Controllers
             {
                 Trip = trip
             };
-            
+
             return View(tripDetailView);
         }
 
@@ -63,7 +63,7 @@ namespace SmartCarUi.Controllers
         {
             int tripId = (int)data["tripId"];
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/gpstrend/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/tripdetails/gpstrend/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -79,7 +79,7 @@ namespace SmartCarUi.Controllers
         {
             int tripId = (int)data["tripId"];
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/speedtrend/obd/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/tripdetails/speedtrend/obd/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -95,7 +95,7 @@ namespace SmartCarUi.Controllers
         {
             int tripId = (int)data["tripId"];
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/speedtrend/gps/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/tripdetails/speedtrend/gps/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -111,7 +111,7 @@ namespace SmartCarUi.Controllers
         {
             int tripId = (int)data["tripId"];
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/rpmtrend/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/tripdetails/rpmtrend/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -127,7 +127,7 @@ namespace SmartCarUi.Controllers
         {
             int tripId = (int)data["tripId"];
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/tripdetails/fueltrend/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/tripdetails/fueltrend/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -162,7 +162,7 @@ namespace SmartCarUi.Controllers
             {
                 if (actionViewTrip.IsSelected)
                 {
-                    await client.DeleteAsync($"http://localhost:5001/api/trip/{actionViewTrip.Trip.TripId}");
+                    await client.DeleteAsync($"{_configuration["Api"]}/api/trip/{actionViewTrip.Trip.TripId}");
                 }
             }
         }
@@ -178,10 +178,10 @@ namespace SmartCarUi.Controllers
                     var content = ApiTools.GetHttpContent(new Trip
                     {
                         TripId = actionViewTrip.Trip.TripId,
-                        Vehicle = new Vehicle{VehicleId = actionView.SelectedVehicleId }
+                        Vehicle = new Vehicle { VehicleId = actionView.SelectedVehicleId }
                     });
 
-                    await client.PutAsync("http://localhost:5001/api/trip/setVehicle", content);
+                    await client.PutAsync($"{_configuration["Api"]}/api/trip/setVehicle", content);
                 }
             }
         }
@@ -189,9 +189,9 @@ namespace SmartCarUi.Controllers
         private async Task<List<Trip>> GetTrips(DateTime rangeStart, DateTime rangeEnd)
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/trip/{rangeStart.ToShortDateString()}/{rangeEnd.ToShortDateString()}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/trip/{rangeStart.ToShortDateString()}/{rangeEnd.ToShortDateString()}");
 
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 var responseContent = await response.Content.ReadAsStringAsync();
                 var trips = JsonConvert.DeserializeObject<List<Trip>>(responseContent);
@@ -199,13 +199,13 @@ namespace SmartCarUi.Controllers
                 return trips.OrderBy(t => t.TripStart).ToList();
             }
 
-            return null;
+            return new List<Trip>();
         }
 
         private async Task<List<Vehicle>> GetVehicles()
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync("http://localhost:5001/api/vehicle");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/vehicle");
 
             if (response.IsSuccessStatusCode)
             {
@@ -215,13 +215,13 @@ namespace SmartCarUi.Controllers
                 return trips;
             }
 
-            return null;
+            return new List<Vehicle>();
         }
 
         private async Task<Trip> GetTrip(int tripId)
         {
             var client = await ApiTools.GetAuthenticatedClient(HttpContext);
-            var response = await client.GetAsync($"http://localhost:5001/api/trip/{tripId}");
+            var response = await client.GetAsync($"{_configuration["Api"]}/api/trip/{tripId}");
 
             if (response.IsSuccessStatusCode)
             {
@@ -231,7 +231,7 @@ namespace SmartCarUi.Controllers
                 return trip;
             }
 
-            return null;
+            return new Trip();
         }
     }
 }

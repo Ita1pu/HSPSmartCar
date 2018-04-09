@@ -5,6 +5,7 @@ Was kann der Dongle, und besonderes erklären
 
 
 \subsection{GPS und Zeit} 
+\label{ImplGpsUndZeit}
 Um den GPS-Empfänger auch in der in diesem Projekt geschriebenen Dongle-Software zu nutzen, wurde zunächst der Code des von Freematics veröffentlichten Treibers für den Coprozessor übernommen, da dieser den Datenaustausch mit dem Empfänger regelt und die serielle Schnittstelle mit diesem verbunden ist. Um die Kommunikation von der eigentlichen Anwendungslogik abzutrennen, wurde eine weitere LocationTimeService-Klasse auf Ebene der Intermediate-Layer implementiert. Diese bietet nun vereinfachten Zugriff auf die gemessenen Werte des geografischen Längen- und Breitengrads, der Höhe über Normalnull und die Anzahl der verfügbaren Satteliten. Darüber hinaus stellt sie auch Funktionen zum erneuten Abrufen und Speichern der GPS-Daten und zur Initialisierung der Kommunikation mit dem GPS-Chip über UART zur Verfügung. Dabei ist zu beachten, dass die Anzahl der Satelliten für eine möglichst korrekte Positionsbestimmung zwischen 4 und 14 liegen muss \cite{gpsPrecision}.
 
 Während der Initialisierung des LocationService, wird bis zu fünf mal versucht, über den Treiber des Coprozessors eine serielle Datenübertragung aufzubauen. Um die Genauigkeit vor allem des Pixhawk-Empfängers zu verbessern, wird während der Initialisierung der LocationService-Klasse der Intermediate Schicht der GPS-Chip für die Nutzung für ``Satellite Based Augmentation Systems'' (SBAS) konfiguriert. Dazu wird die write-Methode des Treibers genutzt, mit dem ein Byte-Array 1:1 übertragen werden kann.
@@ -25,6 +26,18 @@ Da mit dem GPS auch Zeitinformationen übertragen werden, werden diese genutzt, 
 Um die GPS-Information zur ``Unix-Epoch'' umzuwandeln wird auf Funktionen der Header-Datei ``time.h'' zurückgegriffen, welche in der Arduino Header Sammlung enthalten ist. Allerdings muss während der Konversion der Wert 946684800 hinzuaddiert werden, da Arduino die Epoch seit dem 1.1.2000 rechnet und der genannte Wert den Sekunden zwischen 1.1.1970 und 1.1.2000 entspricht. Bei der Rückgabe der Millisekunden muss darauf geachtet werden, dass ein Datentyp mit 64 Bit verwendet wird und auch keine impliziten Umwandlungen bei der Berechnung auftreten.
 \paragraph{}
 In diesem Zuge wird Timer 1 mit global sichtbaren Funktionen und einem Interrupt so konfiguriert, um das Logging-Intervall von 200 ms einzuhalten. Timer 2 wird ähnlich konfiguriert, sorgt aber dafür, dass der zwischengespeicherte Epoch-Wert alle 8 Millisekunden um diesen Wert erhöht wird. Dadurch muss nicht jedes mal die GPS-Zeit abgerufen werden, wenn der Zeitstempel benötigt wird.
+
+\subsection{ \ac{OBD}-Schnittstelle}
+	Da die Kommunikation mit der \ac{OBD}-Schnittstelle ebenfalls über den Coprozessor läuft, von welchem die Software nicht bekannt ist, wurde hier die von Freematics bereitgestellte Klasse \enquote{COBDSPI} verwendet. Diese stellt gewissen Funktionen wie z.B. auslesen einer \ac{PID} oder der \ac{VIN}. Da diese Funktionen allerdings komplizierter zu verwenden sind, wurde auch hierfür auf der Ebene der Intermedia-Layer eine neue Klasse erzeugt mit der es einfacher ist die \ac{PID}-Kategorien auszulesen und für die weitere Verarbeitung zu verpacken.
+	\\
+	Da bei \ac{OBD} zwar der Stecker spezifiziert ist, es allerdings trotzdem unterschiedliche Protokolle gibt welche sich durch die Belegung der Pins unterscheiden, sorgt die Implementierung außerdem dafür, dass das passende Protokoll gefunden und für spätere Neuverbindungen gespeichert wird.
+	\\
+	Die neue Klasse stellt weiterhin eine Methode zu Verfügung mit der es möglich ist zu erkennen, ob beim Auto die Zündung getätigt wurde. Dies ist wichtig, da die \ac{OBD}-Schnittstelle (bei den meisten Autos) dauerhaft mit Strom versorgt ist. Aus diesem Grund kann nicht auf einen Neustart des Fahrzeugs gewartet werden um zu entscheiden ob es sich um eine neue Strecke handelt.
+	\\
+	Die Funktion überprüft wie viele Timeouts beim Versuch \acp{PID} auszulesen auftreten. Sobald diese Anzahl einen Grenzwert überschreitet, wird davon Ausgegangen, dass die Zündung nicht mehr aktiviert ist. Anschließend kann in Regelmäßigen Abständen geprüft werden ob inzwischen wieder Kommunikation mit dem \ac{OBD}-Steuergerät möglich ist. 
+	
+
+
 \subsection{Beschleunigungssensor}
 Der Treiber für den im Dongle verbauten Beschleunigungs-Sensor wurde nicht von Freematics übernommen sondern in Anlehnung an diesen neu Implementiert. Dies geschah vor allem um die Einheit der aufgezeichneten Sensorwerte selbst zu definieren und verständlicher darzustellen, sowie um Platz auf dem Flash-Speicher zu sparen.
 \paragraph{}

@@ -56,6 +56,94 @@ Letztendlich wurde ein Pixhawk GPS Empfänger für einen Modellbau-Quadrokopter 
 Um den neuen Empfänger am Dongle zu betreiben, wurde an dessen Signal-Eingängen ein 2x2-Molex Stecker passend angelötet. Die I2C-Pins des Magnetfeld-Sensors wurden dabei nicht belegt.
 \paragraph{}
 Ein erster Test mit der mitgelieferten Software zeigte die grundsätzliche Funktion des neuen GPS-Moduls. Allerdings ist die Genauigkeit des Pixhawk-Empfängers etwas schlechter als die des UBX-G7020.
+
+	\subsection{ \ac{OBD}-Schnittstelle}
+		Da der Dongle vorwiegend genutzt werden soll um die \ac{OBD}-Daten (kurz \acp{PID}) aufzuzeichnen besitzt der Freematics ONE eine hierfür passende Schnittstelle. Bei den \acp{PID}\cite{OBD-2.net2018} handelt es sich um Daten die von bestimmten Sensoren (z.B. Drehzahl, Geschwindigkeit, Öl-Temperatur, ...) im Auto zu Verfügung gestellt werden.
+		\ \\
+		Bei \ac{OBD} handelt es sich um ein Protokoll welches nach dem \enquote{challenge-response} funktioniert. Dabei werden vom Client (Dongle) anfragen an den Server (\ac{OBD}-Steuergerät im Auto) gesendet. Dieses antwortet anschließend mit den Werten des entsprechenden Sensors.
+		\ \\
+		Da es Abhängig vom vorliegenden Auto abhängig ist, welche Steuergeräte verbaut sind und was somit für \acp{PID} unterstützt werden, ist es nicht bei jedem Auto möglich die selben Daten auszulesen.
+		\ \\
+		Da weiterhin der Platz auf dem Freematics ONE (sowohl RAM als auch Flash) sehr begrenzt ist, wurde von vorne herein entschieden, nur bestimmte \acp{PID} zu verwenden. Insgesamt wurden xy viele \acp{PID} ausgewählt. Um sowohl die \ac{OBD}-Schnittstelle als auch den Prozessor im Freeatics ONE unter wenig Last auszusetzen, dabei allerdings möglichst viel Nutzen aus den gewonnen Informationen ziehen zu können, wurden die \acp{PID} in unterschiedliche Gruppen eingeteilt. 
+		\ \\
+		Eine Gruppe entspricht somit einem Zusammenschluss aus \acp{PID} welche alle in einem gleichen Zeitintervall abgerufen werden. Es wurde sich für folgende Gruppen entschieden (Tabelle \ref{KategorieTable}):
+		
+		\begin{center}
+			\begin{tabular}{|c|c|}
+				\hline 
+				Kategorie & Intervall \\ 
+				\hline 
+				A & 500ms \\ 
+				\hline 
+				B & 1,5s \\ 
+				\hline 
+				C & 15s \\ 
+				\hline 
+				D & 5min \\ 
+				\hline 
+				E & neue Route \\ 
+				\hline 
+				F & neues Auto \\ 
+				\hline 
+			\end{tabular} 
+			\label{KategorieTable}		
+		\end{center}
+
+		
+		Der Tabelle xyc kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und in welcher Kategorie sie zugeordnet wurde.
+		
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline 
+				Name & Wert & Kategorie \\ 
+				\hline 
+				Engine coolant temperature & 0x5 & C \\ 
+				\hline 
+				Engine RPM & 0x0C & A \\ 
+				\hline 
+				Vehicle speed & 0x0D & A \\ 
+				\hline 
+				Run time since engine start & 0x1F & C \\ 
+				\hline 
+				Distance traveled with malfunction indicator lamp & 0x21 & D \\ 
+				\hline 
+				Fuel tank level input & 0x2F & D \\ 
+				\hline 
+				Absolute barometric pressure & 0x33 & C \\ 
+				\hline 
+				Ambient ari temperature & 0x46 & C \\ 
+				\hline 
+				Fuel type & 0x51 & E \\ 
+				\hline 
+				Ethanol fuel \% & 0x52 & E \\ 
+				\hline 
+				Relative accelerator pedal position & 0x5A & A \\ 
+				\hline 
+				Engine oil temperature & 0x5C & C \\ 
+				\hline 
+				Engine fuel rate & 0x5E & A \\ 
+				\hline 
+				Driver's demand engine-percent torque & 0x61 & A \\ 
+				\hline 
+				Actual engine-percent torque & 0x62 & A \\ 
+				\hline 
+				Engine reference torque & 0x63 & A \\ 
+				\hline 
+				Engine run time & 0x7F & C \\ 
+				\hline 
+			\end{tabular} 
+		\end{center}
+		
+		
+		
+	
+	
+	
+	
+	
+	
+
+
 \subsection{Zeit}
 Wie bereits erwähnt, muss auch auf dem Dongle eine Repräsentation der genormten Zeit vorhanden sein. Zunächst soll jeder erfasste Datenwert mit einem Zeitstempel versehen werden um mit einer totalen Ordnung die Analyse dieser Werte erst zu ermöglichen. Zum anderen sollen die Datenwerte mit einem Intervall von 200 Millisekunden erfasst werden.
 \paragraph{}

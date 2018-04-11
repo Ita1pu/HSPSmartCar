@@ -104,6 +104,9 @@
 %um links im pdf zu haben mit denen man hin und her springen kann
 \usepackage{hyperref}
 
+%um Bilder bei Bedarf zu rotieren
+\usepackage{rotating}
+
 %%text farbig hinterlegen
 %\usepackage{color}
 

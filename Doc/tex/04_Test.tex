@@ -1,15 +1,27 @@
 \chapter{Tests}
 \label{sec:test}
 
-Was haben wir getestet, fahren aufgenommen und verifiziert....
+\section{Dongle}
+\label{sec:dongleTest}
+Nach der erfolgreichen Integration der Dongle-Software erfolgte die Testphase, bei der der Dongle in iterativen Durchgängen an die OBD-Buchse verschiedener PKWs angeschlossen wurde. Hierbei wurden mehrere Fehlfunktionen entdeckt und behoben.
+\paragraph{}
+Es wurde zunächst deutlich, dass die Dauer der einzelnen Durchgänge der Haupt-Schleife weit über das erwartete Maß hinaus geht. Hierbei wurden die Zeitstempel zweier geloggter OBD-Werte mit der PID 0x0C verglichen. Dieser Wert ist der erste, der in jedem Durchgang erfasst wird. Folgende Werte zeigen beispielhaft die Dauern von Durchgänge bei denen alle Logging-Kategorien mindestens einmal erfasst wurden:
+\begin{table}
+  \caption{Beispiel-Zeiten für einzelne Durchgänge der Haupt-Schleife}
+  \label{tab:loopTimes}
 
-  
-
- 
- 
- 
- 
- 
- 
- 
- 
+  \begin{center}
+    \begin{tabular}{|c|c|c|}
+    \hline
+      Durchgang & Dauer in Millisekunden & erfasste Logging-Kategorien\\ \hline
+      0 & 488 & A\\ \hline
+      1 & 708 & A + B\\ \hline
+      2 & 960 & A + C\\ \hline
+      3 & 608 & A + D\\ \hline
+      4 & 656 & A + B\\ \hline
+    \end{tabular}
+  \end{center}
+\end{table}
+Eine Analyse zeigte auf, dass diese hohen Zeiten vor allem durch die Latenz bei der Abfrage der OBD-Daten vom Steuergerät zustande kommen. Dieses Verhalten kann nicht beeinflusst werden, stellt allerdings nur ein kleines Problem dar. Da zu jedem erfassten Wert auch ein Zeitstempel mit einer Genauigkeit von \textpm 8 Millisekunden gespeichert wird, ist die Einhaltung der angestrebten 500 Millisekunden für spätere Berechnungen nicht notwendig. Die Unterschiedliche Frequenz mit der die Logging-Klassen erfasst werden, welche mittels der Modulo-Operationen auf dem Loop-Counter erreicht wird, bleibt aufgrund der geringen Änderungsrate der Werte jedoch bestehen.
+\paragraph{}
+Darüber hinaus zeigten die Tests, dass die Verwendung des LowPowerModes des Coprozessors nicht den Erwartungen entsprach. Der STM32 konnte zwar in einen Schlafzustand versetzt werden, die Reaktivierung des selben konnte jedoch trotz intensiver Recherche im veröffentlichten Code und im offiziellen Freematics Forum nicht erreicht werden. Es zeigte sich allerdings, dass die verwendeten Funktionen aus den aktuelleren Versionen der offiziellen Softwarebibliotheken entfernt wurden \cite{freematicsRevFeb}. Da bereits ein Timeout bei der Abfrage von OBD-Werten dazu führt, dass die Dongle-Software ein Abstellen des Fahrzeuges vermutet, folgte daraus ein zufälliges Abbrechen der Aufzeichnung während einer laufenden Fahrt. Zur Beseitigung des Problems wurde auf die Verwendung des LowPowerModes verzichtet. Dieses Problem stellt im aktuellen Projektstand eine Verbesserungsmöglichkeit dar.

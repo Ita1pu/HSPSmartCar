@@ -9,33 +9,13 @@
   \end{center}
 \end{sidewaysfigure}
 \section{Dongle}
-Wie auf der Produkthomepage beschrieben, so nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer ``setup''- und einer ``loop''-Funktion innerhalb einer main-Datei verwendet.
+Wie auf der Produkthomepage beschrieben, nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer \enquote{setup}- und einer \enquote{loop}-Funktion innerhalb einer main-Datei verwendet.
 \paragraph{}
 Um bei der Entwicklung der Software für den Dongle möglichst wenig Inhaltsüber-schneidungen der Teammitglieder zu erreichen und um die Verständlichkeit und Wartbarkeit des Codes zu verbessern wurde entschieden die Schichtenarchitektur wie in Bild \ref{fig:dongleArch} umzusetzen.
-
 Hierbei wird für die meisten Funktionsmerkmale mindestens eine Klasse auf der Intermediate-Layer sowie der Driver-Layer implementiert. Dies hat zur Folge, dass bei einer Funktionsänderung wie beispielsweise der Verwendung eines anderen GPS-Empfängers nur die entsprechende Treiber-Klasse geändert werden muss. Die Hauptklasse mit der eigentlichen Programmlogik bleibt dabei unangetastet.\\
-Die im Bild \ref{fig:dongleArch} mit ``(Fm)'' ergänzten Klassen werden aus den Bibliotheken des Herstellers übernommen.
-\subsection{Programmlogik}
-Die eigentliche Programmlogik kann wie bereits erwähnt in die Teile ``Setup'' und ``Loop'' getrennt werden.
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\textwidth,height=20cm,keepaspectratio]{./img/Startup}
-    \caption{Programmablauf der Initialisierung}
-    \label{fig:setup}
-  \end{center}
-\end{figure}
-\paragraph{}
-Die Abbildung \ref{fig:setup} beschreibt den Ablauf des Programms beim Einstecken des Adapters in die Schnittstelle des Autos. Hervorzuheben ist, dass die Reihenfolge der Initialisierungen von großer Bedeutung ist. Während der Integration zeigte sich, dass die Persistenz-Klasse zur Initialisierung wesentlich mehr RAM benötigt als während des normalen Programmablaufs. Deshalb muss diese so früh wie möglich initialisiert werden. Nur die Klasse für GPS und Zeit muss zuvor bereit sein, da die Persistenzklasse diese während der Initialisierung aufruft.
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\textwidth,height=20cm,keepaspectratio]{./img/ProgLoop}
-    \caption{Programmablauf der Endlosschleife}
-    \label{fig:loop}
-  \end{center}
-\end{figure}
-In Abbildung \ref{fig:loop} ist der Ablauf des Programms ersichtlich, welches die eigentliche Funktionalität enthält. Dies wurde in drei Modi umgesetzt. Während des Logging-Modus werden die Fahrzeug-Daten gesammelt, auf eine SD-Karte geschrieben und per Bluetooth an ein Smartphone gesandt. Der Upload-Modus dient dazu, die gesammelten Daten auf der SD-Karte an die Smartphone-App weiterzugeben. Dies soll ein Entnehmen der Karte zum Auslesen der Daten optional machen. Der Schlafmodus dient letztendlich dazu, bei abgeschalteter Zündung das Bordnetz des Fahrzeugs möglichst wenig zu belasten.
+Die im Bild \ref{fig:dongleArch} mit \enquote{(Fm)} ergänzten Klassen werden aus den Bibliotheken des Herstellers übernommen.
 \subsection{GPS-Empfänger}
-Da ein zentrales Ziel der Applikation die Anfertigung eines Fahrtenbuches mit Streckenaufzeichnung ist, muss auch die Position des Fahrzeuges möglichst genau bestimmt werden. Der in diesem Projekt verwendete Freematics ONE bietet hier die Möglichkeit, einen externen GPS-Empfänger per UART anzubinden.
+Da ein zentrales Ziel der Applikation die Anfertigung eines Fahrtenbuches mit Streckenaufzeichnung ist, muss auch die Position des Fahrzeuges möglichst genau bestimmt werden. Der in diesem Projekt verwendete Freematics ONE bietet hier die Möglichkeit, einen externen GPS-Empfänger über eine \ac{UART}-Schnittstelle anzubinden.
 \paragraph{}
 Um die Anschaffungskosten zu reduzieren, wurde zunächst untersucht, ob neben dem von Freematics verkauften GPS-Empfänger auch andere GPS-Receiver-Chips mit dem OBD-Dongle kompatibel sind.
 Ein Problem bei dieser Untersuchung ist die Architektur des Freematics ONE, da die Kommunikation mit dem GPS-Empfänger nicht auf dem ATmega328p Haupt-Controller sondern auf einem STM32 Coprozessor ausgeführt wird. Leider ist der Code auf dem Coprozessor nicht öffentlich einsehbar und auch nicht ohne großen Aufwand auslesbar.
@@ -50,7 +30,7 @@ Daher wurde eine andere Vorgehensweise zur Untersuchung der Kommunikation angewa
   \end{center}
 \end{figure}
 \paragraph{}
-Nach Auswertung der Kommunikation, stand fest, dass der von Freematics gelieferte Gps-Empfänger kompatibel zu einem u-blox UBX-G7020 ist. Dieser versendet standardmäßig Nachrichten gemäß dem NMEA Standard. Darüber hinaus wurde ersichtlich, dass der OBD-Dongle keine Nachrichten zum GPS-Chip sendet.
+Nach Auswertung der Kommunikation, stand fest, dass der von Freematics gelieferte GPS-Empfänger kompatibel zu einem u-blox UBX-G7020 ist. Dieser versendet standardmäßig Nachrichten gemäß dem \ac{NMEA} Standard. Darüber hinaus wurde ersichtlich, dass der OBD-Dongle keine Nachrichten zum GPS-Chip sendet.
 \paragraph{}
 Da nun allerdings der konkrete Empfänger feststand, konnte dazu die entsprechende Protocol Specification heruntergeladen und mit weiteren GPS-Empfängern verglichen werden.
 Letztendlich wurde ein Pixhawk GPS Empfänger für einen Modellbau-Quadrokopter auf Basis eines u-blox Neo6M mit zusätzlichem Magnetfeld-Sensor ausgewählt. Dieser Mikrochip verfügt zwar nicht über die exakt gleiche Protocol Specification, die ab Werk konfigurierte Kommunikation jedoch ist nahezu identisch und kompatibel mit der des von Freematics gelieferten Produktes.
@@ -58,11 +38,110 @@ Letztendlich wurde ein Pixhawk GPS Empfänger für einen Modellbau-Quadrokopter 
 Um den neuen Empfänger am Dongle zu betreiben, wurde an dessen Signal-Eingängen ein 2x2-Molex Stecker passend angelötet. Die I2C-Pins des Magnetfeld-Sensors wurden dabei nicht belegt.
 \paragraph{}
 Ein erster Test mit der mitgelieferten Software zeigte die grundsätzliche Funktion des neuen GPS-Moduls. Allerdings ist die Genauigkeit des Pixhawk-Empfängers etwas schlechter als die des UBX-G7020.
+
+	\subsection{ \ac{OBD}-Schnittstelle}
+		Da der Dongle vorwiegend genutzt werden soll um die \ac{OBD}-Daten (kurz \acp{PID}) aufzuzeichnen besitzt der Freematics ONE eine hierfür passende Schnittstelle. Bei den \acp{PID}\cite{OBD-2.net2018} handelt es sich um Daten die von bestimmten Sensoren (z.B. Drehzahl, Geschwindigkeit, Öl-Temperatur, ...) im Auto zu Verfügung gestellt werden.
+		\ \\
+		Bei \ac{OBD} handelt es sich um ein Protokoll welches nach dem \enquote{challenge-response}-Prinzip funktioniert. Dabei werden vom Client (Dongle) Anfragen an den Server (\ac{OBD}-Steuergerät im Auto) gesendet. Dieses antwortet anschließend mit den Werten des entsprechenden Sensors.
+		\ \\
+		Da es vom vorliegenden Auto abhängig ist, welche Steuergeräte verbaut sind und somit auch was für \acp{PID} unterstützt werden, ist es nicht bei jedem Auto möglich die selben Daten auszulesen.
+		\ \\
+		Da weiterhin der Platz auf dem Freematics ONE (sowohl RAM als auch Flash) sehr begrenzt ist, wurde von vorne herein entschieden, nur bestimmte \acp{PID} zu verwenden. Insgesamt wurden xy viele \acp{PID} ausgewählt. Um sowohl die \ac{OBD}-Schnittstelle als auch den Prozessor im Freeatics ONE unter wenig Last auszusetzen, dabei allerdings möglichst viel Nutzen aus den gewonnen Informationen ziehen zu können, wurden die \acp{PID} in unterschiedliche Gruppen eingeteilt. 
+		\ \\
+		Eine Gruppe entspricht somit einem Zusammenschluss aus \acp{PID} welche alle in einem gleichen Zeitintervall abgerufen werden. Es wurde sich für folgende Gruppen entschieden (Tabelle \ref{KategorieTable}):
+		
+		\begin{center}
+			\begin{tabular}{|c|c|}
+				\hline 
+				Kategorie & Intervall \\ 
+				\hline 
+				A & 500ms \\ 
+				\hline 
+				B & 1,5s \\ 
+				\hline 
+				C & 15s \\ 
+				\hline 
+				D & 5min \\ 
+				\hline 
+				E & neue Route \\ 
+				\hline 
+				F & neues Auto \\ 
+				\hline 
+			\end{tabular} 
+			\label{KategorieTable}		
+		\end{center}
+
+		
+		Der Tabelle \ref{KategorieTable} kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und in welcher Kategorie sie zugeordnet wurde.
+		
+		\begin{center}
+			\begin{tabular}{|c|c|c|}
+				\hline 
+				Name & Wert & Kategorie \\ 
+				\hline 
+				Engine coolant temperature & 0x05 & C \\ 
+				\hline 
+				Engine RPM & 0x0C & A \\ 
+				\hline 
+				Vehicle speed & 0x0D & A \\ 
+				\hline 
+				Run time since engine start & 0x1F & C \\ 
+				\hline 
+				Distance traveled with malfunction indicator lamp & 0x21 & D \\ 
+				\hline 
+				Fuel tank level input & 0x2F & D \\ 
+				\hline 
+				Absolute barometric pressure & 0x33 & C \\ 
+				\hline 
+				Ambient ari temperature & 0x46 & C \\ 
+				\hline 
+				Fuel type & 0x51 & E \\ 
+				\hline 
+				Ethanol fuel \% & 0x52 & E \\ 
+				\hline 
+				Relative accelerator pedal position & 0x5A & A \\ 
+				\hline 
+				Engine oil temperature & 0x5C & C \\ 
+				\hline 
+				Engine fuel rate & 0x5E & A \\ 
+				\hline 
+				Driver's demand engine-percent torque & 0x61 & A \\ 
+				\hline 
+				Actual engine-percent torque & 0x62 & A \\ 
+				\hline 
+				Engine reference torque & 0x63 & A \\ 
+				\hline 
+				Engine run time & 0x7F & C \\ 
+				\hline 
+			\end{tabular} 
+		\end{center}
+		
+
 \subsection{Zeit}
-Wie bereits erwähnt, muss auch auf dem Dongle eine Repräsentation der genormten Zeit vorhanden sein. Zunächst soll jeder erfasste Datenwert mit einem Zeitstempel versehen werden um mit einer totalen Ordnung die Analyse dieser Werte erst zu ermöglichen. Zum anderen sollen die Datenwerte mit einem Intervall von 200 Millisekunden erfasst werden.
+Wie bereits erwähnt, muss auch auf dem Dongle eine Repräsentation der genormten Zeit vorhanden sein. Zunächst soll jeder erfasste Datenwert mit einem Zeitstempel versehen werden um mit einer totalen Ordnung die Analyse dieser Werte erst zu ermöglichen. Zum anderen sollen die Datenwerte mit einem Intervall von 500 Millisekunden erfasst werden.
 \paragraph{}
-Die Anforderung nach einem genauen Zeitintervall von 200 Millisekunden zwischen dem Abrufen der OBD-Werte der Klasse A kann durch den Einsatz eines Hardware-Timers und Interrupts gelöst werden.
+Die Anforderung nach einem genauen Zeitintervall von 500 Millisekunden zwischen dem Abrufen der OBD-Werte der Kategorie A kann durch den Einsatz eines Hardware-Timers und Interrupts gelöst werden.
 Auf dem ATmega328p Hauptcontroller stehen dem Entwickler 3 Hardware-Timer zur Verfügung. Allerdings muss hierbei beachtet werden, dass die Arduino-Bibliothek den Timer 0 für die Funktionen delay() und millis() verwendet und diese daher unangetastet bleiben sollten.\cite{arduinoTimer}
-Da die Intervalle zum Abrufen der PID-Klassen B, C und D ein Vielfaches der 200 Millisekunden der Klasse A sind, müssen für diese keine weiteren Timer verwendet werden. Statt dessen kann ein einfacher Vergleich in Kombination mit dem Modulo-Operator genutzt werden (vgl. Abbildung \ref{fig:loop}).
+Da die Intervalle zum Abrufen der PID-Kategorien B, C und D ein Vielfaches der 500 Millisekunden der Kategorie A sind, müssen für diese keine weiteren Timer verwendet werden. Statt dessen kann ein einfacher Vergleich in Kombination mit dem Modulo-Operator genutzt werden (vgl. Abbildung \ref{fig:loop}).
 \subsection{Beschleunigungssensor}
-Zunächst wurde ermittelt, welcher Sensor im Dongle verbaut wurde. Anhand der Informationen auf der Produkthomepage sowie des Source-Codes des Treibers wurde ersichtlich, dass ein MPU-9250 MEMS Bewegungssensor mit jeweils 3 Achsen für Beschleunigungs-, Drehraten- und Magnetfeldmessung verbaut ist. Hierbei ist besonders, dass der Sensor für das Magnetfeld als I²C-Submodul am Sensor ausgeführt ist.
+Zunächst wurde ermittelt, welcher Sensor im Dongle verbaut wurde. Anhand der Informationen auf der Produkthomepage sowie des Source-Codes des Treibers wurde ersichtlich, dass ein MPU-9250 \ac{MEMS}-Sensor mit jeweils 3 Achsen für Beschleunigungs-, Drehraten- und Magnetfeldmessung verbaut ist. Hierbei ist besonders, dass der Sensor für das Magnetfeld als I²C-Submodul am Sensor ausgeführt ist.
+\subsection{Programmlogik}
+\label{subsec:ProgLogik}
+Die eigentliche Programmlogik kann wie bereits erwähnt in die Teile \enquote{Setup} und \enquote{Loop} getrennt werden.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=10cm,keepaspectratio]{./img/Startup}
+    \caption{Programmablauf der Initialisierung}
+    \label{fig:setup}
+  \end{center}
+\end{figure}
+\paragraph{}
+Die Abbildung \ref{fig:setup} beschreibt den Ablauf des Programms beim Einstecken des Adapters in die Schnittstelle des Autos. Hervorzuheben ist, dass die Reihenfolge der Initialisierungen von großer Bedeutung ist. Näheres dazu wird im Kapitel \ref{subsec:intPl} erklärt.
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=\textwidth,height=20cm,keepaspectratio]{./img/ProgLoop}
+    \caption{Programmablauf der Endlosschleife}
+    \label{fig:loop}
+  \end{center}
+\end{figure}
+In Abbildung \ref{fig:loop} ist der Ablauf des Programms ersichtlich, welches die eigentliche Funktionalität enthält. Dies wurde in drei Modi umgesetzt. Während des Logging-Modus werden die Fahrzeug-Daten gesammelt, auf eine SD-Karte geschrieben und per Bluetooth an ein Smartphone gesandt. Der Upload-Modus dient dazu, die gesammelten Daten auf der SD-Karte an die Smartphone-App weiterzugeben. Dies soll ein Entnehmen der Karte zum Auslesen der Daten optional machen. Der Schlafmodus dient letztendlich dazu, bei abgeschalteter Zündung das Bordnetz des Fahrzeugs möglichst wenig zu belasten.

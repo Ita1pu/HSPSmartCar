@@ -42,7 +42,24 @@
 
 @misc{aralFAQ,
 	address = {https://www.aral.de/de/forschung/faq/faqs.html},
+	editor = {Global Fuels Technology},
 	howpublished = {online},
 	title = {FAQs | FAQ | Forschung (Aral Website)}
+}
+
+@misc{gpsPrecision,
+	address = {https://wiki.openstreetmap.org/wiki/DE:Genauigkeit\_von\_GPS-Daten},
+	editor = {OpenStreetMap Foundation},
+	howpublished = {online},
+	title = {Genauigkeit von GPS-Daten - OpenStreetMap Wiki}
+}
+
+@misc{ISOobd,
+	editor = {International Organization for Standardization},
+	month = jan,
+	number = {1},
+	series = {Road vehicles - Communication between vehicle and external equipment for emissions-related dignostics},
+	title = {ISO 15031-5},
+	year = {2006}
 }
 

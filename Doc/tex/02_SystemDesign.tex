@@ -37,7 +37,7 @@ Letztendlich wurde ein Pixhawk GPS Empfänger für einen Modellbau-Quadrokopter 
 \paragraph{}
 Um den neuen Empfänger am Dongle zu betreiben, wurde an dessen Signal-Eingängen ein 2x2-Molex Stecker passend angelötet. Die I2C-Pins des Magnetfeld-Sensors wurden dabei nicht belegt.
 \paragraph{}
-Ein erster Test mit der mitgelieferten Software zeigte die grundsätzliche Funktion des neuen GPS-Moduls. Allerdings ist die Genauigkeit des Pixhawk-Empfängers etwas schlechter als die des UBX-G7020.
+Ein erster Test mit der von Freematics bereitgestellten Software zeigte die grundsätzliche Funktion des neuen GPS-Moduls. Allerdings ist die Genauigkeit des Pixhawk-Empfängers etwas schlechter als die des UBX-G7020.
 
 	\subsection{ \ac{OBD}-Schnittstelle}
 		Da der Dongle vorwiegend genutzt werden soll um die \ac{OBD}-Daten (kurz \acp{PID}) aufzuzeichnen besitzt der Freematics ONE eine hierfür passende Schnittstelle. Bei den \acp{PID}\cite{OBD-2.net2018} handelt es sich um Daten die von bestimmten Sensoren (z.B. Drehzahl, Geschwindigkeit, Öl-Temperatur, ...) im Auto zu Verfügung gestellt werden.
@@ -121,7 +121,7 @@ Ein erster Test mit der mitgelieferten Software zeigte die grundsätzliche Funkt
 Wie bereits erwähnt, muss auch auf dem Dongle eine Repräsentation der genormten Zeit vorhanden sein. Zunächst soll jeder erfasste Datenwert mit einem Zeitstempel versehen werden um mit einer totalen Ordnung die Analyse dieser Werte erst zu ermöglichen. Zum anderen sollen die Datenwerte mit einem Intervall von 500 Millisekunden erfasst werden.
 \paragraph{}
 Die Anforderung nach einem genauen Zeitintervall von 500 Millisekunden zwischen dem Abrufen der OBD-Werte der Kategorie A kann durch den Einsatz eines Hardware-Timers und Interrupts gelöst werden.
-Auf dem ATmega328p Hauptcontroller stehen dem Entwickler 3 Hardware-Timer zur Verfügung. Allerdings muss hierbei beachtet werden, dass die Arduino-Bibliothek den Timer 0 für die Funktionen delay() und millis() verwendet und diese daher unangetastet bleiben sollten.\cite{arduinoTimer}
+Auf dem ATmega328p Hauptcontroller stehen dem Entwickler 3 Hardware-Timer zur Verfügung. Allerdings muss hierbei beachtet werden, dass die Arduino-Bibliothek den Timer 0 für die Funktionen delay() und millis() verwendet und dieser daher unangetastet bleiben sollte.\cite{arduinoTimer}
 Da die Intervalle zum Abrufen der PID-Kategorien B, C und D ein Vielfaches der 500 Millisekunden der Kategorie A sind, müssen für diese keine weiteren Timer verwendet werden. Statt dessen kann ein einfacher Vergleich in Kombination mit dem Modulo-Operator genutzt werden (vgl. Abbildung \ref{fig:loop}).
 \subsection{Beschleunigungssensor}
 Zunächst wurde ermittelt, welcher Sensor im Dongle verbaut wurde. Anhand der Informationen auf der Produkthomepage sowie des Source-Codes des Treibers wurde ersichtlich, dass ein MPU-9250 \ac{MEMS}-Sensor mit jeweils 3 Achsen für Beschleunigungs-, Drehraten- und Magnetfeldmessung verbaut ist. Hierbei ist besonders, dass der Sensor für das Magnetfeld als I²C-Submodul am Sensor ausgeführt ist.

@@ -1,6 +1,14 @@
 \chapter{System Design}
 \label{sec:systemDesign}
-
+Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf ein System mit drei Teilen geeinigt. Zunächst benötigt das System ein Gerät zur Aufzeichnung der OBD-Daten. Da dieses Gerät der Bequemlichkeit wegen im Fahrzeug verbleiben soll und vermutlich wenig Ressourcen besitzt, verfügt das geplante System zusätzlich noch über ein Backend welches die aufgezeichneten Daten langfristig speichern und auswerten soll. Zusätzlich erfolgt noch eine Anbindung einer Smartphone-App, welche die Fahrzeug-Daten während der Fahrt veranschaulichen soll. Der Vorteil dieser Lösung liegt in der Möglichkeit, die Software der drei Komponenten OBD-Dongle, App und Backend paralell entwickeln zu können. Somit ergibt sich das in Abbildung \ref{fig:SysArch} dargestellte System.
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[height=7cm,keepaspectratio]{./img/SysArch}
+    \caption{Darstellung des Systems im Kontext}
+    \label{fig:SysArch}
+  \end{center}
+\end{figure}
+\section{Dongle}
 \begin{sidewaysfigure}
   \begin{center}
     \includegraphics[width=\textwidth,height=15cm,keepaspectratio]{./img/Dongle_Arch_final}
@@ -8,8 +16,7 @@
     \label{fig:dongleArch}
   \end{center}
 \end{sidewaysfigure}
-\section{Dongle}
-Wie auf der Produkthomepage beschrieben, nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer \enquote{setup}- und einer \enquote{loop}-Funktion innerhalb einer main-Datei verwendet.
+Um die Fahrzeugdaten gemäß den beschriebenen Use-Cases erfassen zu können, wurden mehrere Freematics ONE beschafft. Dieser Dongle bietet im Gegensatz zu manch anderen Adaptern die Möglichkeit Daten auf eine SD-Karte zu schreiben, mit Bluetooth zu kommunizieren und auf möglichst einfache Weise die darauf befindliche Software zu verändern. Wie auf der Produkthomepage beschrieben, nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer \enquote{setup}- und einer \enquote{loop}-Funktion innerhalb einer main-Datei verwendet.
 \paragraph{}
 Um bei der Entwicklung der Software für den Dongle möglichst wenig Inhaltsüber-schneidungen der Teammitglieder zu erreichen und um die Verständlichkeit und Wartbarkeit des Codes zu verbessern wurde entschieden die Schichtenarchitektur wie in Bild \ref{fig:dongleArch} umzusetzen.
 Hierbei wird für die meisten Funktionsmerkmale mindestens eine Klasse auf der Intermediate-Layer sowie der Driver-Layer implementiert. Dies hat zur Folge, dass bei einer Funktionsänderung wie beispielsweise der Verwendung eines anderen GPS-Empfängers nur die entsprechende Treiber-Klasse geändert werden muss. Die Hauptklasse mit der eigentlichen Programmlogik bleibt dabei unangetastet.\\

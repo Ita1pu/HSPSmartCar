@@ -1,7 +1,73 @@
 \section{App}
 
-Was kann die App, und besonderes erklären
+\subsection{Grundgerüst}
 
+\begin{itemize}
+\item script.ts
+\item variables.ts (zusammenspiel zwischen Typescript und Scss), das variables.scss generiert wird
+\item embedden von resources (images in scss) (wie wird das gemacht, vllt das script beschreiben)
+\end{itemize}
+
+\subsection{Mehrsprachigkeit}
+
+\begin{itemize}
+\item strings.ts, funktion "S"
+\end{itemize}
+
+\subsection{Einstellungsmöglichkeiten}
+\begin{itemize}
+\item Verwaltung, speicherung, Initialwerte von einstellungen (Sprache von system sprache geladen)
+\item sowohl die vom User als auch die fest im code (settings.ts, store.ts)
+\end{itemize}
+
+\subsection{GPS}
+
+\subsection{Bluetooth}
+
+\subsection{Anzeigeelemente}
+
+\begin{itemize}
+\item display features
+\item dialog
+\end{itemize}
+
+\subsection{Zugriff auf Identity Server}
+
+\begin{itemize}
+\item Ajax request zum bekommen des Tokens (über den kann dann später für die schnittstelle zum Backend authentifiziert werden wird im http header übergeben)
+\end{itemize}
+
+\subsection{Sichten}
+
+\subsubsection{Konfiguration}
+
+\begin{itemize}
+\item jede einzelen komponente durchgehen
+\item zusammenspiele zu anderen komponenten über events und store usw..., .. Einstellungsmöglichkeiten usw)
+\end{itemize}
+
+\subsubsection{Anzeige}
+
+\begin{itemize}
+\item Was gibt es alles für anzeigen screenshots und kurze erklärung
+\item welche daten werden benötigt, wie bekommt man die (handler = events von anderen komponenten abonieren) 
+\end{itemize}
+
+\subsection{Test}
+
+\begin{itemize}
+\item Wie debug system funktioniert chrome://inspect/\#devices
+\item Integrationstest zu Dongle (Test auserhalb und vorallem im Auto)
+\item Integrationstest zu Identity Server Get Token für Authentifizierung vom Identity Server
+\end{itemize}
+
+\subsection{Ausblick}
+
+\begin{itemize}
+\item Upload über die App
+\item beliebig viele weitere Views (sehr einfach umzusetzen über das View system)
+\item Flashen von neuer Donglesoftware
+\end{itemize}
   
 
  

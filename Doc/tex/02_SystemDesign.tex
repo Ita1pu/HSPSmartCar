@@ -8,6 +8,38 @@ Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf 
     \label{fig:SysArch}
   \end{center}
 \end{figure}
+
+
+
+\section{App}
+\begin{itemize}
+\item Platformübergreifende App using Cordova
+\item Written in Typescript und Scss (richtiger name? sass?)
+\end{itemize}
+
+\subsection{Aufbau}
+\begin{itemize}
+\item Klassendiagramm (vllt mehrere mit Packet Diagramm)
+\item Genereller aufbau (VSC-TS aufbau)
+\item View prinzip
+\item zusammenspiel mit displayfeatures und dialog
+\item unterpunkt für configuration
+\item zugriff auf Bluetooth (abstraktion über cordova framework)
+\end{itemize}
+
+\subsection{Buildsystem}
+\begin{itemize}
+\item Build System, Gulp files, zusammenfassen, optimieren , obfuscation von Dateien
+\item Automatische generierung von Files wie variables.scss (nur sagen das sowas gemacht wird (wie steht in implementierung))
+\item Embedden von images in scss 
+\end{itemize}
+\subsection{Testumgebung}
+\begin{itemize}
+\item Debug system im überblick (grober test im browser später auf vm und am schluss auf echten device mit debug möglichkeit über chrome) (nur grob später im Test bzw in Implementierung beschrieben) 
+\end{itemize}
+
+
+
 \section{Dongle}
 \begin{sidewaysfigure}
   \begin{center}

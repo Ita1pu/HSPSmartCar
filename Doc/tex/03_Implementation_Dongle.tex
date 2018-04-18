@@ -48,3 +48,51 @@ Während der Integration aller Klassen trat jedoch ein schwerwiegendes Problem a
 \paragraph{}
 Um diesem Problem entgegenzuwirken wurden mehrere Maßnahmen getroffen. Zunächst wurden alle Strings, sofern diese auch wirklich benötigt werden, mithilfe des Makros \enquote{F()} auf den Programmspeicher im Flash des $\mu$-Controllers ausgelagert und mehrere Funktionen als inline-Funktionen deklariert \cite{ardRAMopt}. Damit soll der Stack und damit der gesamte RAM-Verbrauch optimiert werden. Darüber hinaus wurden die meisten funktionalen Klassen nun nicht mehr mit dem new-Operator instantiiert, sondern als global verfügbare Objekte geführt. Dies stellt einen Versuch dar, der Speicherfragmentierung bei der dynamischen Instantiierung entgegenzuwirken. Auch wird nun die Initialisierung der Persistenzklasse sofort nach der Initialisierung der LocationTimeService-Klasse durchgeführt, da zu diesem Zeitpunkt einige der verbliebenen, dynamisch allokierten Klassen noch nicht instantiiert sind und somit mehr RAM zur Verfügung steht.
 Ebenfalls erfolgt die Speicherung der abgefragten OBD-Werte nicht mehr in einem Array, welches groß genug ist für alle Werte. Dieses Array wurde nun so verkleinert, dass es nur noch für alle PIDs der umfangreichsten Logging-Kategorie (je nach Fahrzeug entweder Kategorie A oder Kategorie B) ausreicht. Dabei müssen allerdings die alten PID-Werte bei jedem Wechsel der Logging-Kategorie gelöscht werden.
+
+\subsection{Logging}
+\label{sec:Logging}
+Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.75]{./img/Persistence.jpg}
+    \caption{Hierarchie beim SD Zugriff}
+    \label{fig:Persistence}
+  \end{center}
+\end{figure}
+%% Wenig RAM -> nur eine Datei offen
+%% Aufteilung der Funktionen
+%% File_System hander bietet alle Funktionen zum erstellen und löschen von Dateien generell
+%% Persitence bietet Funktionen zum Loggen der Daten wie zumbeispiel createLoggingEntry() oder openLoggingFile()
+Die Aufteilung in die oben gezeigten Klassen hat aber nicht nur eine bessere Lesbarkeit zu Folge. Ein weiterer Vorteil ist auch, eine bessere Trennung der Funktionalitäten voneinander. Den zwei Klassen \texttt{Persistence} und \texttt{File\_System\_Handler} sind folgende Aufgaben zugeteilt:\pagebreak
+\subsubsection*{File\_System\_Handler Klasse}
+Wie in Abbildung \ref{fig:Persistence} zu sehen ist, greift diese Klasse direkt auf den SD-Kartentreiber zu. Der \texttt{File\_System\_Handler} bietet die Möglichkeit mit von außen aufrufbaren Funktionen Dateien zu erstellen, zu öffnen, zu löschen und anzulegen. Diese Klasse sollte im Gesamtsystem nur einmal vorkommen, da sie eine Menge an Speicherplatz benötigt und der RAM auf dem \textit{ATmega328p} auf 2KB beschränkt ist.\cite{Atmega328P} Die Implementierung eines Singelton Patterns erfolgte nicht um zusätzlich benötigten Speicherplatz zu vermeiden.
+Des weiteren ist es pro File\_System\_Handler nur möglich eine einzige Datei zu öffnen und nicht mehrere auf einmal. Auch das ist eine Schutzmaßname um unnötige Speicherplatz Verschwendung zu verhindern.
+\subsubsection*{Persistence Klasse}
+Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Log-Dateien immer den selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
+\subsubsection*{Logging Format}
+Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine einheitliche Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Aus diesen Gründen wurde das Datenformat aus Abbildung \ref{fig:LoggingEntry} für das Logging gewählt:
+\begin{figure}[h]
+\begin{center}
+  \begin{tabular}{ | c || c | c | c | c |}
+    \hline
+    \textbf{Byte} & 1. & 2. - 9. & 10. - 11. & 12. - 15. \\ \hline
+    \textbf{Wert} & MVID & Datum(ms) & Daten ID & Datenwert \\
+    \hline
+  \end{tabular}
+  \caption{Format eines Logging Eintrags auf der SD-Karte}
+  \label{fig:LoggingEntry}
+\end{center}
+\end{figure}
+\subsubsection*{MVID}
+Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum um ein komfortables Fahrtenmanagement zu gewährleisten. 
+\subsubsection*{Datum}
+Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit wert nur bis ungefähr 2038 zählen könnte und ein Loggen nur bis zu diesem Datum erfolgen. 64-Bit reichen weitaus weiter.  
+\subsubsection*{Daten ID}
+Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser Wert richtet sich nach der in Abschnitt \ref{sec:systemDesign} gezeigten OBD-Tabelle. Zusätzlich zu den OBD-IDs kann dieses Feld Werte für die GPS-Koordinaten, den Beschleunigungssensor und das Gyroskop annehmen.  Nur mit der zugehörigem ID kann dem Wert eine Bedeutung zugeteilt werden. 
+\subsubsection*{Wert}
+Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID muss dieser Wert anders interpretiert werden.
+\subsection{Bluetooth Kommunikation}
+\label{sec:Bluetooth}
+Bluetooth Komm
+
+d

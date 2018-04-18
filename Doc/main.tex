@@ -107,7 +107,11 @@
 \usepackage{acronym}
 
 %um links im pdf zu haben mit denen man hin und her springen kann
+\usepackage{etoolbox}
 \usepackage{hyperref}
+\apptocmd{\UrlBreaks}{\do\f\do\m}{}{}
+\setcounter{biburllcpenalty}{9000}% Kleinbuchstaben
+\setcounter{biburlucpenalty}{9000}% Großbuchstaben
 
 %um Bilder bei Bedarf zu rotieren
 \usepackage{rotating}

@@ -12,12 +12,32 @@ Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf 
 
 
 \section{App}
-\begin{itemize}
-\item Platformübergreifende App using Cordova
-\item Written in Typescript und Scss (richtiger name? sass?)
-\end{itemize}
+Um die Fahrzeugdaten während der Fahrt analysieren zu können, sowie auch ein einfacher Weg die Daten vom OBD-Dongle ins Backend zu übertragen, wurde eine plattformübergreifende Smartphone-App erstellt. Die App ist sowohl für Android, IOS als auch Windows verfügbar. Dafür wurde das für mobile Anwendungen konzipierte Framework Apache Cordova verwendet. Dieses Entwicklung-Framework verwendet die standard-Web-Technologien HTML5, CSS3 und JavaScript für die Cross-Plattform-Entwicklung. Die Bibliothek visualisiert die Anwendung mittels, die von den einzelnen Plattformen bereitgestellten, \enquote{WebViews}. Diese zeigen die Sourcen vergleichbar einer \enquote{Webseite} in einen Browser-Container an. Der Zugriff auf native Funktionen erfolgt über Cordova, bzw. weiteren, nativ geschriebenen, Plugins.
+\\
+Bei der Entwicklung wurde mit den Spracherweiterungen TypeScript und Sass gearbeitet. Diese werden in die standard-Web-Sprachen JavaScript und CSS compiliert. TypeScript bringt den großen Vorteil von festen Typen, Klassen, Namespaces, Vererbungen und vieles mehr. Dadurch wird die Weiterentwicklung und Wartung im Team enorm vereinfacht, da z.B. die einzelnen Module klar, durch Klassen und Namespaces, abgegrenzt sind. Auch der Nutzen von Variablen, durch die festen Typen, ist schneller und leichter ohne das lesen der Dokumentation oder Kommentare, erkennbar. Ein sogar noch größerer Vorteil von TypeScript ist, das die gewünschte ECMA Script Version bei Generierung einstellbar ist. Das heißt, falls ein älteres Smartphone unterstützt werden soll, kann diese auch bis zu ECMA Script 3 (aus dem Jahre 1999) runter gestellt werden. Dies geht zwar auf die Kosten der Performance jedoch wäre das native schreiben in JavaScript mit ECMA Script 3 keine wahre Alternative. 
+\\
+Des weiteren wurde SASS in Stelle von CSS verwendet, welches die Standard CSS-Syntax um Variablen, Vererbung sowie Makros erweitert. Dadurch kann die Weiterentwicklung als auch die Wartung weiter erleichtert werden. Zudem ermöglicht SASS auch das generieren von verschiedenen Versionen von CSS, um auch hier eine möglichst gute Abwärtskompatibilität zu gewährleisten. Eine weitere oft verwendete Funktion, ist das verwendet von Makros, welche z.B. das einbetten von Bildern in die Style-Datei ermöglicht. 
 
 \subsection{Aufbau}
+
+\begin{wrapfigure}{r}{8cm}
+  \begin{center}
+    \includegraphics[width=8cm]{./img/App_Komponentendiagramm}
+    \caption{TODO}
+    \label{fig:appKomponentendiagramm}
+  \end{center}
+\end{wrapfigure}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=\textwidth]{./img/App_Klassendiagramm_View}
+    \caption{TODO}
+    \label{fig:appKlassendiagrammView}
+  \end{center}
+\end{figure}
+
+Hallo Welt 123
+
 \begin{itemize}
 \item Klassendiagramm (vllt mehrere mit Packet Diagramm)
 \item Genereller aufbau (VSC-TS aufbau)
@@ -31,7 +51,7 @@ Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf 
 \begin{itemize}
 \item Build System, Gulp files, zusammenfassen, optimieren , obfuscation von Dateien
 \item Automatische generierung von Files wie variables.scss (nur sagen das sowas gemacht wird (wie steht in implementierung))
-\item Embedden von images in scss 
+\item Embedden von images in scss (wie funktionierts und warum ist das wichtig)
 \end{itemize}
 \subsection{Testumgebung}
 \begin{itemize}

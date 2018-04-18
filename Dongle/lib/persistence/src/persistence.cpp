@@ -20,6 +20,10 @@ void Persistence::init(LocationTimeService *clock, File_System_Handler *file_sys
 }
 
 
+File_System_Handler* Persistence::getFile_System(){
+  return this->_file_system;
+}
+
 stdRetVal Persistence::GetInitStatus()
 {
   return this->_initStatus;
@@ -126,6 +130,10 @@ stdRetVal Persistence::create_and_open_logging_file(char *folder, char *file_nam
   strcat(file_path, folder);
   strcat(file_path, file_name);
   strcat(file_path, ".log");
+  this->_file_system->open_file("FILES.LOG", 'w');
+  this->_file_system->getCurrentFile().write(file_path);
+  this->_file_system->getCurrentFile().write("\n");
+  this->_file_system->getCurrentFile().close();
   if (!(this->_file_system->exists(folder)))//Check if folder for MVID already exists
   {
     //Folder does not exist
@@ -190,4 +198,41 @@ stdRetVal Persistence::update_file_name(){
     this->_open_file.flush();
   }
   return ret;
+}
+
+void Persistence::log_bt_upload_position(uint8_t car, char *date, uint16_t position){
+  char buf[SIZE_OF_BT_UPLOAD_LOG_ENTRY+1];
+  int i ;
+  buf[0] = car;
+  buf[1] = date[0];
+  buf[2] = date[1];
+  buf[3] = date[2];
+  buf[4] = date[3];
+  buf[5] = date[4];
+  buf[6] = date[5];
+  buf[7] = '.';
+  buf[8] = 'L';
+  buf[9] = 'O';
+  buf[10] = 'G';
+  buf[11] = '\n';
+  buf[12] = (uint8_t) position >> 8;
+  buf[13] = (uint8_t) position;
+  buf[14] = 0;
+
+  this->_file_system->open_file("BT.LOG", 'w');
+  this->_file_system->getCurrentFile().write(buf, SIZE_OF_BT_UPLOAD_LOG_ENTRY);
+  this->_file_system->getCurrentFile().close();
+}
+
+uint8_t Persistence::get_next_entry(uint16_t *position, File *open_file, uint8_t *entry){
+  uint8_t i = 0;
+  open_file->seek(*position * SIZE_OF_LOGGING_ENTRY);
+  if(open_file->read(entry, SIZE_OF_LOGGING_ENTRY) != 0){
+    i++;
+  }
+  else{
+    return UNDEFINED_ERROR;
+  }
+  *position = *position + 1;
+  return 0;
 }

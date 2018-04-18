@@ -1,5 +1,5 @@
 /**
- * \class Persitence
+ * \class Persistence
  *
  *
  * \brief Provide an example
@@ -45,6 +45,7 @@ using namespace gps;
 #define SIZE_OF_MVID_COUNTER          1
 //Folder name is the hex value of MVID_COUNTER + String-termination
 #define SIZE_OF_MVID_FOLDER_NAME      (SIZE_OF_MVID_COUNTER * 2) + 1
+#define SIZE_OF_FILE_PATH             16
 #if SIZE_OF_MVID_COUNTER == 1
   #define MVID_TYPE uint8_t
   #define MVID_MAX  0xFF
@@ -58,6 +59,8 @@ using namespace gps;
   #define MVID_TYPE uint8_t
   #define MVID_MAX  0xFF
 #endif
+
+#define SIZE_OF_BT_UPLOAD_LOG_ENTRY   14  //Car+Date+position
 namespace persistence {
 class Persistence{
   public:
@@ -75,8 +78,15 @@ class Persistence{
                               uint16_t data_id, uint32_t data_value);
     stdRetVal update_file_name();/// Checks if the time passes 23:59 and opens a new file
     stdRetVal close_logging_file();
+    uint8_t get_next_entry(uint16_t *position, File *open_file, uint8_t *entry);
+    /**
+     * @brief writes the last uploaded file and its postition to the Bt-logfile
+     *
+     */
+    void log_bt_upload_position(uint8_t car, char *date, uint16_t position);
     /*Getter*/
     stdRetVal GetInitStatus();
+    File_System_Handler* getFile_System();
     /*Setter*/
   protected:
   private:
@@ -106,7 +116,7 @@ class Persistence{
     stdRetVal open_logging_file(); /// Creates a logging file like: 18JAN018.log for 18th of January 2018
     stdRetVal setOpenFileDate(uint32_t file_name); /// Setter for the date
     char* getMonthNumber(char *month); /// Retruns the number of the Monnth JAN --> 01
-};//End class Persitence
+};//End class Persistence
 };//End namespace persistence
 
 #endif

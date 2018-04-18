@@ -48,7 +48,7 @@ Während der Integration aller Klassen trat jedoch ein schwerwiegendes Problem a
 \paragraph{}
 Um diesem Problem entgegenzuwirken wurden mehrere Maßnahmen getroffen. Zunächst wurden alle Strings, sofern diese auch wirklich benötigt werden, mithilfe des Makros \enquote{F()} auf den Programmspeicher im Flash des $\mu$-Controllers ausgelagert und mehrere Funktionen als inline-Funktionen deklariert \cite{ardRAMopt}. Damit soll der Stack und damit der gesamte RAM-Verbrauch optimiert werden. Darüber hinaus wurden die meisten funktionalen Klassen nun nicht mehr mit dem new-Operator instantiiert, sondern als global verfügbare Objekte geführt. Dies stellt einen Versuch dar, der Speicherfragmentierung bei der dynamischen Instantiierung entgegenzuwirken. Auch wird nun die Initialisierung der Persistenzklasse sofort nach der Initialisierung der LocationTimeService-Klasse durchgeführt, da zu diesem Zeitpunkt einige der verbliebenen, dynamisch allokierten Klassen noch nicht instantiiert sind und somit mehr RAM zur Verfügung steht.
 Ebenfalls erfolgt die Speicherung der abgefragten OBD-Werte nicht mehr in einem Array, welches groß genug ist für alle Werte. Dieses Array wurde nun so verkleinert, dass es nur noch für alle PIDs der umfangreichsten Logging-Kategorie (je nach Fahrzeug entweder Kategorie A oder Kategorie B) ausreicht. Dabei müssen allerdings die alten PID-Werte bei jedem Wechsel der Logging-Kategorie gelöscht werden.
-
+\pagebreak
 \subsection{Logging}
 \label{sec:Logging}
 Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
@@ -59,10 +59,6 @@ Für die persistente Speicherung der Daten während der Fahrt bietet der \textit
     \label{fig:Persistence}
   \end{center}
 \end{figure}
-%% Wenig RAM -> nur eine Datei offen
-%% Aufteilung der Funktionen
-%% File_System hander bietet alle Funktionen zum erstellen und löschen von Dateien generell
-%% Persitence bietet Funktionen zum Loggen der Daten wie zumbeispiel createLoggingEntry() oder openLoggingFile()
 Die Aufteilung in die oben gezeigten Klassen hat aber nicht nur eine bessere Lesbarkeit zu Folge. Ein weiterer Vorteil ist auch, eine bessere Trennung der Funktionalitäten voneinander. Den zwei Klassen \texttt{Persistence} und \texttt{File\_System\_Handler} sind folgende Aufgaben zugeteilt:\pagebreak
 \subsubsection*{File\_System\_Handler Klasse}
 Wie in Abbildung \ref{fig:Persistence} zu sehen ist, greift diese Klasse direkt auf den SD-Kartentreiber zu. Der \texttt{File\_System\_Handler} bietet die Möglichkeit mit von außen aufrufbaren Funktionen Dateien zu erstellen, zu öffnen, zu löschen und anzulegen. Diese Klasse sollte im Gesamtsystem nur einmal vorkommen, da sie eine Menge an Speicherplatz benötigt und der RAM auf dem \textit{ATmega328p} auf 2KB beschränkt ist.\cite{Atmega328P} Die Implementierung eines Singelton Patterns erfolgte nicht um zusätzlich benötigten Speicherplatz zu vermeiden.
@@ -93,6 +89,37 @@ Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser
 Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID muss dieser Wert anders interpretiert werden.
 \subsection{Bluetooth Kommunikation}
 \label{sec:Bluetooth}
-Bluetooth Komm
+Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über Bluetooth mit einer Smartphone App zu kommunizieren. Hierfür wird der Freematics ONE mit dem Bluetooth Low energy fähigem CC2541 Modul von Texas Instruments ausgeliefert.
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.5]{./img/BLEChip.jpg}
+    \caption{Schematischer Aufbau des CC2541 Quelle: \url{https://freematics.com/dl/Freematics_ONE_schematic_print_2016.pdf}}
+    \label{fig:BLEChip}
+  \end{center}
+\end{figure} 
+Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine PINs. Die zwei UART Pins des Chips(UART\_TXD/UART\_RXD) sind mit den UART Pins des ATmega328p(B\_RXD/M\_TXD) verbunden. Der CC2541 ist so konfiguriert, dass jede Nachricht die von dem Mikrocontroller über UART versendet wird direkt über Bluetooth nach außen gesendet wird. Dadurch entsteht der Effekt, dass für Nachrichten, die über die der Dongle über die Arudino Funktion \texttt{Serial.println()} ausgibt, automatisch ein Versenden über BLE erfolgt.
+\paragraph{}{}
+Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Der Dongle nutzt Bluetooth um die folgenden 2 Funktionen auszuführen.
+\subsubsection*{1. Live Daten Übertragung}
+Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
+\begin{figure}[h]
+\begin{center}
+  \begin{tabular}{ | c | c | c | c | c |}
+    \hline
+    Startzeichen & ID & Trennzeichen & Wert & Endzeichen \\ \hline
+    \# & uint16 & : & uint32 & ; \\
+    \hline
+  \end{tabular}
+  \caption{Format einer Livedaten Nachricht}
+  \label{fig:LiveDataMessage}
+\end{center}
+\end{figure}
+Eine Live Daten Nachricht, wie in Abbildung \ref{fig:LiveDataMessage} zu sehen gliedert sich in folgende Teile:
+\begin{enumerate}
+  \item Start der Nachricht\textbf{(\#)}: Eine Raute am Anfang der Nachricht signalisiert, dass es sich bei dieser Nachricht um eine Live-Daten Nachricht handelt. Dieses Markieren verhindert ein versehentliches interpretieren eine anderen Nachricht als Live-Daten Nachricht.
+  \item Daten ID: Direkt nach der Raute folgt die ID des Wertes der in der in der Nachricht enthalten ist. Sie richtet sich wieder nach den OBD-IDs aus Abschnitt \ref{sec:systemDesign}
+  \item Trennzeichen(\textbf{:}): Nach der ID kommt ein Doppelpunkt als Trennzeichen
+  \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch 
+\end{enumerate}
 
-d
+\subsubsection*{2. Upload der Logdateien}

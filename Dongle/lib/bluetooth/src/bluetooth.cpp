@@ -25,6 +25,7 @@ using namespace bluetooth;
    *
    */
   void BtUploader::delete_entry(){
+    //Not used yet
     return;
   }
 
@@ -63,19 +64,20 @@ using namespace bluetooth;
     this->upload_size = 0;
     uint8_t i = 0;
     uint8_t in[IN_BUFFER_SIZE] = {0};
-    this->upload_file_date[0] = '0';
-    this->upload_file_date[1] = '/';
-    this->upload_file_date[2] = '1';
-    this->upload_file_date[3] = '1';
-    this->upload_file_date[4] = '0';
-    this->upload_file_date[5] = '1';
-    this->upload_file_date[6] = '1';
-    this->upload_file_date[7] = '9';
-    this->upload_file_date[8] = '.';
-    this->upload_file_date[9] = 'L';
-    this->upload_file_date[10] = 'O';
-    this->upload_file_date[11] = 'G';
-    this->upload_file_date[12] = 0;
+    this->upload_file_date = "0/110119.LOG";
+    // this->upload_file_date[0] = '0';
+    // this->upload_file_date[1] = '/';
+    // this->upload_file_date[2] = '1';
+    // this->upload_file_date[3] = '1';
+    // this->upload_file_date[4] = '0';
+    // this->upload_file_date[5] = '1';
+    // this->upload_file_date[6] = '1';
+    // this->upload_file_date[7] = '9';
+    // this->upload_file_date[8] = '.';
+    // this->upload_file_date[9] = 'L';
+    // this->upload_file_date[10] = 'O';
+    // this->upload_file_date[11] = 'G';
+    // this->upload_file_date[12] = 0;
 
     //Recive Request like: "##<size>"
     Serial.readBytes(in, IN_BUFFER_SIZE);

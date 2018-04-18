@@ -75,7 +75,7 @@ Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ei
     \textbf{Wert} & MVID & Datum(ms) & Daten ID & Datenwert \\
     \hline
   \end{tabular}
-  \caption{Format eines Logging Eintrags auf der SD-Karte}
+  \caption{Format eines Logging Eintrags auf der SD-Karte (15Byte)}
   \label{fig:LoggingEntry}
 \end{center}
 \end{figure}
@@ -121,5 +121,21 @@ Eine Live Daten Nachricht, wie in Abbildung \ref{fig:LiveDataMessage} zu sehen g
   \item Trennzeichen(\textbf{:}): Nach der ID kommt ein Doppelpunkt als Trennzeichen
   \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch 
 \end{enumerate}
-
+\pagebreak
 \subsubsection*{2. Upload der Logdateien}
+Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses verfahren ist ein zweiter weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=0.6]{./img/DataUploadSequence.jpg}
+    \caption{Ablauf des Datenuploads via Bluetooth}
+    \label{fig:DataUpload}
+  \end{center}
+\end{figure}
+
+Der Ablauf lässt sich in 4 Teile unterteilen:
+\begin{enumerate}
+  \item Nutzer Request: Der Vorgang des Datenübertragens erfolgt mit der Interaktion des Nutzers auf dem Smartphone. 
+  \item Buffer Größe: Nach der Anfrage des Nutzers sendet die App eine Buffer Größe an den Dongle. Diese Zahl stellt die Maximale Anzahl an Logeinträgen dar, die gesendet werden sollen.
+  \item  Datum:
+  \item Datenübertragung:
+\end{enumerate}

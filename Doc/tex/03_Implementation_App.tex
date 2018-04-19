@@ -1,70 +1,99 @@
 \section{App}
 
 \subsection{Grundgerüst}
+\label{sec:appGrundgerust}
 
 \begin{itemize}
 \item script.ts
-\item variables.ts (zusammenspiel zwischen Typescript und Scss), das variables.scss generiert wird
+\item variables.ts (zusammenspiel zwischen Typescript und Scss), das variables.scss generiert wird (mit beispiel)
 \item embedden von resources (images in scss) (wie wird das gemacht, vllt das script beschreiben)
+(evtl. mit neuem VSC-TS scripten) 
 \end{itemize}
 
-\subsection{Mehrsprachigkeit}
+\subsection{Bluetooth}
+\label{sec:appBluetooth}
 
 \begin{itemize}
-\item strings.ts, funktion "S"
-\end{itemize}
-
-\subsection{Konfiguration}
-\begin{itemize}
-\item Einstellungsmöglichkeiten
-\item Verwaltung, speicherung, Initialwerte von einstellungen (Sprache von system sprache geladen)
-\item sowohl die vom User als auch die fest im code (settings.ts, store.ts)
+\item zugriff auf Bluetooth (abstraktion über cordova framework)
 \end{itemize}
 
 \subsection{GPS}
-
-\subsection{Bluetooth}
-
-\subsection{Anzeigeelemente}
+\label{sec:appGPS}
 
 \begin{itemize}
-\item display features
-\item dialog
+\item todo
 \end{itemize}
 
 \subsection{Zugriff auf Identity Server}
 
 \begin{itemize}
 \item Ajax request zum bekommen des Tokens (über den kann dann später für die schnittstelle zum Backend authentifiziert werden wird im http header übergeben)
+\item literatur https://tools.ietf.org/html/rfc6750
+\end{itemize}
+
+\subsection{Konfiguration}
+\label{sec:appKonfiguration}
+\begin{itemize}
+\item Einstellungsmöglichkeiten
+\item Verwaltung, speicherung, Initialwerte von einstellungen (Sprache von system sprache geladen)
+\item sowohl die vom User als auch die fest im code (settings.ts, store.ts)
+\end{itemize}
+
+\subsection{Mehrsprachigkeit}
+\label{sec:appMehrsprachigkeit}
+
+\begin{itemize}
+\item strings.ts, funktion "S"
 \end{itemize}
 
 \subsection{Sichten}
 
 \subsubsection{Konfiguration}
+\label{sec:appSichtKonfiguration}
 
 \begin{itemize}
 \item jede einzelen komponente durchgehen
 \item zusammenspiele zu anderen komponenten über events und store usw..., .. Einstellungsmöglichkeiten usw)
+\item bild von suchen von bluetooth devices
+\item bild von connect to backend
+\item bild von Logging
+\item usw..
 \end{itemize}
 
 \subsubsection{Anzeige}
+\label{sec:appSichtAnzeige}
 
 \begin{itemize}
 \item Was gibt es alles für anzeigen screenshots und kurze erklärung
 \item welche daten werden benötigt, wie bekommt man die (handler = events von anderen komponenten abonieren) 
 \end{itemize}
 
-\subsection{Test}
+\subsection{Weitere Anzeigeelemente}
+\label{sec:appAnzeigeelemente}
 
 \begin{itemize}
-\item Wie debug system funktioniert chrome://inspect/\#devices
-\item Integrationstest zu Dongle (Test auserhalb und vorallem im Auto)
+\item display features
+\item dialog
+\item ViewCircles
+\item ErrorPanel
+\item SwipeHelp
+\end{itemize}
+
+\subsection{Test}
+\label{sec:appTest}
+
+\begin{itemize}
+\item vllt ins testkapitel
+\item Wie debug system funktioniert chrome://inspect/\#devices (evtl bild)
+\item Integrationstest zu Dongle (Test außerhalb und vorallem im Auto)
 \item Integrationstest zu Identity Server Get Token für Authentifizierung vom Identity Server
 \end{itemize}
 
 \subsection{Ausblick}
+\label{sec:appAusblick}
 
 \begin{itemize}
+\item vllt ins ausblickkapitel
 \item Upload über die App
 \item beliebig viele weitere Views (sehr einfach umzusetzen über das View system)
 \item Flashen von neuer Donglesoftware

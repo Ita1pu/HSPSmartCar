@@ -16,47 +16,108 @@ Um die Fahrzeugdaten während der Fahrt analysieren zu können, sowie auch ein e
 \\
 Bei der Entwicklung wurde mit den Spracherweiterungen TypeScript und Sass gearbeitet. Diese werden in die standard-Web-Sprachen JavaScript und CSS compiliert. TypeScript bringt den großen Vorteil von festen Typen, Klassen, Namespaces, Vererbungen und vieles mehr. Dadurch wird die Weiterentwicklung und Wartung im Team enorm vereinfacht, da z.B. die einzelnen Module klar, durch Klassen und Namespaces, abgegrenzt sind. Auch der Nutzen von Variablen, durch die festen Typen, ist schneller und leichter ohne das lesen der Dokumentation oder Kommentare, erkennbar. Ein sogar noch größerer Vorteil von TypeScript ist, das die gewünschte ECMA Script Version bei Generierung einstellbar ist. Das heißt, falls ein älteres Smartphone unterstützt werden soll, kann diese auch bis zu ECMA Script 3 (aus dem Jahre 1999) runter gestellt werden. Dies geht zwar auf die Kosten der Performance jedoch wäre das native schreiben in JavaScript mit ECMA Script 3 keine wahre Alternative. 
 \\
-Des weiteren wurde SASS in Stelle von CSS verwendet, welches die Standard CSS-Syntax um Variablen, Vererbung sowie Makros erweitert. Dadurch kann die Weiterentwicklung als auch die Wartung weiter erleichtert werden. Zudem ermöglicht SASS auch das generieren von verschiedenen Versionen von CSS, um auch hier eine möglichst gute Abwärtskompatibilität zu gewährleisten. Eine weitere oft verwendete Funktion, ist das verwendet von Makros, welche z.B. das einbetten von Bildern in die Style-Datei ermöglicht. 
+Des weiteren wurde SASS in Stelle von CSS verwendet, welches die Standard CSS-Syntax um Variablen, Vererbung sowie Makros erweitert. Dadurch kann die Weiterentwicklung als auch die Wartung weiter erleichtert werden. Zudem ermöglicht SASS auch das generieren von verschiedenen Versionen von CSS, um auch hier eine möglichst gute Abwärtskompatibilität zu gewährleisten. Eine weitere oft verwendete Funktion, ist das verwendet von Makros, welche z.B. das einbetten von Bildern in die Style-Datei ermöglicht (Siehe \ref{sec:appGrundgerust}). 
 
 \subsection{Aufbau}
+Die App ist von Beginn an in fünf große Bereiche eingeteilt, welche sich jeweils als eigene Komponente (siehe Abbildung \ref{fig:appKomponentendiagramm}) gliedern. Des Weiteren sind noch, zur besseren Handhabbarkeit, Unterkomponenten eingebaut, sowie Aufspaltungen der Komponenten vorgenommen worden.
 
-\begin{wrapfigure}{r}{8cm}
+\begin{figure}[H]
   \begin{center}
-    \includegraphics[width=8cm]{./img/App_Komponentendiagramm}
-    \caption{TODO}
+    \includegraphics[width=0.75\textwidth]{./img/App_Komponentendiagramm}
+    \caption{Komponentendiagramm der Smartphone-App}
     \label{fig:appKomponentendiagramm}
-  \end{center}
-\end{wrapfigure}
-
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[width=\textwidth]{./img/App_Klassendiagramm_View}
-    \caption{TODO}
-    \label{fig:appKlassendiagrammView}
   \end{center}
 \end{figure}
 
-Hallo Welt 123
+Die \enquote{Helpers}-Komponente (siehe Abbildung \ref{fig:appKlassendiagrammHelpers}) besteht aus Hilfsklassen und Funktionen, die von sämtlichen anderen Hauptmodulen verwendet werden können. Dabei sind die Klassen mit dem Single-Pattern versehen und somit jederzeit über die statischen Instanzen in den jeweiligen Namespaces zugreifbar. 
 
-\begin{itemize}
-\item Klassendiagramm (vllt mehrere mit Packet Diagramm)
-\item Genereller aufbau (VSC-TS aufbau)
-\item View prinzip
-\item zusammenspiel mit displayfeatures und dialog
-\item unterpunkt für configuration
-\item zugriff auf Bluetooth (abstraktion über cordova framework)
-\end{itemize}
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{./img/App_Klassendiagramm_Helpers}
+    \caption{Klassendiagramm Komponente \enquote{Helpers}}
+    \label{fig:appKlassendiagrammHelpers}
+  \end{center}
+\end{wrapfigure}
+
+Die \enquote{Variables} Dateien enthalten eine Liste von allen HTML IDs und Klassen Namen, die über HTML, TypeScript als auch über SASS zugegriffen werden können. Die Liste wird nur als TypeScript Objekt in JSON-Format gepflegt und automatisch, beim kompilieren, als SASS Variablen generiert (Siehe Kapitel \ref{sec:appGrundgerust}).
+\\
+Für das Speichern aktueller Benutzereinstellungen und Konfigurationen (z.B. bei Neustart der App wird die letzte ausgewählte View gesetzt) steht die Klasse \enquote{Store} zur Verfügung (Siehe Kapitel \ref{ration}). Hier werden die Daten als Key-Value-Paar in die Browser eigenen \enquote{Local/Session Storage} gespeichert. Dabei können die Daten entweder flüchtig in den \enquote{Session Store} oder permanent in den \enquote{Local Store} eingetragen werden. 
+\\
+Um die Anforderung der Mehrsprachigkeit zu gewährleisten, werden alle benötigten Texte nicht \enquote{Hard Coded} in die Quelldateien eingefügt, sondern in die \enquote{Strings} Klasse (Siehe Kapitel \ref{sec:appMehrsprachigkeit}) ausgelagert. Hier sind alle Texte in jeder verfügbaren Sprache gespeichert. Außerdem verfügt sie über eine Funktion, welche automatisch den Text in der richtigen Sprache zurückgibt.
+\\
+Außerdem enthält die Komponente die \enquote{Settings} Klasse, die alle zur Verfügung stehenden festen Einstellungen, Standardwerte sowie Definitionen (z.B. PIDs, Storage-Keys, ClientId für den Identity Server) beinhaltet.
+
+\paragraph{}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+    \includegraphics[width=0.5\textwidth]{./img/App_Klassendiagramm_Logging}
+    \caption{Klassendiagramm Komponente \enquote{Logging}}
+    \label{fig:appKlassendiagrammLogging}
+    \includegraphics[width=0.5\textwidth]{./img/App_Klassendiagramm_Dongle}
+    \caption{Klassendiagramm Komponente \enquote{Dongle}}
+    \label{fig:appKlassendiagrammDongle}
+    \includegraphics[width=0.5\textwidth]{./img/App_Klassendiagramm_Mobile}
+    \caption{Klassendiagramm Komponente \enquote{Mobile}}
+    \label{fig:appKlassendiagrammMobile}
+  \end{center}
+\end{wrapfigure}
+
+Für die Pflege der App ist ein Protokollierung der Handlungen sowie der Fehler unumgänglich. Dazu steht die Komponente \enquote{Logging} (siehe Abbildung \ref{fig:appKlassendiagrammLogging}) zur Verfügung. Diese enthält eine Liste von \enquote{ErrorLogEntry}'s, welche zum einen automatisch mit Systemmeldungen gefüttert wird, sowie zum anderen von jeder Komponente bespeist werden kann. Außerdem kann die Liste bei Bedarf auf der Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}) angezeigt werden.
+\\
+In der Komponente \enquote{Dongle} (siehe Abbildung \ref{fig:appKlassendiagrammDongle}) befindet sich aktuell nur die \enquote{Bluetooth} Klasse. Diese kümmert sich um die Bluetooth Verbindung und Kommunikation mit dem Dongle (siehe Kapitel \ref{sec:appBluetooth}).
+Weitere Klassen werden in Zukunft unter anderen das Herunterladen der Loggingdaten, sowie das flashen des Dongle's mit neuer Firmware sein (siehe Kapitel \ref{sec:appAusblick}).
+\\
+Die Verbindung zu den nativen Schnittstellen zum Smartphone kümmert sich das Modul \enquote{Mobile} (siehe Abbildung \ref{fig:appKlassendiagrammMobile})) und beinhaltet die benötigten GPS Funktionen (siehe Kapitel \ref{sec:appGPS}).
+
+\paragraph{}
+
+Die App ist grafisch in Ansichten, die durch das Wischen nach links oder rechts durchgeschaltet werden können, eingeteilt. Diese werden von der Komponente \enquote{View} (siehe Abbildung \ref{fig:appKlassendiagrammView}) verwaltet. Zurzeit stehen vier Ansichten zur Verfügung. Eine Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}), in der Einstellungen, Verbindungsoptionen und Funktionen zum Down- und Upload der Loggingdaten zur Verfügung stehen und drei verschiedene Anzeigesichten für Livedaten (z.B. Tacho) (siehe Kapitel \ref{sec:appSichtAnzeige}).
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{./img/App_Klassendiagramm_View}
+    \caption{Klassendiagramm Komponente \enquote{View}}
+    \label{fig:appKlassendiagrammView}
+	\subfigure{\includegraphics[width=0.45\textwidth]{./img/App_Klassendiagramm_DisplayFeature}}
+	\label{fig:appKlassendiagrammDisplayFeature}
+	\subfigure{\includegraphics[width=0.45\textwidth]{./img/App_Klassendiagramm_Dialog}}
+    \label{fig:appKlassendiagrammDialog}
+	\caption{Klassendiagramm Komponenten \enquote{DisplayFeature} \& \enquote{Dialog}}
+	\label{fig:appKlassendiagrammDisplayFeatureDialog}
+  \end{center}
+\end{figure}
+
+In Paket \enquote{DisplayFeature} (siehe Abbildung \ref{fig:appKlassendiagrammDisplayFeatureDialog})) sind Funktionen für die Anzeige von Elementen enthalten (Sie Kapitel \ref{sec:appAnzeigeelemente}). Darunter befindet sich das \enquote{ErrorPanel}, welches bei unerwarteten Fehlern, diesen am oberen Rand des Displays darstellt. 
+\\
+Um einen Verbindungsfehler, bzw. noch nicht verbundenen Zustand zum Dongle zu signalisieren, gibt es das \enquote{NoConnectionPanel}. Dieses stellt ein Overlay da, welches vor den anderen Anzeigeelementen erscheint.
+\\
+Für einen leichteren Einstieg in die App gibt es optional die Anzeigehilfe \enquote{SwipeHelp}, die signalisiert, dass durch das wischen nach Links und Rechts weitere Sichten zur Verfügung stehen. Diese blendet sich automatisch nach ein paar Sekunden nach App-Start aus und kann auch komplett über die Optionen deaktiviert werden.
+\\
+Die Klasse \enquote{ViewCircles} zeigt am unteren Ende des Displays die aktuell ausgewählte Sicht, durch ausgefüllte bzw. unausgefüllte Kreise, an.
+\\
+In der Komponente \enquote{Dialog} (siehe Abbildung \ref{fig:appKlassendiagrammDisplayFeatureDialog})) befindet sich die gleichnamige Klasse und deren Hilfsklasse. Sie ist für das darstellen von Dialogen mit beliebigen Inhalt zuständig. So können leicht einfache Ja-Nein-Bestätigungsdialog und aufwändige Dialoge, wie zum Beispiel das Suchen der Bluetooth Geräte im Umfeld (siehe Kapitel \ref{sec:appSichtKonfiguration}), implementiert werden.
 
 \subsection{Buildsystem}
-\begin{itemize}
-\item Build System, Gulp files, zusammenfassen, optimieren , obfuscation von Dateien
-\item Automatische generierung von Files wie variables.scss (nur sagen das sowas gemacht wird (wie steht in implementierung))
-\item Embedden von images in scss (wie funktionierts und warum ist das wichtig)
-\end{itemize}
+
+Als Buildsystem für die Smartphone-App wurde \enquote{gulp.js} gewählt. Gulp führt dabei ein definiertes Script (ähnlich des Build-Management-Tools make) aus. In diesem File werden sogenannte Tasks in JavaScript definiert. Diese Gulp-Tasks werden direkt über die IDE (z.B VS-Code) bzw. der Shell ausgeführt. Abbildung \ref{fig:appBuildsystemAktivitatsdiagramm}a zeigt das Vorgehen des definierten Gulp-Tasks (siehe Kapitel \ref{sec:appGrundgerust}). Zuerst werden Variablen generiert und Bilder von den Ressourcen in die Sass-Files eingebunden. Danach werden die Sass Dateien zu CSS Dateien und die TypeScript Dateien zu JavaScript kompiliert. Optional kann beim Release-Task eine Obfuskierung und Komprimierung des Codes durchgeführt werden.
+\\
+Zur leichteren Entwicklung ist ein Watch-Task implementiert worden (Sie Abbildung \ref{fig:appBuildsystemAktivitatsdiagramm}b). Dieser funktioniert wie ein \enquote{Watchdog} auf die einzelnen Dateien und triggert bei Modifikation, je nach Dateityp, das kompilieren der einzelnen Dateien bzw., falls benötigt, des ganzen Systems.
+
+\begin{figure}[H]
+  \begin{center}
+	\subfigure[Task Debug]{\includegraphics[width=0.22\textwidth]{./img/App_Buildsystem_Aktivitatsdiagramm_Debug}}
+    \label{fig:appBuildsystemAktivitatsdiagrammDebug}
+	\subfigure[Task Watch]{\includegraphics[width=0.65\textwidth]{./img/App_Buildsystem_Aktivitatsdiagramm_Watch}}
+	\label{fig:appBuildsystemAktivitatsdiagrammWatch}
+	\caption{Aktivitätsdiagramm Buildsystem}
+	\label{fig:appBuildsystemAktivitatsdiagramm}
+  \end{center}
+\end{figure}
+
 \subsection{Testumgebung}
-\begin{itemize}
-\item Debug system im überblick (grober test im browser später auf vm und am schluss auf echten device mit debug möglichkeit über chrome) (nur grob später im Test bzw in Implementierung beschrieben) 
-\end{itemize}
+
+Da die App auf HTML basiert und Plattform unabhängig ist, gibt es durch mehrere Testumgebungen diverse Möglichkeiten zum testen. Für einfache Tests ohne viel Anforderungen (z.B. Oberflächen- / Responsive- / Designtest) kann die App einfach im Browser geöffnet werden. Falls Device spezifische Funktionen (z.B. GPS, Bluetooth) benötigt werden, kann die App als Windows Anwendung, in einen Android Emulator oder direkt auf einem Endgerät vollständig gedebuggt werden (siehe Kapitel \ref{sec:appTest}). 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 

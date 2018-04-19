@@ -58,7 +58,50 @@ Hallo Welt 123
 \item Debug system im überblick (grober test im browser später auf vm und am schluss auf echten device mit debug möglichkeit über chrome) (nur grob später im Test bzw in Implementierung beschrieben) 
 \end{itemize}
 
+% % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
+\section{Backend}
+
+Für die Aufbereitung und Auswertung der erfassten Fahrzeugdaten wird ein Backend bereitgestellt, in das die Daten hochgeladen werden können. Der folgende angebotene Funktionsumfang deckt dabei die in Kapitel \ref{sec:useCases} definierten Anforderungen ab\todo{Referenz auf Use Cases einfügen}:
+
+%Erklärung zu den einzelnen Punkten hinzufügen
+
+\begin{itemize}
+\item Manueller Datenupload
+\item Fahrzeugverwaltung
+\item Fahrtenübersicht
+\item Monatliches Fahrtenbuch
+\item Übersicht über vielbefahrene Strecken (Heatmap)
+\end{itemize}
+
+\subsection{Architektur}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=\textwidth]{./img/BackendDesign.png}
+    \caption{Backend Architektur}
+    \label{fig:backendDesign}
+  \end{center}
+\end{figure}
+
+Die Umsetzung der Lösung ist in verschiedene Submodule gekapselt die jeweils eine Teilfunktionalität umsetzten. Dadurch wird das gesamte Backend gut skalierbar und erweiterbar. Die eingesetzten Module sowie die deren Zusammenschluss werden in Abbildung \ref{fig:backendDesign} skizziert und im folgenden Beschrieben:
+
+\begin{itemize}
+\item Identity Server \\
+Dieses Modul ist für die Identitätsverwaltung der Benutzer sowohl für das Backend als auch die Smartphone App zuständig. Hier wird über einen zentralen Single-Sign-On Dienst sowohl das Session als auch das Rechtemanagement des Systems implementiert.
+\item Database \\
+Die Datenbank persistiert sowohl die Benutzerdaten für den Identity Server, als auch die Nutzdaten die sich aus der Analyse der geladenen Fahrdaten ergeben. 
+\item Web API \\
+Sämtliche Zugriffe auf die Datenbank, sowie die Aufbereitung von Daten werden von einer Web API implementiert die ihren Service als REST API zur Verfügung stellt. Dies bietet den Vorteil, dass verschiedene Applikationen über ein einheitliches Interface auf die selbe Funktionalität zugreifen können, ohne dass Funktionen redundant implementiert werden müssen.
+\item Web UI User \\
+Die Schnittstelle zum Benutzer ist ein Web UI, über das die definierten Funktionen nach außen hin angeboten werden. Die hier angezeigten Daten betreffen nur den Nutzer der sie hochgeladen hat. Übergreifende Analysen werden hier nicht angeboten.
+\item Web UI Analysis \\
+Für die Auswertung der gesamten Daten die sich im System befindet ist eine eigene Schnittstelle vorgesehen, da diese Funktionalität normalen Benutzern nicht zugänglich sein soll. 
+\end{itemize}
+
+%Interaktion der Module, typischer Ablauf?
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % %
 
 \section{Dongle}
 \begin{sidewaysfigure}

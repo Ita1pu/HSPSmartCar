@@ -135,7 +135,7 @@ Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der gelo
 Der Ablauf lässt sich in 4 Teile unterteilen:
 \begin{enumerate}
   \item Nutzer Request: Der Vorgang des Datenübertragens erfolgt mit der Interaktion des Nutzers auf dem Smartphone. 
-  \item Buffer Größe: Nach der Anfrage des Nutzers sendet die App eine Buffer Größe an den Dongle. Diese Zahl stellt die Maximale Anzahl an Logeinträgen dar, die gesendet werden sollen.
-  \item  Datum:
-  \item Datenübertragung:
+  \item Übertragen der Puffer Größe: Nach der Anfrage des Nutzers sendet die App eine Puffer Größe an den Dongle. Diese Zahl stellt die Maximale Anzahl an Logeinträgen dar, die gesendet werden sollen. Diese Nachricht beginnt mit zwei Raute Zeichen(ASCII) gefolgt von einem 8-Bit Wert für den Puffer. Der Dongle bestätigt den Empfang des Puffers mit dem Zurücksenden der gleichen Nachricht. So kann die App sicherstellen, dass für die Pufferübertragung kein Fehler passiert ist. Für eine Puffergröße von 55 würde die Nachricht als String folgendermaßen aussehen: \#\#7 (7 $\equiv$ ASCII 55)
+  \item  Mitteilen des Datums: Nach dem Empfang der Antwort des Dongles sendet die App dann das Datum zu dem die Daten übertragen werden sollen. Hier beginnt die Nachricht mit zwei Stichpunkten(ASCII) gefolgt von dem Datum(ASCII) im Format DDMMYYYY. Nach Empfang der Nachricht antwortet der Dongle wie bei der Puffergröße mit der gleichen Nachricht. Für den 01. Januar 2017 wäre die Nachricht ;;01012017
+  \item Datenübertragung: Nach dem Austausch der nötigen Informationen beginnt der Dongle mit dem Senden der Daten bis die in 1. definierte Pufffergröße erreicht wurde, oder keine Logdaten mehr vorhanden sind.
 \end{enumerate}

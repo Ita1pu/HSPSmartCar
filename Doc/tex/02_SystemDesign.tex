@@ -125,17 +125,21 @@ Da die App auf HTML basiert und Plattform unabhängig ist, gibt es durch mehrere
 
 Für die Aufbereitung und Auswertung der erfassten Fahrzeugdaten wird ein Backend bereitgestellt, in das die Daten hochgeladen werden können. Der folgende angebotene Funktionsumfang deckt dabei die in Kapitel \ref{sec:useCases} definierten Anforderungen ab\todo{Referenz auf Use Cases einfügen}:
 
-%Erklärung zu den einzelnen Punkten hinzufügen
-
 \begin{itemize}
-\item Manueller Datenupload
-\item Fahrzeugverwaltung
-\item Fahrtenübersicht
-\item Monatliches Fahrtenbuch
-\item Übersicht über vielbefahrene Strecken (Heatmap)
+\item Manueller Datenupload \\
+Die auf der SD Karte des Dongles gespeicherten Logfiles können hier über ein Webinterface in das Backend hochgeladen werden.
+\item Fahrzeugverwaltung \\
+Da ein Benutzer über mehrere Fahrzeuge verfügen kann werden auch diese im Backend verwaltet, um aufgezeichnete Fahrten einem Fahrzeug zuordnen zu können.
+\item Fahrtenübersicht \\
+Dieses Feature bietet eine Übersicht über alle erfassten Fahrten für einen einstellbaren Zeitraum. Ebenfalls verfügbar ist eine Detailansicht für jeden angezeigten Trip.
+\item Monatliches Fahrtenbuch \\
+Fasst auf monatlicher Basis alle erfassten Fahrten zusammen und ermöglicht so eine Jahresübersicht über das Fahrverhalten.
+\item Übersicht über vielbefahrene Strecken (Heatmap) \\
+Erfasste Fahrten werden für einen einstellbaren Zeitraum auf einer Karte als Heatmap angezeigt. Hieraus lassen sich leicht vielbefahrene Strecken ableiten.
 \end{itemize}
 
 \subsection{Architektur}
+\label{sec:backendArchitecture}
 
 \begin{figure}[h]
   \begin{center}
@@ -157,10 +161,38 @@ Sämtliche Zugriffe auf die Datenbank, sowie die Aufbereitung von Daten werden v
 \item Web UI User \\
 Die Schnittstelle zum Benutzer ist ein Web UI, über das die definierten Funktionen nach außen hin angeboten werden. Die hier angezeigten Daten betreffen nur den Nutzer der sie hochgeladen hat. Übergreifende Analysen werden hier nicht angeboten.
 \item Web UI Analysis \\
-Für die Auswertung der gesamten Daten die sich im System befindet ist eine eigene Schnittstelle vorgesehen, da diese Funktionalität normalen Benutzern nicht zugänglich sein soll. 
+Für benutzerübergreifende Auswertung der Daten ist eine eigene Schnittstelle vorgesehen, da diese Funktionalität normalen Benutzern nicht zugänglich sein soll. Aufgrund zeitlicher Beschränkungen ist diese Funktion aktuell im Projekt nicht umgesetzt.
 \end{itemize}
 
-%Interaktion der Module, typischer Ablauf?
+\subsection{Modulinteraktion}
+Um die angebotene Funktionalität umzusetzen, interagieren die in \ref{sec:backendArchitecture} beschriebenen Komponenten miteinander. Abbildung \ref{fig:backendModuleInteraction} beschreibt abstrakt den Informationsfluss innerhalb des Backends für eine beliebige Benutzerinteraktion. \\
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=\textwidth]{./img/BackendModuleInteraction.png}
+    \caption{Basis Modulinteraktion}
+    \label{fig:backendModuleInteraction}
+  \end{center}
+\end{figure}
+
+Beim ersten Aufruf einer der angebotenen Funktionen durch den Benutzer wird dieser zum Identity Server weitergeleitet, um seine Identität zu verifizieren. Anschließend kann über das Web UI eine beliebige Anfrage gestellt werden. Da das Webfrontend über keinerlei Geschäftslogik oder Datenbankzugriff verfügt, wird die aufbereitete Anfrage an die Web API weitergeleitet, wo sowohl auf persistierte Daten zugegriffen werde kann, als auch die Verarbeitung stattfindet. Die Ergebnisse werden nachfolgend an den Benutzer zurück propagiert. 
+
+\subsection{Datenmodell}
+Das eingesetzte Datenmodell für die Persistenz der Backenddaten, teilt sich in zwei Kategorien die nachfolgend erläutert werden:
+
+\begin{itemize}
+\item Benutzer \\
+Abbildung \ref{fig:backendDatamodels} (a) beschreibt das Modell für die Benutzerdaten. Neben den Basisdaten des Benutzers können selbigem auch verschiedene Rollen zugeordnet werden. Die Entitäten \texttt{User Claims} und \texttt{Role Claims} beschreiben Eigenschaften von Benutzern und Rollen die dynamisch angepasst werden können. Das Claims Konzept ist Teil des eingesetzten Identity Frameworks (Asp.Net Identity).
+\item SmartCar \\
+Das Datenmodell für die Anwendungsdaten wird in Abbildung \ref{fig:backendDatamodels} (b) gezeigt. Benutzern werden darin beliebig viele Fahrzeuge sowie Fahrten zugeordnet. Eine Fahrt (Trip) ist mit den aus den Logfiles geparsten Rohdaten verbunden (\texttt{TripData}) wobei jeder Eintrag einen bestimmten Signaltypen aufweist. Für eine bessere Anpassbarkeit der unterstützen Signale sind diese in die Entität \texttt{SignalMap} ausgelagert.
+\end{itemize}
+
+\begin{figure} 
+    \subfigure[Datenmodell Benutzer]{\includegraphics[width=0.49\textwidth]{./img/BackendDatamodelUsers.png}} 
+    \subfigure[Datenmodell SmartCar]{\includegraphics[width=0.49\textwidth]{./img/BackendDatamodelSmartCar.png}} 
+\caption{Backend Datenmodelle} 
+\label{fig:backendDatamodels}
+\end{figure} 
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 

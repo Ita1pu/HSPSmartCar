@@ -1,55 +1,49 @@
 \section{App}
 
-\subsection{Grundgerüst}
-\label{sec:appGrundgerust}
-
-\begin{itemize}
-\item script.ts
-\item variables.ts (zusammenspiel zwischen Typescript und Scss), das variables.scss generiert wird (mit beispiel)
-\item embedden von resources (images in scss) (wie wird das gemacht, vllt das script beschreiben)
-(evtl. mit neuem VSC-TS scripten) 
-\end{itemize}
-
-\subsection{Bluetooth}
-\label{sec:appBluetooth}
-
-\begin{itemize}
-\item zugriff auf Bluetooth (abstraktion über cordova framework)
-\end{itemize}
-
-\subsection{GPS}
-\label{sec:appGPS}
-
-\begin{itemize}
-\item todo
-\end{itemize}
-
-\subsection{Zugriff auf Identity Server}
-
-\begin{itemize}
-\item Ajax request zum bekommen des Tokens (über den kann dann später für die schnittstelle zum Backend authentifiziert werden wird im http header übergeben)
-\item literatur https://tools.ietf.org/html/rfc6750
-\end{itemize}
-
-\subsection{Konfiguration}
-\label{sec:appKonfiguration}
-\begin{itemize}
-\item Einstellungsmöglichkeiten
-\item Verwaltung, speicherung, Initialwerte von einstellungen (Sprache von system sprache geladen)
-\item sowohl die vom User als auch die fest im code (settings.ts, store.ts)
-\end{itemize}
-
-\subsection{Mehrsprachigkeit}
-\label{sec:appMehrsprachigkeit}
-
-\begin{itemize}
-\item strings.ts, funktion "S"
-\end{itemize}
-
 \subsection{Sichten}
+
+\subsubsection{Anzeige}
+\label{sec:appSichtAnzeige}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+	\includegraphics[width=0.3\textwidth]{./img/App_Speedo}
+	\caption{Ansicht \enquote{Speedo}}
+	\label{fig:App_Speedo}
+  \end{center}
+\end{wrapfigure}
+
+\todo{TODO}
+
+\begin{itemize}
+\item Allgemein zu Anzeige schrieben, das alels auf die View klasse basiert, nur die anzeigelemente geschrieben werden müssen. Die daten werden über handler schon konvertiert erhalten. So können beliebig viele weitere views implementiert werden, falls mehr daten zur verfügung stehen
+\item dannach jede der 3 Views mit bilder erklären
+
+\item Was gibt es alles für anzeigen screenshots und kurze erklärung
+\item welche daten werden benötigt, wie bekommt man die (handler = events von anderen komponenten abonieren) 
+\item sagen das ganz leicht weiter sichen implementiert werden können, da diese alle auf gleiches prinzip beruhen und sehr einfach zu programmiern sind (sehr wenig neu zu machen)
+\end{itemize}
 
 \subsubsection{Konfiguration}
 \label{sec:appSichtKonfiguration}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+	\includegraphics[width=0.3\textwidth]{./img/APP_Configuration}
+	\caption{Ansicht \enquote{Konfiguration}}
+	\label{fig:APP_Configuration}
+  \end{center}
+\end{wrapfigure}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+  \begin{center}
+	\includegraphics[width=0.3\textwidth]{./img/App_Bluetooth_Search}
+	\caption{Dialog \enquote{Dongle - Connect}}
+	\label{fig:App_Bluetooth_Search}
+  \end{center}
+\end{wrapfigure}
+
+\todo{TODO}
 
 \begin{itemize}
 \item jede einzelen komponente durchgehen
@@ -60,48 +54,111 @@
 \item usw..
 \end{itemize}
 
-\subsubsection{Anzeige}
-\label{sec:appSichtAnzeige}
+\subsection{Bluetooth}
+\label{sec:appBluetooth}
 
-\begin{itemize}
-\item Was gibt es alles für anzeigen screenshots und kurze erklärung
-\item welche daten werden benötigt, wie bekommt man die (handler = events von anderen komponenten abonieren) 
-\end{itemize}
+Die Kommunikation mit dem Dongle erfolgt über Bluetooth Low Energy. Dafür wurde in der App das Cordova-Plugin \enquote{ble-central} verwendet. Das Plugin dient als einfacher \enquote{Wrapper} zu den nativen Funktionen. Außerdem mussten spezielle BLE konventionen eingehaltet werden. So können Daten nur durch das abonnieren von vom Sender angebotenen \enquote{Characteristic}'s (32 Bit ID) von \enquote{Service}'s (32 Bit ID) empfangen und gesendet werden. Welche \enquote{Service}'s und \enquote{Characteristic}'s angeboten werden, müssen vorher angefragt  werden. Hierbei gibt es zum einen Standard-Services (z.B. Device Information - 0x180A) und zum anderen Custom-Services zum Übertragen von speziellen Daten. Das Bluetooth Modul vom Dongle ist nicht veränderbar und sendet alle Daten, die über die serielle Konsole gesendet werden über den Service 0xFFE0 und der Characteristic 0xFFE1. Dadurch kann das für BLE empfohlene Schema, das Trennen der Daten durch andere Characteristic-ID, nicht abgewannt werden. Somit muss für die unterschiedlichen Anforderungen weitere Merkmale zur Unterscheidung der Daten eingebaut werden. 
+\\
+Wie auch bei normalen TCP-Netzwerkkommunikation können auch bei Bluetooth die Daten in Pakete aufgeteilt werden, so müssen die Daten beim Empfangen zusammengesetzte werden. Falls in einem Callback festgestellt wird, dass ein Datensatz nicht vollständig angekommen ist, wird dieser Teil vom Puffer des aktuellen Callback's entfernt und dem zukünftigen am Anfang hinzugefügt.
+
+\subsection{GPS}
+\label{sec:appGPS}
+
+Um einen Vergleich der Genauigkeit des GPS-Sensors im Dongle zu erhalten, wird dieser mit dem GPS-Sensor des Smartphones verglichen. Dazu wird entweder die letzte gespeicherte Position des Betriebssystems genutzt, falls diese nicht länger als 10 Sekunden alt ist, oder eine neue Position angefordert.
+
+\subsection{Zugriff auf Identity Server}
+
+Um mit den Backend kommunizieren zu können, muss zuerst die Authentifizierung über den Identity Server stattfinden. Dieser bietet dafür mehrere Möglichkeiten (z.B. Authorization Code, Client Credentials). In der App wird die Authentifizierungsmethode \enquote{Password Grand} verwendet. Dabei wird ein JSON-Objekt (siehe nachfolgenden Code) über einen HTTP-Request, mit Hilfe von AJAX, an den Server gesendet. Das Objekt enthält den Namen und das Passwort des Benutzers, sowie eine Client ID, die extra für die APP ausgestellt wurde, und ein dazu passendes Geheimnis. Der Authentifizierungsserver liefert nun ein Token zurück, mit dem nun mit dem Backend für eine gewisse Zeit kommuniziert werden kann. Dieses wird dem Backend bei jedem Request über dem HTTP Header mitgesendet. 
+
+\noindent
+\begin{minipage}{\linewidth} 
+\begin{lstlisting}
+{
+	username: Store.get(username), 
+	password: Store.get(password),
+	scope: "openid",
+	grant_type: "password",
+	client_id: Settings.Backend.clientId,
+	client_secret: Settings.Backend.secret
+}
+\end{lstlisting} 
+\end{minipage}
+
+\subsection{Konfiguration}
+\label{sec:appKonfiguration}
+
+Es gibt Grundlegend drei Arten von Konfigurationswerten. Zum einen statische, Standard- und Initial- Werte (z.B Timeouts, Client ID / Secret, Standard Ansicht), die fest im Code integriert sind. Diese sind zur besseren Wartbarkeit in der Datei \enquote{Settings} als JSON-Objekt gesammelt. Veränderbare Einstellungen können entweder im \enquote{Local Store} oder im \enquote{Session Store} als Key-Value-Paar angelegt werden. Dabei sind sie entweder flüchtig (z.B. für den Token), damit zeitlich begrenzt gelöscht, oder fest (z.B. für die Sprache) gespeichert.
+
+\subsection{Mehrsprachigkeit}
+\label{sec:appMehrsprachigkeit}
+
+Um die geforderte Mehrsprachigkeit zu gewährleisten, sind alle verwendeten Texte in einer JSON-Datei zusammengefasst. In dieser sind die Texte als Key-Value-Paar abgespeichert (z.B. load: „load“); falls der beinhaltende Text eine Übersetzung benötigt, kann das Key-Value-Paar optional in die jeweiligen Sprachen aufgeteilt werden (z.B.
+load: \{ en: „load“, de: „laden“ \}). Die \enquote{String}-Klasse ermittelt dann mit Hilfe der eingestellten Sprache den zu verwendenden Text. Falls der Text in der aktuellen Sprache nicht verfügbar ist, wird die Standardsprache (Englisch) zurückgegeben.
+
+\pagebreak
 
 \subsection{Weitere Anzeigeelemente}
 \label{sec:appAnzeigeelemente}
 
-\begin{itemize}
-\item display features
-\item dialog
-\item ViewCircles
-\item ErrorPanel
-\item SwipeHelp
-\end{itemize}
+\begin{wrapfigure}{R}{0.45\textwidth}
+  \begin{center}
+	\includegraphics[width=0.4\textwidth]{./img/App_ErrorPanel}
+	\caption{Error Panel}
+	\label{fig:App_ErrorPanel}
+	\includegraphics[width=0.4\textwidth]{./img/App_NoConnectionPanel}
+	\caption{No Connection Panel}
+	\label{fig:App_NoConnectionPanel}
+    \includegraphics[width=0.4\textwidth]{./img/App_SwipeHelp}
+    \caption{Swipe Help}
+    \label{fig:App_SwipeHelp}
+    \includegraphics[width=0.4\textwidth]{./img/App_ViewCircles}
+    \caption{View Circles}
+    \label{fig:App_ViewCircles}
+    \includegraphics[width=0.4\textwidth]{./img/App_Dialog}
+    \caption{Dialog}
+    \label{fig:App_Dialog}
+  \end{center}
+\end{wrapfigure}
+
+Für das Anzeigen von speziellen Informationen gibt es mehrere Elemente. Zur Mitteilung von unerwarteten Fehlern gibt es einen Fehler Dialog (siehe Abbildung \ref{fig:App_ErrorPanel}). Dieses zeigt am oberen Rand des Bildschirmes eine Kurzinformation zum Fehler und die Information, dass sie im Logging-Bereich der Konfigurationsansicht komplett eingesehen werden kann an.
+\\
+Falls keine Bluetooth Verbindung zum Dongle besteht oder diese abgebrochen oder gestört ist, wird im mittleren Teil des Displays ein Panel (siehe Abbildung \ref{fig:App_NoConnectionPanel}) angezeigt, das dieses Ereignis visualisiert.
+\\
+Für die erste Benutzung der App wird beim Starten der App eine bewegende Anzeige (siehe Abbildung \ref{fig:App_SwipeHelp}) eingeblendet, die den Anwender signalisieren soll, dass durch nach Links und Rechts wischen weitere Ansichten und Optionen zur Verfügung stehen. Diese Funktion kann, falls sie als Störend empfunden wird, in der Konfigurationssicht deaktiviert werden. 
+\\
+Um den Benutzer über die gerade angezeigt Sicht zu informieren, sind am unteren Ende der App Kreise (siehe Abbildung \ref{fig:App_ViewCircles}) für jede View symbolisiert. Der Kreis für die zurzeit sichtbare Ansicht ist dabei ausgefüllt.
+\\
+Für manche Funktionen bieten sich Dialoge am besten an. Hier gibt es zum einen kleine Dialoge wie in Abbildung \ref{fig:App_ViewCircles} zu sehen und zum anderen Fullscreen-Dialoge, für zum Beispiel das Suchen der aktuellen Bluetooth Geräte im Umkreis (siehe Kapitel \ref{sec:appSichtKonfiguration}).
 
 \subsection{Test}
 \label{sec:appTest}
 
-\begin{itemize}
-\item vllt ins testkapitel
-\item Wie debug system funktioniert chrome://inspect/\#devices (evtl bild)
-\item Integrationstest zu Dongle (Test außerhalb und vorallem im Auto)
-\item Integrationstest zu Identity Server Get Token für Authentifizierung vom Identity Server
-\end{itemize}
+\todo{Evtl ins Kapitel Test}
 
-\subsection{Ausblick}
-\label{sec:appAusblick}
+\subsubsection{Im Browser}
 
-\begin{itemize}
-\item vllt ins ausblickkapitel
-\item Upload über die App
-\item beliebig viele weitere Views (sehr einfach umzusetzen über das View system)
-\item Flashen von neuer Donglesoftware
-\end{itemize}
-  
+Beim Entwickeln der Oberfläche konnte die App im Browser getestet werden ohne diese dabei neu kompilieren zu müssen. Hier konnten zum Beispiel Tests für die verschiedenen Bildschirmgrößen durchgeführt werden.
 
- 
- 
+\subsubsection{Als Windows App und im Android Emulator}
+
+Für das Testen einiger Funktionen (z.B. Bluetooth) wird die Device-Umgebung benötigt. Hierfür wurde die Smartphone-App entweder als Windows App oder im Android Emulator getestet. So wurde zum Beispiel der Integrationstest zum Identity Server, bei dem spezielle Rechte für einen HTTP-Request benötigt werden, durchgeführt.
+
+\subsubsection{Auf Endgerät}
+
+Jedoch mussten viele Tests direkt auf dem Endgerät stattfinden. Die App kann dabei durch die im Chrome-Browser enthaltenen Debug-Features bestens, sogar über die IDE (z.B. VS-Code) \enquote{debugged} (siehe Abbildung \ref{fig:App_Debug_Device}) werden.
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[height=7cm,keepaspectratio]{./img/App_Debug_Device}
+    \caption{Debuggen der Smartphone-App auf Endgerät}
+    \label{fig:App_Debug_Device}
+  \end{center}
+\end{figure}
+
+\subsubsection{Während der Fahrt}
+
+Da auch Fehler während der Fahrt auftreten können, hier jedoch nicht sofort auf diese eingegangen werden kann, werden diese mitprotokolliert und können nach der Fahrt ausgewertet und nachvollzogen werden. 
+
  
  
  

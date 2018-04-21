@@ -31,8 +31,6 @@ In diesem Zuge wird Timer 1 mit global sichtbaren Funktionen und einem Interrupt
 	Die neue Klasse stellt weiterhin eine Methode zu Verfügung mit der es möglich ist zu erkennen, ob beim Auto die Zündung getätigt wurde. Dies ist wichtig, da die \ac{OBD}-Schnittstelle (bei den meisten Autos) dauerhaft mit Strom versorgt ist. Aus diesem Grund kann nicht auf einen Neustart des Fahrzeugs gewartet werden um zu entscheiden ob es sich um eine neue Strecke handelt.
 	\\
 	Die Funktion überprüft wie viele Timeouts beim Versuch \acp{PID} auszulesen auftreten. Sobald diese Anzahl einen Grenzwert überschreitet, wird davon Ausgegangen, dass die Zündung nicht mehr aktiviert ist. Anschließend kann in Regelmäßigen Abständen geprüft werden ob inzwischen wieder Kommunikation mit dem \ac{OBD}-Steuergerät möglich ist. 
-	
-
 
 \subsection{Beschleunigungssensor}
 Der Treiber für den im Dongle verbauten Beschleunigungs-Sensor wurde nicht von Freematics übernommen sondern in Anlehnung an diesen neu Implementiert. Dies geschah vor allem um die Einheit der aufgezeichneten Sensorwerte selbst zu definieren und verständlicher darzustellen, sowie um Platz auf dem Flash-Speicher zu sparen.
@@ -80,9 +78,9 @@ Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ei
 \end{center}
 \end{figure}
 \subsubsection*{MVID}
-Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum um ein komfortables Fahrtenmanagement zu gewährleisten. 
+Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten. 
 \subsubsection*{Datum}
-Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit wert nur bis ungefähr 2038 zählen könnte und ein Loggen nur bis zu diesem Datum erfolgen. 64-Bit reichen weitaus weiter.  
+Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit Wert nur bis ungefähr 2038 zählen könnte. Mit 64 Bit lässt sich ein weitaus größerer Zeitraum abdecken.
 \subsubsection*{Daten ID}
 Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser Wert richtet sich nach der in Abschnitt \ref{sec:systemDesign} gezeigten OBD-Tabelle. Zusätzlich zu den OBD-IDs kann dieses Feld Werte für die GPS-Koordinaten, den Beschleunigungssensor und das Gyroskop annehmen.  Nur mit der zugehörigem ID kann dem Wert eine Bedeutung zugeteilt werden. 
 \subsubsection*{Wert}
@@ -97,7 +95,7 @@ Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über
     \label{fig:BLEChip}
   \end{center}
 \end{figure} 
-Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine PINs. Die zwei UART Pins des Chips(UART\_TXD/UART\_RXD) sind mit den UART Pins des ATmega328p(B\_RXD/M\_TXD) verbunden. Der CC2541 ist so konfiguriert, dass jede Nachricht die von dem Mikrocontroller über UART versendet wird direkt über Bluetooth nach außen gesendet wird. Dadurch entsteht der Effekt, dass für Nachrichten, die über die der Dongle über die Arudino Funktion \texttt{Serial.println()} ausgibt, automatisch ein Versenden über BLE erfolgt.
+Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine PINs. Die zwei UART Pins des Chips(UART\_TXD/UART\_RXD) sind mit den UART Pins des ATmega328p(B\_RXD/M\_TXD) verbunden. Der CC2541 ist so konfiguriert, dass jede Nachricht die von dem Mikrocontroller über UART versendet wird direkt über Bluetooth nach Außen gesendet wird. Dadurch entsteht der Effekt, dass für Nachrichten, die über die der Dongle über die Arudino Funktion \texttt{Serial.println()} ausgibt, automatisch ein Versenden über BLE erfolgt.
 \paragraph{}{}
 Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Der Dongle nutzt Bluetooth um die folgenden 2 Funktionen auszuführen.
 \subsubsection*{1. Live Daten Übertragung}
@@ -123,7 +121,7 @@ Eine Live Daten Nachricht, wie in Abbildung \ref{fig:LiveDataMessage} zu sehen g
 \end{enumerate}
 \pagebreak
 \subsubsection*{2. Upload der Logdateien}
-Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses verfahren ist ein zweiter weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
+Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
 \begin{figure}[h]
   \begin{center}
     \includegraphics[scale=0.6]{./img/DataUploadSequence.jpg}

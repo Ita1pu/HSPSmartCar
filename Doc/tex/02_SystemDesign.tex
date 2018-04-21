@@ -12,11 +12,11 @@ Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf 
 
 
 \section{App}
-Um die Fahrzeugdaten während der Fahrt analysieren zu können, sowie auch ein einfacher Weg die Daten vom OBD-Dongle ins Backend zu übertragen, wurde eine plattformübergreifende Smartphone-App erstellt. Die App ist sowohl für Android, IOS als auch Windows verfügbar. Dafür wurde das für mobile Anwendungen konzipierte Framework Apache Cordova verwendet. Dieses Entwicklung-Framework verwendet die standard-Web-Technologien HTML5, CSS3 und JavaScript für die Cross-Plattform-Entwicklung. Die Bibliothek visualisiert die Anwendung mittels, die von den einzelnen Plattformen bereitgestellten, \enquote{WebViews}. Diese zeigen die Sourcen vergleichbar einer \enquote{Webseite} in einen Browser-Container an. Der Zugriff auf native Funktionen erfolgt über Cordova, bzw. weiteren, nativ geschriebenen, Plugins.
+Um die Fahrzeugdaten während der Fahrt analysieren zu können, sowie auch ein einfacher Weg die Daten vom OBD-Dongle ins Backend zu übertragen, wurde eine plattformübergreifende Smartphone-App erstellt. Die App ist sowohl für Android, IOS als auch Windows verfügbar. Dafür wurde das für mobile Anwendungen konzipierte Framework Apache Cordova verwendet. Dieses Entwicklungs-Framework verwendet die Standard-Web-Technologien HTML5, CSS3 und JavaScript für die Cross-Plattform-Entwicklung. Die Bibliothek visualisiert die Anwendung mittels, die von den einzelnen Plattformen bereitgestellten, \enquote{WebViews}. Diese zeigen die Sourcen vergleichbar einer \enquote{Webseite} in einen Browser-Container an. Der Zugriff auf native Funktionen erfolgt über Cordova, bzw. weiteren, nativ geschriebenen, Plugins.
 \\
 Bei der Entwicklung wurde mit den Spracherweiterungen TypeScript und Sass gearbeitet. Diese werden in die standard-Web-Sprachen JavaScript und CSS compiliert. TypeScript bringt den großen Vorteil von festen Typen, Klassen, Namespaces, Vererbungen und vieles mehr. Dadurch wird die Weiterentwicklung und Wartung im Team enorm vereinfacht, da z.B. die einzelnen Module klar, durch Klassen und Namespaces, abgegrenzt sind. Auch der Nutzen von Variablen, durch die festen Typen, ist schneller und leichter ohne das lesen der Dokumentation oder Kommentare, erkennbar. Ein sogar noch größerer Vorteil von TypeScript ist, das die gewünschte ECMA Script Version bei Generierung einstellbar ist. Das heißt, falls ein älteres Smartphone unterstützt werden soll, kann diese auch bis zu ECMA Script 3 (aus dem Jahre 1999) runter gestellt werden. Dies geht zwar auf die Kosten der Performance jedoch wäre das native schreiben in JavaScript mit ECMA Script 3 keine wahre Alternative. 
 \\
-Des weiteren wurde SASS in Stelle von CSS verwendet, welches die Standard CSS-Syntax um Variablen, Vererbung sowie Makros erweitert. Dadurch kann die Weiterentwicklung als auch die Wartung weiter erleichtert werden. Zudem ermöglicht SASS auch das generieren von verschiedenen Versionen von CSS, um auch hier eine möglichst gute Abwärtskompatibilität zu gewährleisten. Eine weitere oft verwendete Funktion, ist das verwendet von Makros, welche z.B. das einbetten von Bildern in die Style-Datei ermöglicht. 
+Des weiteren wurde SASS an Stelle von CSS verwendet, welches die Standard CSS-Syntax um Variablen, Vererbung sowie Makros erweitert. Dadurch kann die Weiterentwicklung als auch die Wartung weiter erleichtert werden. Zudem ermöglicht SASS auch das generieren von verschiedenen Versionen von CSS, um auch hier eine möglichst gute Abwärtskompatibilität zu gewährleisten. Eine weitere oft verwendete Funktion, ist die Nutzung von Makros, welche z.B. das Einbetten von Bildern in die Style-Datei ermöglicht. 
 
 \subsection{Aufbau}
 Die App ist von Beginn an in fünf große Bereiche eingeteilt, welche sich jeweils als eigene Komponente (siehe Abbildung \ref{fig:appKomponentendiagramm}) gliedern. Des Weiteren sind noch, zur besseren Handhabbarkeit, Unterkomponenten eingebaut, sowie Aufspaltungen der Komponenten vorgenommen worden.
@@ -39,7 +39,7 @@ Die \enquote{Helpers}-Komponente (siehe Abbildung \ref{fig:appKlassendiagrammHel
   \end{center}
 \end{wrapfigure}
 
-Die \enquote{Variables} Dateien enthalten eine Liste von allen HTML IDs und Klassen Namen, die über HTML, TypeScript als auch über SASS zugegriffen werden können. Die Liste wird nur als TypeScript Objekt in JSON-Format gepflegt und automatisch, beim kompilieren, als SASS Variablen generiert.
+Die \enquote{Variables} Dateien enthalten eine Liste von allen HTML IDs und Klassen Namen, die über HTML, TypeScript als auch über SASS zugegriffen werden können. Die Liste wird nur als TypeScript Objekt im JSON-Format gepflegt und automatisch, beim Kompilieren, als SASS Variablen generiert.
 \\
 Für das Speichern aktueller Benutzereinstellungen und Konfigurationen (z.B. bei Neustart der App wird die letzte ausgewählte View gesetzt) steht die Klasse \enquote{Store} zur Verfügung (Siehe Kapitel \ref{ration}). Hier werden die Daten als Key-Value-Paar in die Browser eigenen \enquote{Local/Session Storage} gespeichert. Dabei können die Daten entweder flüchtig in den \enquote{Session Store} oder permanent in den \enquote{Local Store} eingetragen werden. 
 \\
@@ -63,7 +63,7 @@ Außerdem enthält die Komponente die \enquote{Settings} Klasse, die alle zur Ve
   \end{center}
 \end{wrapfigure}
 
-Für die Pflege der App ist ein Protokollierung der Handlungen sowie der Fehler unumgänglich. Dazu steht die Komponente \enquote{Logging} (siehe Abbildung \ref{fig:appKlassendiagrammLogging}) zur Verfügung. Diese enthält eine Liste von \enquote{ErrorLogEntry}'s, welche zum einen automatisch mit Systemmeldungen gefüttert wird, sowie zum anderen von jeder Komponente bespeist werden kann. Außerdem kann die Liste bei Bedarf auf der Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}) angezeigt werden.
+Für die Pflege der App ist eine Protokollierung der Handlungen sowie der Fehler unumgänglich. Dazu steht die Komponente \enquote{Logging} (siehe Abbildung \ref{fig:appKlassendiagrammLogging}) zur Verfügung. Diese enthält eine Liste von \enquote{ErrorLogEntry}'s, welche zum einen automatisch mit Systemmeldungen gefüttert wird, sowie zum anderen von jeder Komponente bespeist werden kann. Außerdem kann die Liste bei Bedarf auf der Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}) angezeigt werden.
 \\
 In der Komponente \enquote{Dongle} (siehe Abbildung \ref{fig:appKlassendiagrammDongle}) befindet sich aktuell nur die \enquote{Bluetooth} Klasse. Diese kümmert sich um die Bluetooth Verbindung und Kommunikation mit dem Dongle (siehe Kapitel \ref{sec:appBluetooth}).
 Weitere Klassen werden in Zukunft unter anderen das Herunterladen der Loggingdaten, sowie das flashen des Dongle's mit neuer Firmware sein (siehe Kapitel \ref{sec:appAusblick}).
@@ -96,13 +96,13 @@ Für einen leichteren Einstieg in die App gibt es optional die Anzeigehilfe \enq
 \\
 Die Klasse \enquote{ViewCircles} zeigt am unteren Ende des Displays die aktuell ausgewählte Sicht, durch ausgefüllte bzw. unausgefüllte Kreise, an.
 \\
-In der Komponente \enquote{Dialog} (siehe Abbildung \ref{fig:appKlassendiagrammDisplayFeatureDialog})) befindet sich die gleichnamige Klasse und deren Hilfsklasse. Sie ist für das darstellen von Dialogen mit beliebigen Inhalt zuständig. So können leicht einfache Ja-Nein-Bestätigungsdialog und aufwändige Dialoge, wie zum Beispiel das Suchen der Bluetooth Geräte im Umfeld (siehe Kapitel \ref{sec:appSichtKonfiguration}), implementiert werden.
+In der Komponente \enquote{Dialog} (siehe Abbildung \ref{fig:appKlassendiagrammDisplayFeatureDialog})) befindet sich die gleichnamige Klasse und deren Hilfsklasse. Sie ist für das darstellen von Dialogen mit beliebigen Inhalt zuständig. So können leicht einfache Ja-Nein-Bestätigungsdialog und aufwändigere Dialoge, wie zum Beispiel das Suchen der Bluetooth Geräte im Umfeld (siehe Kapitel \ref{sec:appSichtKonfiguration}), implementiert werden.
 
 \subsection{Buildsystem}
 
 Als Buildsystem für die Smartphone-App wurde \enquote{gulp.js} gewählt. Gulp führt dabei ein definiertes Script (ähnlich des Build-Management-Tools make) aus. In diesem File werden sogenannte Tasks in JavaScript definiert. Diese Gulp-Tasks werden direkt über die IDE (z.B VS-Code) bzw. der Shell ausgeführt. Abbildung \ref{fig:appBuildsystemAktivitatsdiagramm}a zeigt das Vorgehen des definierten Gulp-Tasks. Zuerst werden Variablen generiert und Bilder von den Ressourcen in die Sass-Files eingebunden. Danach werden die Sass Dateien zu CSS Dateien und die TypeScript Dateien zu JavaScript kompiliert. Optional kann beim Release-Task eine Obfuskierung und Komprimierung des Codes durchgeführt werden.
 \\
-Zur leichteren Entwicklung ist ein Watch-Task implementiert worden (Sie Abbildung \ref{fig:appBuildsystemAktivitatsdiagramm}b). Dieser funktioniert wie ein \enquote{Watchdog} auf die einzelnen Dateien und triggert bei Modifikation, je nach Dateityp, das kompilieren der einzelnen Dateien bzw., falls benötigt, des ganzen Systems.
+Zur leichteren Entwicklung ist ein Watch-Task implementiert worden (Sie Abbildung \ref{fig:appBuildsystemAktivitatsdiagramm}b). Dieser funktioniert wie ein \enquote{Watchdog} auf die einzelnen Dateien und triggert bei Modifikation, je nach Dateityp, das Kompilieren der einzelnen Dateien bzw. im Bedarfsfall des ganzen Systems.
 
 \begin{figure}[H]
   \begin{center}
@@ -181,10 +181,10 @@ Die im Bild \ref{fig:dongleArch} mit \enquote{(Fm)} ergänzten Klassen werden au
 Da ein zentrales Ziel der Applikation die Anfertigung eines Fahrtenbuches mit Streckenaufzeichnung ist, muss auch die Position des Fahrzeuges möglichst genau bestimmt werden. Der in diesem Projekt verwendete Freematics ONE bietet hier die Möglichkeit, einen externen GPS-Empfänger über eine \ac{UART}-Schnittstelle anzubinden.
 \paragraph{}
 Um die Anschaffungskosten zu reduzieren, wurde zunächst untersucht, ob neben dem von Freematics verkauften GPS-Empfänger auch andere GPS-Receiver-Chips mit dem OBD-Dongle kompatibel sind.
-Ein Problem bei dieser Untersuchung ist die Architektur des Freematics ONE, da die Kommunikation mit dem GPS-Empfänger nicht auf dem ATmega328p Haupt-Controller sondern auf einem STM32 Coprozessor ausgeführt wird. Leider ist der Code auf dem Coprozessor nicht öffentlich einsehbar und auch nicht ohne großen Aufwand auslesbar.
-Ein weiteres Problem bestand darin, dass auch ein Öffnen des Gehäuses des von Freematics selbst vertriebenen GPS-Empfängers nicht zur Identifikation des Chips beitragen konnte. Es wurde allerdings klar, dass dieser nicht der Angabe auf der Produkthomepage des Freematics ONE entsprach. Der Empfänger-Chip ist nur mit einem QR-Code versehen und eine Recherche zum Hersteller verwies nur auf den chinesischen Produzenten des ganzen Empfänger-Moduls.(www.szgrltd.com)
+Ein Problem bei dieser Untersuchung war die Architektur des Freematics ONE, da die Kommunikation mit dem GPS-Empfänger nicht auf dem ATmega328p Haupt-Controller sondern auf einem STM32 Coprozessor ausgeführt wird. Leider ist der Code auf dem Coprozessor nicht öffentlich einsehbar und auch nicht ohne enormen Aufwand auslesbar.
+Ein weiteres Problem bestand darin, dass auch ein Öffnen des Gehäuses des von Freematics selbst vertriebenen GPS-Empfängers nicht zur Identifikation des Chips beitragen konnte. Es wurde allerdings klar, dass dieser nicht der Angabe auf der Produkthomepage des Freematics ONE entsprach. Der Empfänger-Chip ist nur mit einem QR-Code versehen und eine Recherche zum Hersteller verwies nur auf den chinesischen Produzenten des ganzen Empfänger-Moduls.\footnote{\url{www.szgrltd.com}}
 \paragraph{}
-Daher wurde eine andere Vorgehensweise zur Untersuchung der Kommunikation angewandt. Dazu wurde, wie in Abbildung \ref{fig:gpsAnalyse} abgebildet, ein zusätzlicher Arduino UNO als Zwischenstation in die UART-Kommunikation zwischen Dongle und Empfänger eingefügt. Zwei durch Software simulierte, serielle Schnittstellen auf dem Arduino UNO werden nun genutzt, um die vom Dongle und vom GPS-Empfänger gesendeten Daten aufzufangen, auf der über USB angeschlossenen seriellen Konsole eines Rechners auszugeben und an den jeweils anderen Kommunikationspartner weiterzuleiten.
+Daher wurde eine andere Vorgehensweise zur Untersuchung der Kommunikation angewandt. Dazu wurde, wie in Abbildung \ref{fig:gpsAnalyse} abgebildet, ein zusätzlicher Arduino UNO als Zwischenstation in die UART-Kommunikation zwischen Dongle und Empfänger eingefügt. Zwei durch Software simulierte, serielle Schnittstellen auf dem Arduino UNO werden nun genutzt, um die vom Dongle und vom GPS-Empfänger gesendeten Daten aufzufangen, auf der über \ac{USB} angeschlossenen seriellen Konsole eines Rechners auszugeben und an den jeweils anderen Kommunikationspartner weiterzuleiten.
 \begin{figure}
   \begin{center}
     \includegraphics[width=\textwidth]{./img/gpsVersuch}
@@ -209,7 +209,7 @@ Ein erster Test mit der von Freematics bereitgestellten Software zeigte die grun
 		\ \\
 		Da es vom vorliegenden Auto abhängig ist, welche Steuergeräte verbaut sind und somit auch was für \acp{PID} unterstützt werden, ist es nicht bei jedem Auto möglich die selben Daten auszulesen.
 		\ \\
-		Da weiterhin der Platz auf dem Freematics ONE (sowohl RAM als auch Flash) sehr begrenzt ist, wurde von vorne herein entschieden, nur bestimmte \acp{PID} zu verwenden. Insgesamt wurden xy viele \acp{PID} ausgewählt. Um sowohl die \ac{OBD}-Schnittstelle als auch den Prozessor im Freeatics ONE unter wenig Last auszusetzen, dabei allerdings möglichst viel Nutzen aus den gewonnen Informationen ziehen zu können, wurden die \acp{PID} in unterschiedliche Gruppen eingeteilt. 
+		Da weiterhin der Platz auf dem Freematics ONE (sowohl RAM als auch Flash) sehr begrenzt ist, wurde von vorne herein entschieden, nur bestimmte \acp{PID} zu verwenden. Insgesamt wurden 37 \acp{PID} ausgewählt. Um sowohl die \ac{OBD}-Schnittstelle als auch den Prozessor im Freeatics ONE unter wenig Last auszusetzen, dabei allerdings möglichst viel Nutzen aus den gewonnen Informationen ziehen zu können, wurden die \acp{PID} in unterschiedliche Gruppen eingeteilt. 
 		\ \\
 		Eine Gruppe entspricht somit einem Zusammenschluss aus \acp{PID} welche alle in einem gleichen Zeitintervall abgerufen werden. Es wurde sich für folgende Gruppen entschieden (Tabelle \ref{KategorieTable}):
 		
@@ -241,22 +241,34 @@ Ein erster Test mit der von Freematics bereitgestellten Software zeigte die grun
 			\begin{tabular}{|c|c|c|}
 				\hline 
 				Name & Wert & Kategorie \\ 
-				\hline 
+				\hline
+				Engine Load & 0x04 & A \\ 
+				\hline
 				Engine coolant temperature & 0x05 & C \\ 
 				\hline 
 				Engine RPM & 0x0C & A \\ 
 				\hline 
 				Vehicle speed & 0x0D & A \\ 
+				\hline
+				Air Flow Rate & 0x10 & A\\
 				\hline 
 				Run time since engine start & 0x1F & C \\ 
 				\hline 
 				Distance traveled with malfunction indicator lamp & 0x21 & D \\ 
+				\hline
+				Oxygen Sensor(s) of Bank 1 & 0x24 - 0x2B & A \\
 				\hline 
 				Fuel tank level input & 0x2F & D \\ 
 				\hline 
 				Absolute barometric pressure & 0x33 & C \\ 
-				\hline 
-				Ambient ari temperature & 0x46 & C \\ 
+				\hline
+				Oxygen Sensor(s) of Bank 2 & 0x34 - 0x3B & A \\ 
+				\hline
+				Ambient air temperature & 0x46 & C \\ 
+				\hline
+				Maximum value for Equivalence Ratio & 0x4F & E \\
+				\hline
+				Maximum value for Air Flow Rate & 0x50 & E \\
 				\hline 
 				Fuel type & 0x51 & E \\ 
 				\hline 

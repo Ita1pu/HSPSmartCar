@@ -2,7 +2,7 @@
 
 \subsection{Sichten}
 
-\subsubsection{Anzeige}
+\subsubsection{Visualisierung}
 \label{sec:appSichtAnzeige}
 
 \begin{wrapfigure}{r}{0.5\textwidth}
@@ -13,45 +13,36 @@
   \end{center}
 \end{wrapfigure}
 
-\todo{TODO}
-
-\begin{itemize}
-\item Allgemein zu Anzeige schrieben, das alels auf die View klasse basiert, nur die anzeigelemente geschrieben werden müssen. Die daten werden über handler schon konvertiert erhalten. So können beliebig viele weitere views implementiert werden, falls mehr daten zur verfügung stehen
-\item dannach jede der 3 Views mit bilder erklären
-
-\item Was gibt es alles für anzeigen screenshots und kurze erklärung
-\item welche daten werden benötigt, wie bekommt man die (handler = events von anderen komponenten abonieren) 
-\item sagen das ganz leicht weiter sichen implementiert werden können, da diese alle auf gleiches prinzip beruhen und sehr einfach zu programmiern sind (sehr wenig neu zu machen)
-\end{itemize}
+In der Smartphone-App stehen mehrere Sichten für die Anzeige der Live Daten zur Verfügung. Diese können über eine Callback-Funktion auf schon vorbereite Daten vom Dongle und Smartphone zugreifen. Dadurch müssen sich diese nur noch um die bloße Darstellung der Daten kümmern. Jede Sicht fügt sich dabei selbst der Liste der Views hinzu und wird dadurch in der App angezeigt. So ist es ein leichtes, sobald neue Daten vom Dongle zur Verfügung stehen sollten, fast unbegrenzt weitere Ansichten hinzuzufügen.
+\\
+Zurzeit stehen drei Sichten zur Auswahl. Eine einfache Liste mit allen vom Dongle und Smartphone verfügbaren Werten. Darunter die Geschwindigkeit, gemessen vom Dongle sowohl als auch vom Handy, Drehzahl, Kühlwassertemperatur und die GPS Daten des Dongles und Smartphones.
+\\
+Des weiteren eine Tachoansicht (siehe Abbildung \ref{fig:App_Speedo}), der die momentan gefahrene Geschwindigkeit, Drehzahl und die Kühlwassertemperatur anzeigt.
+\\ 
+Die letzte zurzeit implementierte Sicht ist ein Vergleich der gemessenen Geschwindigkeit von der OBD-Schnittstelle und der ermittelten Geschwindigkeit vom GPS Sensor jeweils visualisiert als Tacho.
 
 \subsubsection{Konfiguration}
 \label{sec:appSichtKonfiguration}
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-  \begin{center}
-	\includegraphics[width=0.3\textwidth]{./img/APP_Configuration}
+
+
+\begin{figure}[H]
+	\centering 
+	\subfigure[Übersicht]{\includegraphics[width=0.3\textwidth]{./img/APP_Configuration}}
+    \label{fig:APP_Configuration_View}
+    \hspace{1cm}
+	\subfigure[Dialog \enquote{Dongle - Connect}]{\includegraphics[width=0.3\textwidth]{./img/App_Bluetooth_Search}}
+	\label{fig:App_Bluetooth_Search}
 	\caption{Ansicht \enquote{Konfiguration}}
 	\label{fig:APP_Configuration}
-  \end{center}
-\end{wrapfigure}
+\end{figure}
 
-\begin{wrapfigure}{r}{0.5\textwidth}
-  \begin{center}
-	\includegraphics[width=0.3\textwidth]{./img/App_Bluetooth_Search}
-	\caption{Dialog \enquote{Dongle - Connect}}
-	\label{fig:App_Bluetooth_Search}
-  \end{center}
-\end{wrapfigure}
 
 \todo{TODO}
 
 \begin{itemize}
 \item jede einzelen komponente durchgehen
 \item zusammenspiele zu anderen komponenten über events und store usw..., .. Einstellungsmöglichkeiten usw)
-\item bild von suchen von bluetooth devices
-\item bild von connect to backend
-\item bild von Logging
-\item usw..
 \end{itemize}
 
 \subsection{Bluetooth}

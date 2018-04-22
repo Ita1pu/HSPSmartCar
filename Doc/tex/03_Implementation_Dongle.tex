@@ -50,7 +50,7 @@ Ebenfalls erfolgt die Speicherung der abgefragten OBD-Werte nicht mehr in einem 
 \subsection{Logging}
 \label{sec:Logging}
 Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und Schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.75]{./img/Persistence.jpg}
     \caption{Hierarchie beim SD Zugriff}
@@ -65,7 +65,7 @@ Des weiteren ist es pro File\_System\_Handler nur möglich eine einzige Datei zu
 Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Log-Dateien immer den selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
 \subsubsection*{Logging Format}
 Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine einheitliche Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Aus diesen Gründen wurde das Datenformat aus Abbildung \ref{fig:LoggingEntry} für das Logging gewählt:
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
   \begin{tabular}{ | c || c | c | c | c |}
     \hline
@@ -88,7 +88,7 @@ Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je 
 \subsection{Bluetooth Kommunikation}
 \label{sec:Bluetooth}
 Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über Bluetooth mit einer Smartphone App zu kommunizieren. Hierfür wird der Freematics ONE mit dem Bluetooth Low energy fähigem CC2541 Modul von Texas Instruments ausgeliefert.
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.5]{./img/BLEChip.jpg}
     \caption{Schematischer Aufbau des CC2541\cite{Freematics2016}}
@@ -100,7 +100,7 @@ Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine P
 Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Der Dongle nutzt Bluetooth um die folgenden 2 Funktionen auszuführen.
 \subsubsection*{1. Live Daten Übertragung}
 Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
   \begin{tabular}{ | c | c | c | c | c |}
     \hline

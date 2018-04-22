@@ -2,11 +2,11 @@
 Als Technologie für die Implementierung des Backends wird das Asp.Net Core Framework von Microsoft eingesetzt. Grund dafür ist, dass alle benötigten Funktionen wie Webfrontends, REST APIs oder Identity Management nativ und gleichzeitig plattformunabhängig unterstützt werden. Als Programmiersprache wird C\# eingesetzt.
 
 \subsection{Authentifizierung und Autorisierung}
-Für die Umsetzung der Benutzerauthentifizierung und die Rechteverwaltung wird IdentityServer4\footnote{\url{http://docs.identityserver.io/en/release/}} eingesetzt. Dieses Framework erlaubt eine moderne zentralisierte Identitätsverwaltung für verschiedene Anwendungsszenarien basierend auf OpenId und OAuth2. 
+Für die Umsetzung der Benutzerauthentifizierung und die Rechteverwaltung wird IdentityServer4\cite{Allen2016} eingesetzt. Dieses Framework erlaubt eine moderne zentralisierte Identitätsverwaltung für verschiedene Anwendungsszenarien basierend auf OpenId und OAuth2. 
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=\textwidth]{./img/BackendIdentityServer.png}
+    \includegraphics[width=\textwidth]{./img/BackendIdentityServer.PNG}
     \caption{Terminologien des Identity Servers}
     \label{fig:backendIdentityServer}
   \end{center}
@@ -29,14 +29,14 @@ Als Datenbank wird MySql eingesetzt da es einfach in der Anwendung und schlank i
 
 Der Zugriff auf die Datenbank erfolgt nicht direkt über SQL-Anfragen sondern über Entity Framework, ein Framework für objektrelationale Abbildung. Dabei werden die Daten im Hintergrund in Collections geladen, sodass es für den Benutzer aussieht, als würden die Daten direkt im RAM liegen. Dieses System bietet - insbesondere in Kombination mit \ac{LINQ} in C\#- den Vorteil, dass der Code wesentlich übersichtlicher und leichter verständlich wird, da das direkte Laden der Daten mittels SQL-Anfragen und anschließendem manuellen einlesen entfällt.
 
-Für die Integration von Entity Framework für MySql Datenbanken in einer Asp.Net Core Umgebung muss ein Third Party NuGet Paket\footnote{\url{https://www.nuget.org/packages/Pomelo.EntityFrameworkCore.MySql}} verwendet werden, da zum Zeitpunkt der Entwicklung keine native Anbindung zur Verfügung steht. Das verwendete Paket hat allerdings Performanceprobleme bei der Verarbeitung größerer Datenmengen. Schon das speichern und laden von Fahrten mit einer Rohdatenmenge von ~500kB führen zu Verzögerungen von ca. 30 Sekunden. Die einzig verbleibende Alternative um das Problem zu beheben ist der Austausch der Datenbank, wozu während der Projektlaufzeit keine Ressourcen mehr zur Verfügung stehen.
+Für die Integration von Entity Framework für MySql Datenbanken in einer Asp.Net Core Umgebung muss ein Third Party NuGet Paket\cite{Microsoft2018} verwendet werden, da zum Zeitpunkt der Entwicklung keine native Anbindung zur Verfügung steht. Das verwendete Paket hat allerdings Performanceprobleme bei der Verarbeitung größerer Datenmengen. Schon das speichern und laden von Fahrten mit einer Rohdatenmenge von ~500kB führen zu Verzögerungen von ca. 30 Sekunden. Die einzig verbleibende Alternative um das Problem zu beheben ist der Austausch der Datenbank, wozu während der Projektlaufzeit keine Ressourcen mehr zur Verfügung stehen.
 
 \subsection{Bereitstellung}
 \label{sec:backendDeployment}
 Da das Backend aus verschiedenen zunächst unabhängigen Komponenten besteht und einige Voraussetzungen bezüglich der Infrastruktur mit sich bringt, ist die Bereitstellung einer Produktivumgebung nicht trivial. 
 Aus diesem Grund wird die Containervirtualisierung Docker eingesetzt, um das Gesamtsystem leicht installierbar zu machen.
 
-Docker\footnote{\url{https://docs.docker.com/}} unterscheidet von normalen virtuellen Maschinen darin, dass nicht für jede Instanz ein gesamtes Hostsystem emuliert wird, sonder lediglich die Applikation samt ihrer Abhängigkeiten in dem Container stecken. In der Terminologie wird bei Docker zwischen Containern und Images unterschieden. Ein Image ist dabei ein Speicherabbild, aus dem heraus sich mehrere Container starten lassen (vergleichbar mit Klassen und Instanzen bei objektorientierter Programmierung). Für die Installation bedeutet das, dass nur die Images aller am System beteiligten Module zur Verfügung stehen müssen um aus jedem Image einen Container zu starten. Um das hochfahren komplexerer Anwendungen die aus mehreren Containern bestehen zu erleichtern, gibt es das Tool Docker Compose. Hiermit lassen sich verschiedene Parameter einstellen und alle Container gemeinsam starten was den Aufwand bei der Bereitstellung weiter reduziert. 
+Docker\cite{Inc.2018} unterscheidet von normalen virtuellen Maschinen darin, dass nicht für jede Instanz ein gesamtes Hostsystem emuliert wird, sonder lediglich die Applikation samt ihrer Abhängigkeiten in dem Container stecken. In der Terminologie wird bei Docker zwischen Containern und Images unterschieden. Ein Image ist dabei ein Speicherabbild, aus dem heraus sich mehrere Container starten lassen (vergleichbar mit Klassen und Instanzen bei objektorientierter Programmierung). Für die Installation bedeutet das, dass nur die Images aller am System beteiligten Module zur Verfügung stehen müssen um aus jedem Image einen Container zu starten. Um das hochfahren komplexerer Anwendungen die aus mehreren Containern bestehen zu erleichtern, gibt es das Tool Docker Compose. Hiermit lassen sich verschiedene Parameter einstellen und alle Container gemeinsam starten was den Aufwand bei der Bereitstellung weiter reduziert. 
 
 Um das SmartCar Backend in einer neuen Umgebung auszurollen werden lediglich die Images der Module, sowie das docker-compose File benötigt. Zusätzlich muss natürlich Docker auf dem Zielsystem installiert sein. Ist alles vorhanden, lässt sich über den Befehl \texttt{docker-compose up} die gesamte Umgebung ohne zusätzlichen Installationen hochfahren.
 

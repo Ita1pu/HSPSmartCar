@@ -37,7 +37,7 @@ Die \enquote{Helpers}-Komponente (siehe Abbildung \ref{fig:appKlassendiagrammHel
     \caption{Klassendiagramm Komponente \enquote{Helpers}}
     \label{fig:appKlassendiagrammHelpers}
   \end{center}
-\end{wrapfigure}
+\end{wrapfigure}\leavevmode
 
 Die \enquote{Variables} Dateien enthalten eine Liste von allen HTML IDs und Klassen Namen, die über HTML, TypeScript als auch über SASS zugegriffen werden können. Die Liste wird nur als TypeScript Objekt im JSON-Format gepflegt und automatisch, beim Kompilieren, als SASS Variablen generiert.
 \\
@@ -61,7 +61,7 @@ Außerdem enthält die Komponente die \enquote{Settings} Klasse, die alle zur Ve
     \caption{Klassendiagramm Komponente \enquote{Mobile}}
     \label{fig:appKlassendiagrammMobile}
   \end{center}
-\end{wrapfigure}
+\end{wrapfigure}\leavevmode
 
 Für die Pflege der App ist eine Protokollierung der Handlungen sowie der Fehler unumgänglich. Dazu steht die Komponente \enquote{Logging} (siehe Abbildung \ref{fig:appKlassendiagrammLogging}) zur Verfügung. Diese enthält eine Liste von \enquote{ErrorLogEntry}'s, welche zum einen automatisch mit Systemmeldungen gefüttert wird, sowie zum anderen von jeder Komponente bespeist werden kann. Außerdem kann die Liste bei Bedarf auf der Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}) angezeigt werden.
 \\
@@ -214,7 +214,7 @@ Da ein zentrales Ziel der Applikation die Anfertigung eines Fahrtenbuches mit St
 \paragraph{}
 Um die Anschaffungskosten zu reduzieren, wurde zunächst untersucht, ob neben dem von Freematics verkauften GPS-Empfänger auch andere GPS-Receiver-Chips mit dem OBD-Dongle kompatibel sind.
 Ein Problem bei dieser Untersuchung war die Architektur des Freematics ONE, da die Kommunikation mit dem GPS-Empfänger nicht auf dem ATmega328p Haupt-Controller sondern auf einem STM32 Coprozessor ausgeführt wird. Leider ist der Code auf dem Coprozessor nicht öffentlich einsehbar und auch nicht ohne enormen Aufwand auslesbar.
-Ein weiteres Problem bestand darin, dass auch ein Öffnen des Gehäuses des von Freematics selbst vertriebenen GPS-Empfängers nicht zur Identifikation des Chips beitragen konnte. Es wurde allerdings klar, dass dieser nicht der Angabe auf der Produkthomepage des Freematics ONE entsprach. Der Empfänger-Chip ist nur mit einem QR-Code versehen und eine Recherche zum Hersteller verwies nur auf den chinesischen Produzenten des ganzen Empfänger-Moduls.\footnote{\url{www.szgrltd.com}}
+Ein weiteres Problem bestand darin, dass auch ein Öffnen des Gehäuses des von Freematics selbst vertriebenen GPS-Empfängers nicht zur Identifikation des Chips beitragen konnte. Es wurde allerdings klar, dass dieser nicht der Angabe auf der Produkthomepage des Freematics ONE entsprach. Der Empfänger-Chip ist nur mit einem QR-Code versehen und eine Recherche zum Hersteller verwies nur auf den chinesischen Produzenten des ganzen Empfänger-Moduls\cite{Co.2014}.
 \paragraph{}
 Daher wurde eine andere Vorgehensweise zur Untersuchung der Kommunikation angewandt. Dazu wurde, wie in Abbildung \ref{fig:gpsAnalyse} abgebildet, ein zusätzlicher Arduino UNO als Zwischenstation in die UART-Kommunikation zwischen Dongle und Empfänger eingefügt. Zwei durch Software simulierte, serielle Schnittstellen auf dem Arduino UNO werden nun genutzt, um die vom Dongle und vom GPS-Empfänger gesendeten Daten aufzufangen, auf der über \ac{USB} angeschlossenen seriellen Konsole eines Rechners auszugeben und an den jeweils anderen Kommunikationspartner weiterzuleiten.
 \begin{figure}

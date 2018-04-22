@@ -178,13 +178,13 @@ Um die angebotene Funktionalität umzusetzen, interagieren die in \ref{sec:backe
 Beim ersten Aufruf einer der angebotenen Funktionen durch den Benutzer wird dieser zum Identity Server weitergeleitet, um seine Identität zu verifizieren. Anschließend kann über das Web UI eine beliebige Anfrage gestellt werden. Da das Webfrontend über keinerlei Geschäftslogik oder Datenbankzugriff verfügt, wird die aufbereitete Anfrage an die Web API weitergeleitet, wo sowohl auf persistierte Daten zugegriffen werde kann, als auch die Verarbeitung stattfindet. Die Ergebnisse werden nachfolgend an den Benutzer zurück propagiert. 
 
 \subsection{Datenmodell}
-Das eingesetzte Datenmodell für die Persistenz der Backenddaten, teilt sich in zwei Kategorien die nachfolgend erläutert werden:
+Das eingesetzte Datenmodell für die Persistenz der Backenddaten teilt sich in zwei Kategorien die nachfolgend erläutert werden:
 
 \begin{itemize}
 \item Benutzer \\
 Abbildung \ref{fig:backendDatamodels} (a) beschreibt das Modell für die Benutzerdaten. Neben den Basisdaten des Benutzers können selbigem auch verschiedene Rollen zugeordnet werden. Die Entitäten \texttt{User Claims} und \texttt{Role Claims} beschreiben Eigenschaften von Benutzern und Rollen die dynamisch angepasst werden können. Das Claims Konzept ist Teil des eingesetzten Identity Frameworks (Asp.Net Identity).
 \item SmartCar \\
-Das Datenmodell für die Anwendungsdaten wird in Abbildung \ref{fig:backendDatamodels} (b) gezeigt. Benutzern werden darin beliebig viele Fahrzeuge sowie Fahrten zugeordnet. Eine Fahrt (Trip) ist mit den aus den Logfiles geparsten Rohdaten verbunden (\texttt{TripData}) wobei jeder Eintrag einen bestimmten Signaltypen aufweist. Für eine bessere Anpassbarkeit der unterstützen Signale sind diese in die Entität \texttt{SignalMap} ausgelagert.
+Das Datenmodell für die Anwendungsdaten wird in Abbildung \ref{fig:backendDatamodels} (b) gezeigt. Benutzern werden darin beliebig viele Fahrzeuge sowie Fahrten zugeordnet. Eine Fahrt (Trip) ist mit den aus den Logfiles geparsten Rohdaten verbunden (\texttt{TripData}), wobei jeder Eintrag einen bestimmten Signaltypen aufweist. Für eine bessere Anpassbarkeit der unterstützen Signale sind diese in die Entität \texttt{SignalMap} ausgelagert.
 \end{itemize}
 
 \begin{figure} 

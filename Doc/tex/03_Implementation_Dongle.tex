@@ -49,7 +49,7 @@ Ebenfalls erfolgt die Speicherung der abgefragten OBD-Werte nicht mehr in einem 
 \pagebreak
 \subsection{Logging}
 \label{sec:Logging}
-Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
+Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und Schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
 \begin{figure}[h]
   \begin{center}
     \includegraphics[scale=0.75]{./img/Persistence.jpg}

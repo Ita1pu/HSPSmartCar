@@ -3,18 +3,18 @@
 Folgendes Kapitel soll einen Überblick über die durchgeführten Tests geben und aufzählen welche Erkenntnisse aus diesen erlangt wurden.
 
 \section{Backend}
-Nach dem erreichen des geplanten Standes des Backends wurde dieses getestet. Hierfür wurden Trips unterschiedlicher Länge mehrfach in das Backend geladen. 
+Nach dem Erreichen des geplanten Standes des Backends wurde dieses getestet. Hierfür wurden Trips unterschiedlicher Länge mehrfach in das Backend geladen. 
 
 Bei diesen Tests wurde folgendes festgestellt:
 \begin{itemize}
-	\item \textbf{Schlechte Performance beim interagieren mit Tracks}
+	\item \textbf{Schlechte Performance beim Interagieren mit Tracks}
 	
-	Beim einlesen und erneuten laden der Tracks, zum Beispiel für die Darstellung, wurde festgestellt, dass die benötigte Dauer fast unabhängig von der Größe des Tracks ist. Bei genauerer Recherche konnte festgestellt werden, dass die langen Zugriffszeiten durch den verwendeten Datenbankzugriff bedingt wurden. Dieser beruht auf %todo: sorry andi weis nicht genau was du damals gesagt hattest
+	Beim Einlesen und erneuten Laden der Tracks, zum Beispiel für die Darstellung, wurde festgestellt, dass die benötigte Dauer fast unabhängig von der Größe des Tracks ist. Bei genauerer Recherche konnte festgestellt werden, dass die langen Zugriffszeiten durch den verwendeten Datenbankzugriff bedingt wurden. Dieser beruht auf %todo: sorry andi weis nicht genau was du damals gesagt hattest
 	Da es allerdings keine Alternative zu der verwendeten Technik gibt, konnte dieses Problem vorerst nicht gelöst werden.
 	
 	\item \textbf{Verwendung des \ac{API}-Containers als Release}
 	
-	Beim Versuch den \ac{API}-Containers im Release-Modus zu verwenden, wurde festgestellt, dass in diesem Modus die anderen Container keine Verbindung zum \ac{API}-Container herstellen können. %todo: auch hier kann ich leider nicht angeben woran es genau liegt
+	Beim Versuch den \ac{API}-Container im Release-Modus zu verwenden, wurde festgestellt, dass in diesem Modus die anderen Container keine Verbindung zum \ac{API}-Container herstellen können. %todo: auch hier kann ich leider nicht angeben woran es genau liegt
 	
 %	man könnte noch schreiben, dass es probleme gibt wenn man des zeug neu startet nachm neuen bauen... aber des dürfte eigentlich nichts für hier sein oder... weil der normale user baut es ja nicht neu und startet es anschließend wieder...
 \end{itemize}
@@ -43,4 +43,3 @@ Es wurde zunächst deutlich, dass die Dauer der einzelnen Durchgänge der Haupt-
 Eine Analyse zeigte auf, dass diese hohen Zeiten vor allem durch die Latenz bei der Abfrage der OBD-Daten vom Steuergerät zustande kommen. Dieses Verhalten kann nicht beeinflusst werden, stellt allerdings nur ein kleines Problem dar. Da zu jedem erfassten Wert auch ein Zeitstempel mit einer Genauigkeit von \textpm 8 Millisekunden gespeichert wird, ist die Einhaltung der angestrebten 500 Millisekunden für spätere Berechnungen nicht notwendig. Die Unterschiedliche Frequenz mit der die Logging-Klassen erfasst werden, welche mittels der Modulo-Operationen auf dem Loop-Counter erreicht wird, bleibt aufgrund der geringen Änderungsrate der Werte jedoch bestehen.
 \paragraph{}
 Darüber hinaus zeigten die Tests, dass die Verwendung des LowPowerModes des Coprozessors nicht den Erwartungen entsprach. Der STM32 konnte zwar in einen Schlafzustand versetzt werden, die Reaktivierung des selben konnte jedoch trotz intensiver Recherche im veröffentlichten Code und im offiziellen Freematics Forum nicht erreicht werden. Es zeigte sich allerdings, dass die verwendeten Funktionen aus den aktuelleren Versionen der offiziellen Softwarebibliotheken entfernt wurden \cite{freematicsRevFeb}. Da bereits ein Timeout bei der Abfrage von OBD-Werten dazu führt, dass die Dongle-Software ein Abstellen des Fahrzeuges vermutet, folgte daraus ein zufälliges Abbrechen der Aufzeichnung während einer laufenden Fahrt. Zur Beseitigung des Problems wurde auf die Verwendung des LowPowerModes verzichtet. Dieses Problem stellt im aktuellen Projektstand eine Verbesserungsmöglichkeit dar.
-

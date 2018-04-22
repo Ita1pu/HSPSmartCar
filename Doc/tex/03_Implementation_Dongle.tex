@@ -50,7 +50,7 @@ Ebenfalls erfolgt die Speicherung der abgefragten OBD-Werte nicht mehr in einem 
 \subsection{Logging}
 \label{sec:Logging}
 Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und Schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.75]{./img/Persistence.jpg}
     \caption{Hierarchie beim SD Zugriff}
@@ -62,10 +62,10 @@ Die Aufteilung in die oben gezeigten Klassen hat aber nicht nur eine bessere Les
 Wie in Abbildung \ref{fig:Persistence} zu sehen ist, greift diese Klasse direkt auf den SD-Kartentreiber zu. Der \texttt{File\_System\_Handler} bietet die Möglichkeit mit von außen aufrufbaren Funktionen Dateien zu erstellen, zu öffnen, zu löschen und anzulegen. Diese Klasse sollte im Gesamtsystem nur einmal vorkommen, da sie eine Menge an Speicherplatz benötigt und der RAM auf dem \textit{ATmega328p} auf 2KB beschränkt ist.\cite{Atmega328P} Die Implementierung eines Singelton Patterns erfolgte nicht um zusätzlich benötigten Speicherplatz zu vermeiden.
 Des weiteren ist es pro File\_System\_Handler nur möglich eine einzige Datei zu öffnen und nicht mehrere auf einmal. Auch das ist eine Schutzmaßname um unnötige Speicherplatz Verschwendung zu verhindern.
 \subsubsection*{Persistence Klasse}
-Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Log-Dateien immer den selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
+Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Logs immer dem selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
 \subsubsection*{Logging Format}
-Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine einheitliche Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Aus diesen Gründen wurde das Datenformat aus Abbildung \ref{fig:LoggingEntry} für das Logging gewählt:
-\begin{figure}[h]
+Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Für die Umsetzung dieser Anforderungen ist das Datenformat aus Abbildung \ref{fig:LoggingEntry} für das Logging entstanden:
+\begin{figure}[H]
 \begin{center}
   \begin{tabular}{ | c || c | c | c | c |}
     \hline
@@ -78,29 +78,18 @@ Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ei
 \end{center}
 \end{figure}
 \subsubsection*{MVID}
-Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten. 
+Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. Die MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten. 
 \subsubsection*{Datum}
-Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit Wert nur bis ungefähr 2038 zählen könnte. Mit 64 Bit lässt sich ein weitaus größerer Zeitraum abdecken.
+Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit Wert nur bis zum Jahr 2038 zählen könnte. Mit 64 Bit lässt sich ein weitaus größerer Zeitraum abdecken und eine genaue Bestimmung für jeden Zeitstempel ermöglichen.
 \subsubsection*{Daten ID}
 Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser Wert richtet sich nach der in Abschnitt \ref{sec:systemDesign} gezeigten OBD-Tabelle. Zusätzlich zu den OBD-IDs kann dieses Feld Werte für die GPS-Koordinaten, den Beschleunigungssensor und das Gyroskop annehmen.  Nur mit der zugehörigem ID kann dem Wert eine Bedeutung zugeteilt werden. 
 \subsubsection*{Wert}
-Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID muss dieser Wert anders interpretiert werden.
-\subsection{Bluetooth Kommunikation}
-\label{sec:Bluetooth}
-Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über Bluetooth mit einer Smartphone App zu kommunizieren. Hierfür wird der Freematics ONE mit dem Bluetooth Low energy fähigem CC2541 Modul von Texas Instruments ausgeliefert.
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[scale=0.5]{./img/BLEChip.jpg}
-    \caption{Schematischer Aufbau des CC2541\cite{Freematics2016}}
-    \label{fig:BLEChip}
-  \end{center}
-\end{figure} 
-Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine PINs. Die zwei UART Pins des Chips(UART\_TXD/UART\_RXD) sind mit den UART Pins des ATmega328p(B\_RXD/M\_TXD) verbunden. Der CC2541 ist so konfiguriert, dass jede Nachricht die von dem Mikrocontroller über UART versendet wird direkt über Bluetooth nach Außen gesendet wird. Dadurch entsteht der Effekt, dass für Nachrichten, die über die der Dongle über die Arudino Funktion \texttt{Serial.println()} ausgibt, automatisch ein Versenden über BLE erfolgt.
-\paragraph{}{}
-Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Der Dongle nutzt Bluetooth um die folgenden 2 Funktionen auszuführen.
-\subsubsection*{1. Live Daten Übertragung}
+Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID wird dieser Wert anders interpretiert.
+\subsubsection{Bluetooth}
+Wie in Kapitel \ref{sec:Bluetooth} beschrieben, lassen sich Nachrichten über Bluetooth vom Dongle aus über die Arduino Funktion \texttt{Serial.println()} ausgeben und mit Hilfe von \texttt{Serial.read()} einlesen. Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Bluetooth nutzt der Dongle um die Live Daten zu übertragen und um die Daten von der SD-Karte zu übertragen. Die nächsten 2 Kapitel beschreiben wie die zwei Features implementiert sind und wie verwendete Protokolle aussehen.
+\subsubsection{Live Daten Übertragung}
 Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
   \begin{tabular}{ | c | c | c | c | c |}
     \hline
@@ -120,8 +109,8 @@ Eine Live Daten Nachricht, wie in Abbildung \ref{fig:LiveDataMessage} zu sehen g
   \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch 
 \end{enumerate}
 \pagebreak
-\subsubsection*{2. Upload der Logdateien}
-Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
+\subsubsection{Upload der Logdateien}
+Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses Verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
 \begin{figure}[h]
   \begin{center}
     \includegraphics[scale=0.6]{./img/DataUploadSequence.jpg}

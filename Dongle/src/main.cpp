@@ -242,8 +242,6 @@ void loop()
 }
 
 //Not Used due to missing App feature
-/*
 void uploadBT(){
-  //Not implemented yet; 23-03-2018
   return;
-}*/
+}

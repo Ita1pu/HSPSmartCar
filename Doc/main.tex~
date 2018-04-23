@@ -1,5 +1,8 @@
 \documentclass[numbers=noenddot, a4paper, 12pt, headsepline, footsepline]{scrreprt}
 
+% Zeilenabstand vergrößern
+\renewcommand{\baselinestretch}{1.25} 
+
 % Deutsche Umlaute
 \usepackage[utf8]{inputenc}
 
@@ -11,6 +14,8 @@
 
 % Einbinden von Bildern
 \usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{float}
 
 % Mathematische Pakete
 \usepackage{amsmath}
@@ -36,6 +41,11 @@
 
 %einbinden von pdf seiten
 \usepackage{pdfpages}
+
+\usepackage{wrapfig}
+
+
+\usepackage{todonotes}
 
 \lstset{
 	%	backgroundcolor=\color{lbcolor},
@@ -102,7 +112,11 @@
 \usepackage{acronym}
 
 %um links im pdf zu haben mit denen man hin und her springen kann
+\usepackage{etoolbox}
 \usepackage{hyperref}
+\apptocmd{\UrlBreaks}{\do\f\do\m}{}{}
+\setcounter{biburllcpenalty}{9000}% Kleinbuchstaben
+\setcounter{biburlucpenalty}{9000}% Großbuchstaben
 
 %um Bilder bei Bedarf zu rotieren
 \usepackage{rotating}
@@ -139,7 +153,7 @@
 
 \newpage
 \listoffigures
-\lstlistoflistings
+%\lstlistoflistings
 \listoftables
 \include{./tex/abkuerzungen}
 \printbibliography

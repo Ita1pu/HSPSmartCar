@@ -1,0 +1,42 @@
+\title{Smart Car} 
+\subtitle{Hauptseminar Projektstudium}
+\author{\\
+	\begin{tabular}{|c|c|c|}
+		\hline 
+		Knorr Thomas 		 & xyzk 	& HSP1 \\ 
+		\hline 
+		Lackner Andreas 	 & 3120204 	& HSP2 \\ 
+		\hline 
+		Schleinkofer Michael & 3119501 	& HSP2 \\ 
+		\hline 
+		Welker Franz 		 & 3119754  & HSP2 \\ 
+		\hline 
+		Wiche Fabian 		 & xyzk		& HSP1 \\ 
+		\hline 
+	\end{tabular} 
+	}	
+
+\date{\today}
+%\clearpairofpagestyles
+
+\makeatletter
+\begin{titlepage}
+	
+	\begin{center}
+		\includegraphics[width=10cm]{./img/OTHLogo.jpg}\\
+		\vspace{4cm}
+		{\huge\bfseries\@title\unskip\strut\par}\paragraph{}
+		{\Large\bfseries\@subtitle\unskip\strut\par}\paragraph{}
+		An der\\
+		Ostbayerischen Technischen Hochschule Regensburg\\
+		Fakultät Informatik/Mathematik
+		\paragraph{}
+		Betreut durch Prof. Dr. Klaus Volbert\\
+		\vspace{\fill}
+		Vorgelegt von: \vspace{0,3cm}
+		\@author\\
+		\vspace{0,3cm}
+		Datum: \@date
+	\end{center}
+\end{titlepage}
+\makeatother

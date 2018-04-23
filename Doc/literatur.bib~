@@ -1,0 +1,65 @@
+@comment{x-kbibtex-encoding=utf-8}
+
+@article{hierkoennte42,
+	author = {hier könnte},
+	date = {2018-03-14},
+	title = {ihre Werbung stehen},
+	year = {42}
+}
+
+@comment{jabref-meta: databaseType:biblatex;}
+
+@proceedings{rtFuel,
+	author = {Henrique Fonseca and Carlos Ferreira and Telmo Fernandes},
+	month = {06},
+	series = {Conference: 15th International Conference on Experimental Mechanics},
+	title = {New Methodologies to Measure in Real Time Fuel Consumption of Internal Combustion Engines},
+	year = {2012}
+}
+
+@misc{arduinoTimer,
+	address = {https://www.arduino.cc/en/Tutorial/SecretsOfArduinoPWM},
+	author = {Ken Shirriff and Paul Badger},
+	howpublished = {online},
+	title = {Arduino -SecretsOfArduinoPWM}
+}
+
+@proceedings{obdConsumption,
+	author = {Adriano Alessandrini and Francesco Filippi and Fernando Ortenzi},
+	month = {01},
+	series = {Conference: 20th International Emission Inventory Conference},
+	title = {Consumption calculation of vehicles using OBD data},
+	year = {2012}
+}
+
+@misc{nefz,
+	address = {http://eur-lex.europa.eu/legal-content/DE/TXT/HTML/?uri=CELEX:31991L0441\&from=DE},
+	howpublished = {online},
+	month = jun,
+	title = {Richtlinie 91/441/EWG des Rates vom 26. Juni 1991 zur Änderung der Richtlinie 70/220/EWG zur Angleichung der Rechtsvorschriften der Mitgliedsstaaten über Maßnahmen gegen die Verunreinigung der Luft durch Emissionen von Kraftfahrzeugen},
+	year = {1991}
+}
+
+@misc{aralFAQ,
+	address = {https://www.aral.de/de/forschung/faq/faqs.html},
+	editor = {Global Fuels Technology},
+	howpublished = {online},
+	title = {FAQs | FAQ | Forschung (Aral Website)}
+}
+
+@misc{gpsPrecision,
+	address = {https://wiki.openstreetmap.org/wiki/DE:Genauigkeit\_von\_GPS-Daten},
+	editor = {OpenStreetMap Foundation},
+	howpublished = {online},
+	title = {Genauigkeit von GPS-Daten - OpenStreetMap Wiki}
+}
+
+@misc{ISOobd,
+	editor = {International Organization for Standardization},
+	month = jan,
+	number = {1},
+	series = {Road vehicles - Communication between vehicle and external equipment for emissions-related dignostics},
+	title = {ISO 15031-5},
+	year = {2006}
+}
+

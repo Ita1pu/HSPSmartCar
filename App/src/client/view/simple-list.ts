@@ -97,7 +97,7 @@ namespace View {
                 Math.round(position.coords.longitude * 1000) / 1000);
 
             if (position.coords.speed != null) 
-                SimpleList.lastInstance.velocityMobile.text(Math.round(position.coords.speed));
+                SimpleList.lastInstance.velocityMobile.text(Math.round(position.coords.speed * 3.6));
             else
                 SimpleList.lastInstance.velocityMobile.text("0");
         }

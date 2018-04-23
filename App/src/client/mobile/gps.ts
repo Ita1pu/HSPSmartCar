@@ -46,7 +46,7 @@ namespace Mobile {
 
         private getCurrentPosition() {
             this.watchID = navigator.geolocation.watchPosition((position: Position) => {
-                Logging.push("GPS: " + position.coords.latitude + ", " + position.coords.longitude + " | " + position.coords.speed);
+                //Logging.push("GPS: " + position.coords.latitude + ", " + position.coords.longitude + " | " + position.coords.speed);
 
                 for (let notificationCallback of this.currentPositionCallbacks) {
                     notificationCallback(position);

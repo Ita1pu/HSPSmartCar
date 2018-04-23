@@ -1,4 +1,4 @@
-\chapter{System Design}
+﻿\chapter{System Design}
 \label{sec:systemDesign}
 Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf ein System mit drei Teilen geeinigt. Zunächst benötigt das System ein Gerät zur Aufzeichnung der OBD-Daten. Da dieses Gerät der Bequemlichkeit wegen im Fahrzeug verbleiben soll und vermutlich wenig Ressourcen besitzt, verfügt das geplante System zusätzlich noch über ein Backend welches die aufgezeichneten Daten langfristig speichern und auswerten soll. Zusätzlich erfolgt noch eine Anbindung einer Smartphone-App, welche die Fahrzeug-Daten während der Fahrt veranschaulichen soll. Der Vorteil dieser Lösung liegt in der Möglichkeit, die Software der drei Komponenten OBD-Dongle, App und Backend paralell entwickeln zu können. Somit ergibt sich das in Abbildung \ref{fig:SysArch} dargestellte System.
 \begin{figure}[h]
@@ -41,7 +41,7 @@ Die \enquote{Helpers}-Komponente (siehe Abbildung \ref{fig:appKlassendiagrammHel
 
 Die \enquote{Variables} Dateien enthalten eine Liste von allen HTML IDs und Klassen Namen, die über HTML, TypeScript als auch über SASS zugegriffen werden können. Die Liste wird nur als TypeScript Objekt im JSON-Format gepflegt und automatisch, beim Kompilieren, als SASS Variablen generiert.
 \\
-Für das Speichern aktueller Benutzereinstellungen und Konfigurationen (z.B. bei Neustart der App wird die letzte ausgewählte View gesetzt) steht die Klasse \enquote{Store} zur Verfügung (Siehe Kapitel \ref{ration}). Hier werden die Daten als Key-Value-Paar in die Browser eigenen \enquote{Local/Session Storage} gespeichert. Dabei können die Daten entweder flüchtig in den \enquote{Session Store} oder permanent in den \enquote{Local Store} eingetragen werden. 
+Für das Speichern aktueller Benutzereinstellungen und Konfigurationen (z.B. bei Neustart der App wird die letzte ausgewählte View gesetzt) steht die Klasse \enquote{Store} zur Verfügung (Siehe Kapitel \ref{sec:appKonfiguration}). Hier werden die Daten als Key-Value-Paar in die Browser eigenen \enquote{Local/Session Storage} gespeichert. Dabei können die Daten entweder flüchtig in den \enquote{Session Store} oder permanent in den \enquote{Local Store} eingetragen werden. 
 \\
 Um die Anforderung der Mehrsprachigkeit zu gewährleisten, werden alle benötigten Texte nicht \enquote{Hard Coded} in die Quelldateien eingefügt, sondern in die \enquote{Strings} Klasse (Siehe Kapitel \ref{sec:appMehrsprachigkeit}) ausgelagert. Hier sind alle Texte in jeder verfügbaren Sprache gespeichert. Außerdem verfügt sie über eine Funktion, welche automatisch den Text in der richtigen Sprache zurückgibt.
 \\
@@ -66,7 +66,7 @@ Außerdem enthält die Komponente die \enquote{Settings} Klasse, die alle zur Ve
 Für die Pflege der App ist eine Protokollierung der Handlungen sowie der Fehler unumgänglich. Dazu steht die Komponente \enquote{Logging} (siehe Abbildung \ref{fig:appKlassendiagrammLogging}) zur Verfügung. Diese enthält eine Liste von \enquote{ErrorLogEntry}'s, welche zum einen automatisch mit Systemmeldungen gefüttert wird, sowie zum anderen von jeder Komponente bespeist werden kann. Außerdem kann die Liste bei Bedarf auf der Konfigurationssicht (siehe Kapitel \ref{sec:appSichtKonfiguration}) angezeigt werden.
 \\
 In der Komponente \enquote{Dongle} (siehe Abbildung \ref{fig:appKlassendiagrammDongle}) befindet sich aktuell nur die \enquote{Bluetooth} Klasse. Diese kümmert sich um die Bluetooth Verbindung und Kommunikation mit dem Dongle (siehe Kapitel \ref{sec:appBluetooth}).
-Weitere Klassen werden in Zukunft unter anderen das Herunterladen der Loggingdaten, sowie das flashen des Dongle's mit neuer Firmware sein (siehe Kapitel \ref{sec:appAusblick}).
+Weitere Klassen werden in Zukunft unter anderen das Herunterladen der Loggingdaten, sowie das flashen des Dongle's mit neuer Firmware sein.
 \\
 Die Verbindung zu den nativen Schnittstellen zum Smartphone kümmert sich das Modul \enquote{Mobile} (siehe Abbildung \ref{fig:appKlassendiagrammMobile})) und beinhaltet die benötigten GPS Funktionen (siehe Kapitel \ref{sec:appGPS}).
 

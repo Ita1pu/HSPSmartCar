@@ -4,7 +4,7 @@ Als Technologie für die Implementierung des Backends wird das Asp.Net Core Fram
 \subsection{Authentifizierung und Autorisierung}
 Für die Umsetzung der Benutzerauthentifizierung und die Rechteverwaltung wird IdentityServer4\cite{Allen2016} eingesetzt. Dieses Framework erlaubt eine moderne zentralisierte Identitätsverwaltung für verschiedene Anwendungsszenarien basierend auf OpenId und OAuth2. 
 
-\begin{figure}[h]
+\begin{figure}[htp!]
   \begin{center}
     \includegraphics[width=\textwidth]{./img/BackendIdentityServer.png}
     \caption{Terminologien des Identity Servers}
@@ -14,7 +14,7 @@ Für die Umsetzung der Benutzerauthentifizierung und die Rechteverwaltung wird I
 
 Das Grundkonzept des Identity Servers wird in Abbildung \ref{fig:backendIdentityServer} gezeigt. \textbf{Benutzer} greifen dabei über verschiedene \textbf{Clients} auf geschützte \textbf{Ressourcen} wie APIs oder Anwendungsbereiche zu, die von dem Identitätsserver geschützt werden. Dieses Konzept passt auf das in diesem Projekt entstehende Szenario, in dem Benutzer entweder über die Smartphone App oder das Webfrontend des Backends (Clients) auf die Web API zugreifen (Ressource).
 
-\begin{figure}[h]
+\begin{figure}[htp!]
   \begin{center}
     \includegraphics[width=\textwidth]{./img/BackendAuthenticationFlow.png}
     \caption{Ablauf der Authentifizierung beim Zugriff auf geschützte Ressourcen}
@@ -54,15 +54,15 @@ Für aktuelle Autos ist es mit den gemessenen Verbrauchswerten anschließend mö
 Bei älteren Autos, welche nicht messen wie viel Kraftstoff verbraucht wird oder diese Informationen nicht über \ac{OBD} zu Verfügung stellen ist die Analyse komplexer. Aus diesem Grund gibt es auch mehrere wissenschaftliche Arbeiten die sich in diesem Zusammenhang auch mit der \ac{OBD} Schnittstelle beschäftigen \cite{obdConsumption} \cite{rtFuel}. Der Konsens dieser Arbeiten ist, dass sich der Momentanverbrauch, sofern er sich nicht über die \ac{PID} 0x5E auslesen lässt, mithilfe anderer Datenwerte Berechnen lässt.
 Dazu wird im Grunde die Formel \ref{GrundFormelMomentanVerbrauch} verwendet. 
 
-Hier gibt die Konstante $AirFuelRatio_\text{Stöch}$ das Verhältnis von Luft und Kraftstoff an, bei der alle
-Kohlenwasserstoff-Moleküle mit allen Sauerstoffmolekülen der angesaugten Luft reagieren. Dieses
-Verhältnis ist für den Verbrennungsvorgang optimal, und beträgt bei Ottomotoren 14,7 und bei
-Dieselmotoren 14,5.
-
 \begin{equation}
 \label{GrundFormelMomentanVerbrauch}
 Sprit(\frac{g}{sec}) = \frac{Luftmasse(\frac{g}{sec})}{\lambda*AirFuelRatio_\text{Stöch}}
 \end{equation}
+
+Hier gibt die Konstante $AirFuelRatio_\text{Stöch}$ das Verhältnis von Luft und Kraftstoff an, bei der alle
+Kohlenwasserstoff-Moleküle mit allen Sauerstoffmolekülen der angesaugten Luft reagieren. Dieses
+Verhältnis ist für den Verbrennungsvorgang optimal, und beträgt bei Ottomotoren 14,7 und bei
+Dieselmotoren 14,5.
 
 Ausgehend von Formel \ref{GrundFormelMomentanVerbrauch} kann nun anhand der Dichte auf den Momentanverbrauch in Litern geschlossen werden. Dazu verwendet man Formel \ref{DichteZuVerbrauchInLiter}. Dabei ist $\rho$ die gemittelte Dichte des Kraftstoffs. Für Ottokraftstoff beträgt diese etwa 747,5
 Gramm pro Liter, für Diesel dagegen etwa 832,5 Gramm pro Liter\cite{Aral2018}. 
@@ -76,10 +76,10 @@ Für die Berechnung wird als nächstes $\lambda$ benötigt. Hierbei handelt es s
 
 \begin{equation}
 \label{FormelFuerLambda}
-EQRAT 11_\text{PID 24}=DATAab_{(\text{PID 24})}*(\frac{DATAa_{(\text{PID 4F})}}{65535})
+EQRAT 11_\text{(PID 24)}=DATAab_{(\text{PID 24})}*(\frac{DATAa_{(\text{PID 4F})}}{65535})
 \end{equation}
 
-$DATAab_{\text{PID 24}}$ entspricht hierbei dem Sensorwert, welcher über die ersten beiden Bytes der \ac{PID} 0x24 ausgelesen wird (alternativ können je nach Verfügbarkeit auch die \acp{PID}) 0x25-0x2B oder 0x34-0x3B verwendet werden).
+$DATAab_{\text{(PID 24)}}$ entspricht hierbei dem Sensorwert, welcher über die ersten beiden Bytes der \ac{PID} 0x24 ausgelesen wird (alternativ können je nach Verfügbarkeit auch die \acp{PID}) 0x25-0x2B oder 0x34-0x3B verwendet werden).
 \newline
 $DATAa_{(\text{PID 4F})}$ gibt die Skalierung an.
 \newline

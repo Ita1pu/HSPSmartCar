@@ -1,4 +1,4 @@
-﻿\chapter{System Design}
+\chapter{System Design}
 \label{sec:systemDesign}
 Zur Erfüllung der im vorherigen Kapitel dargestellten Use-Cases wurde sich auf ein System mit drei Teilen geeinigt. Zunächst benötigt das System ein Gerät zur Aufzeichnung der OBD-Daten. Da dieses Gerät der Bequemlichkeit wegen im Fahrzeug verbleiben soll und vermutlich wenig Ressourcen besitzt, verfügt das geplante System zusätzlich noch über ein Backend welches die aufgezeichneten Daten langfristig speichern und auswerten soll. Zusätzlich erfolgt noch eine Anbindung einer Smartphone-App, welche die Fahrzeug-Daten während der Fahrt veranschaulichen soll. Der Vorteil dieser Lösung liegt in der Möglichkeit, die Software der drei Komponenten OBD-Dongle, App und Backend paralell entwickeln zu können. Somit ergibt sich das in Abbildung \ref{fig:SysArch} dargestellte System.
 \begin{figure}[h]

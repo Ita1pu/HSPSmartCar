@@ -90,7 +90,7 @@ Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser
 Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID wird dieser Wert anders interpretiert.
 \subsubsection{Bluetooth}
 Wie in Kapitel \ref{sec:Bluetooth} beschrieben, lassen sich Nachrichten über Bluetooth vom Dongle aus über die Arduino Funktion \texttt{Serial.println()} ausgeben und mit Hilfe von \texttt{Serial.read()} einlesen. Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Bluetooth nutzt der Dongle um die Live Daten zu übertragen und um die Daten von der SD-Karte zu übertragen. Die nächsten 2 Kapitel beschreiben wie die zwei Features implementiert sind und wie verwendete Protokolle aussehen.
-\subsubsection{Live Daten Übertragung}
+\subsection{Live Daten Übertragung}
 Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
 
 \begin{table}[htp!]
@@ -113,7 +113,7 @@ Eine Live Daten Nachricht, wie in Tabelle \ref{fig:LiveDataMessage} zu sehen gli
   \item Trennzeichen(\textbf{:}): Nach der ID kommt ein Doppelpunkt als Trennzeichen
   \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch 
 \end{enumerate}
-\subsubsection{Upload der Logdateien}
+\subsection{Upload der Logdateien}
 Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses Verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
 \begin{figure}[H]
   \begin{center}

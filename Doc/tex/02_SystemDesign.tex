@@ -245,83 +245,93 @@ Ein erster Test mit der von Freematics bereitgestellten Software zeigte die grun
 		\ \\
 		Eine Gruppe entspricht somit einem Zusammenschluss aus \acp{PID} welche alle in einem gleichen Zeitintervall abgerufen werden. Es wurde sich für folgende Gruppen entschieden (Tabelle \ref{KategorieTable}):
 		
-		\begin{center}
-			\begin{tabular}{|c|c|}
-				\hline 
-				Kategorie & Intervall \\ 
-				\hline 
-				A & 500ms \\ 
-				\hline 
-				B & 1,5s \\ 
-				\hline 
-				C & 15s \\ 
-				\hline 
-				D & 5min \\ 
-				\hline 
-				E & neue Route \\ 
-				\hline 
-				F & neues Auto \\ 
-				\hline 
-			\end{tabular} 
-			\label{KategorieTable}		
-		\end{center}
+		\begin{table}[htp!]
+			\caption{Kategorien der \acp{PID}}
+			\label{KategorieTable}	
+			
+			\begin{center}
+				\begin{tabular}{|c|c|}
+					\hline 
+					Kategorie & Intervall \\ 
+					\hline 
+					A & 500ms \\ 
+					\hline 
+					B & 1,5s \\ 
+					\hline 
+					C & 15s \\ 
+					\hline 
+					D & 5min \\ 
+					\hline 
+					E & neue Route \\ 
+					\hline 
+					F & neues Auto \\ 
+					\hline 
+				\end{tabular} 
+			\end{center}
+		\end{table}
+		
 
 		
-		Der Tabelle \ref{KategorieTable} kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und in welcher Kategorie sie zugeordnet wurde.
+		Der Tabelle \ref{selectedPIDs} kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und welcher Kategorie sie zugeordnet wurde.
 		
-		\begin{center}
-			\begin{tabular}{|c|c|c|}
-				\hline 
-				Name & Wert & Kategorie \\ 
-				\hline
-				Engine Load & 0x04 & A \\ 
-				\hline
-				Engine coolant temperature & 0x05 & C \\ 
-				\hline 
-				Engine RPM & 0x0C & A \\ 
-				\hline 
-				Vehicle speed & 0x0D & A \\ 
-				\hline
-				Air Flow Rate & 0x10 & A\\
-				\hline 
-				Run time since engine start & 0x1F & C \\ 
-				\hline 
-				Distance traveled with malfunction indicator lamp & 0x21 & D \\ 
-				\hline
-				Oxygen Sensor(s) of Bank 1 & 0x24 - 0x2B & A \\
-				\hline 
-				Fuel tank level input & 0x2F & D \\ 
-				\hline 
-				Absolute barometric pressure & 0x33 & C \\ 
-				\hline
-				Oxygen Sensor(s) of Bank 2 & 0x34 - 0x3B & A \\ 
-				\hline
-				Ambient air temperature & 0x46 & C \\ 
-				\hline
-				Maximum value for Equivalence Ratio & 0x4F & E \\
-				\hline
-				Maximum value for Air Flow Rate & 0x50 & E \\
-				\hline 
-				Fuel type & 0x51 & E \\ 
-				\hline 
-				Ethanol fuel \% & 0x52 & E \\ 
-				\hline 
-				Relative accelerator pedal position & 0x5A & A \\ 
-				\hline 
-				Engine oil temperature & 0x5C & C \\ 
-				\hline 
-				Engine fuel rate & 0x5E & A \\ 
-				\hline 
-				Driver's demand engine-percent torque & 0x61 & A \\ 
-				\hline 
-				Actual engine-percent torque & 0x62 & A \\ 
-				\hline 
-				Engine reference torque & 0x63 & A \\ 
-				\hline 
-				Engine run time & 0x7F & C \\ 
-				\hline 
-			\end{tabular} 
-		\end{center}
+		\begin{table}[htp!]
+			\caption{Ausgewählte \acp{PID}}
+			\label{selectedPIDs}
+		
+			\begin{center}
+				\begin{tabular}{|c|c|c|}
+					\hline 
+					Name & Wert & Kategorie \\ 
+					\hline
+					Engine Load & 0x04 & A \\ 
+					\hline
+					Engine coolant temperature & 0x05 & C \\ 
+					\hline 
+					Engine RPM & 0x0C & A \\ 
+					\hline 
+					Vehicle speed & 0x0D & A \\ 
+					\hline
+					Air Flow Rate & 0x10 & A\\
+					\hline 
+					Run time since engine start & 0x1F & C \\ 
+					\hline 
+					Distance traveled with malfunction indicator lamp & 0x21 & D \\ 
+					\hline
+					Oxygen Sensor(s) of Bank 1 & 0x24 - 0x2B & A \\
+					\hline 
+					Fuel tank level input & 0x2F & D \\ 
+					\hline 
+					Absolute barometric pressure & 0x33 & C \\ 
+					\hline
+					Oxygen Sensor(s) of Bank 2 & 0x34 - 0x3B & A \\ 
+					\hline
+					Ambient air temperature & 0x46 & C \\ 
+					\hline
+					Maximum value for Equivalence Ratio & 0x4F & E \\
+					\hline
+					Maximum value for Air Flow Rate & 0x50 & E \\
+					\hline 
+					Fuel type & 0x51 & E \\ 
+					\hline 
+					Ethanol fuel \% & 0x52 & E \\ 
+					\hline 
+					Relative accelerator pedal position & 0x5A & A \\ 
+					\hline 
+					Engine oil temperature & 0x5C & C \\ 
+					\hline 
+					Engine fuel rate & 0x5E & A \\ 
+					\hline 
+					Driver's demand engine-percent torque & 0x61 & A \\ 
+					\hline 
+					Actual engine-percent torque & 0x62 & A \\ 
+					\hline 
+					Engine reference torque & 0x63 & A \\ 
+					\hline 
+					Engine run time & 0x7F & C \\ 
+					\hline 
+				\end{tabular} 
+			\end{center}
+		\end{table}
 		
 
 \subsection{Zeit}

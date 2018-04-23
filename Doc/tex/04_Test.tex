@@ -1,23 +1,44 @@
 \chapter{Tests}
 \label{sec:test}
-Folgendes Kapitel soll einen Überblick über die durchgeführten Tests geben und aufzählen welche Erkenntnisse aus diesen erlangt wurden.
+Folgendes Kapitel soll einen Überblick über die durchgeführten Tests geben und gegebenenfalls aufzählen welche Erkenntnisse aus diesen erlangt wurden.
+
+\section{App}
+\label{sec:appTest}
+
+\subsection{Im Browser}
+
+Beim Entwickeln der Oberfläche konnte die App im Browser getestet werden ohne diese dabei neu kompilieren zu müssen. Hier konnten zum Beispiel Tests für die verschiedenen Bildschirmgrößen durchgeführt werden.
+
+\subsection{Als Windows App und im Android Emulator}
+
+Für das Testen einiger Funktionen (z.B. Bluetooth) wird die Device-Umgebung benötigt. Hierfür wurde die Smartphone-App entweder als Windows App oder im Android Emulator getestet. So wurde zum Beispiel der Integrationstest zum Identity Server, bei dem spezielle Rechte für einen HTTP-Request benötigt werden, durchgeführt.
+
+\subsection{Auf einem Endgerät}
+
+Jedoch mussten viele Tests direkt auf dem Endgerät stattfinden. Die App kann dabei durch die im Chrome-Browser enthaltenen Debug-Features bestens, sogar über die IDE (z.B. VS-Code) \enquote{debugged} (siehe Abbildung \ref{fig:App_Debug_Device}) werden.
+
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[height=7cm,keepaspectratio]{./img/App_Debug_Device}
+		\caption{Debuggen der Smartphone-App auf Endgerät}
+		\label{fig:App_Debug_Device}
+	\end{center}
+\end{figure}
+
+\subsection{Während der Fahrt}
+
+Da auch Fehler während der Fahrt auftreten können, hier jedoch nicht sofort auf diese eingegangen werden kann, werden diese mitprotokolliert und können nach der Fahrt ausgewertet und nachvollzogen werden. 
+
+
 
 \section{Backend}
 Nach dem Erreichen des geplanten Standes des Backends wurde dieses getestet. Hierfür wurden Trips unterschiedlicher Länge mehrfach in das Backend geladen. 
 
-Bei diesen Tests wurde folgendes festgestellt:
-\begin{itemize}
-	\item \textbf{Schlechte Performance beim Interagieren mit Tracks}
+Bei diesen Tests wurde festgestellt, dass es eine schlechte Performance beim Interagieren mit den  Tracks gibt.
+Beim Einlesen und erneuten Laden der Tracks, zum Beispiel für die Darstellung, wurde festgestellt, dass die benötigte Dauer fast unabhängig von der Größe des Tracks ist. Bei genauerer Recherche konnte festgestellt werden, dass die langen Zugriffszeiten durch den verwendeten Datenbankzugriff bedingt wurden. Dieser beruht auf %todo: sorry andi weis nicht genau was du damals gesagt hattest
+Da es allerdings keine Alternative zu der verwendeten Technik gibt, konnte dieses Problem vorerst nicht gelöst werden.
 	
-	Beim Einlesen und erneuten Laden der Tracks, zum Beispiel für die Darstellung, wurde festgestellt, dass die benötigte Dauer fast unabhängig von der Größe des Tracks ist. Bei genauerer Recherche konnte festgestellt werden, dass die langen Zugriffszeiten durch den verwendeten Datenbankzugriff bedingt wurden. Dieser beruht auf %todo: sorry andi weis nicht genau was du damals gesagt hattest
-	Da es allerdings keine Alternative zu der verwendeten Technik gibt, konnte dieses Problem vorerst nicht gelöst werden.
-	
-	\item \textbf{Verwendung des \ac{API}-Containers als Release}
-	
-	Beim Versuch den \ac{API}-Container im Release-Modus zu verwenden, wurde festgestellt, dass in diesem Modus die anderen Container keine Verbindung zum \ac{API}-Container herstellen können. %todo: auch hier kann ich leider nicht angeben woran es genau liegt
-	
-%	man könnte noch schreiben, dass es probleme gibt wenn man des zeug neu startet nachm neuen bauen... aber des dürfte eigentlich nichts für hier sein oder... weil der normale user baut es ja nicht neu und startet es anschließend wieder...
-\end{itemize}
+
 
 \section{Dongle}
 \label{sec:dongleTest}

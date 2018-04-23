@@ -113,37 +113,7 @@ Um den Benutzer über die gerade angezeigt Sicht zu informieren, sind am unteren
 \\
 Für manche Funktionen bieten sich Dialoge am besten an. Hier gibt es zum einen kleine Dialoge wie in Abbildung \ref{fig:App_ViewCircles} zu sehen und zum anderen Fullscreen-Dialoge, für zum Beispiel das Suchen der aktuellen Bluetooth Geräte im Umkreis (siehe Kapitel \ref{sec:appSichtKonfiguration}).
 
-\subsection{Test}
-\label{sec:appTest}
 
-\todo{Evtl ins Kapitel Test}
-
-\subsubsection{Im Browser}
-
-Beim Entwickeln der Oberfläche konnte die App im Browser getestet werden ohne diese dabei neu kompilieren zu müssen. Hier konnten zum Beispiel Tests für die verschiedenen Bildschirmgrößen durchgeführt werden.
-
-\subsubsection{Als Windows App und im Android Emulator}
-
-Für das Testen einiger Funktionen (z.B. Bluetooth) wird die Device-Umgebung benötigt. Hierfür wurde die Smartphone-App entweder als Windows App oder im Android Emulator getestet. So wurde zum Beispiel der Integrationstest zum Identity Server, bei dem spezielle Rechte für einen HTTP-Request benötigt werden, durchgeführt.
-
-\subsubsection{Auf Endgerät}
-
-Jedoch mussten viele Tests direkt auf dem Endgerät stattfinden. Die App kann dabei durch die im Chrome-Browser enthaltenen Debug-Features bestens, sogar über die IDE (z.B. VS-Code) \enquote{debugged} (siehe Abbildung \ref{fig:App_Debug_Device}) werden.
-
-\begin{figure}[H]
-  \begin{center}
-    \includegraphics[height=7cm,keepaspectratio]{./img/App_Debug_Device}
-    \caption{Debuggen der Smartphone-App auf Endgerät}
-    \label{fig:App_Debug_Device}
-  \end{center}
-\end{figure}
-
-\subsubsection{Während der Fahrt}
-
-Da auch Fehler während der Fahrt auftreten können, hier jedoch nicht sofort auf diese eingegangen werden kann, werden diese mitprotokolliert und können nach der Fahrt ausgewertet und nachvollzogen werden. 
-
- 
- 
  
  
  

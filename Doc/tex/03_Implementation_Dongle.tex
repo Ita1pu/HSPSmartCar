@@ -64,19 +64,22 @@ Des weiteren ist es pro File\_System\_Handler nur möglich eine einzige Datei zu
 \subsubsection*{Persistence Klasse}
 Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Logs immer dem selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
 \subsubsection*{Logging Format}
-Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Für die Umsetzung dieser Anforderungen ist das Datenformat aus Abbildung \ref{fig:LoggingEntry} für das Logging entstanden:
-\begin{figure}[H]
-\begin{center}
-  \begin{tabular}{ | c || c | c | c | c |}
-    \hline
-    \textbf{Byte} & 1. & 2. - 9. & 10. - 11. & 12. - 15. \\ \hline
-    \textbf{Wert} & MVID & Datum(ms) & Daten ID & Datenwert \\
-    \hline
-  \end{tabular}
-  \caption{Format eines Logging Eintrags auf der SD-Karte (15Byte)}
-  \label{fig:LoggingEntry}
-\end{center}
-\end{figure}
+Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Für die Umsetzung dieser Anforderungen ist das Datenformat aus Tabelle \ref{fig:LoggingEntry} für das Logging entstanden:
+
+\begin{table}[htp!]
+	\caption{Format eines Logging Eintrags auf der SD-Karte (15Byte)}
+	\label{fig:LoggingEntry}
+	
+	\begin{center}
+		  \begin{tabular}{ | c || c | c | c | c |}
+			\hline
+			\textbf{Byte} & 1. & 2. - 9. & 10. - 11. & 12. - 15. \\ \hline
+			\textbf{Wert} & MVID & Datum(ms) & Daten ID & Datenwert \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
 \subsubsection*{MVID}
 Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. Die MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten. 
 \subsubsection*{Datum}
@@ -89,19 +92,21 @@ Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je 
 Wie in Kapitel \ref{sec:Bluetooth} beschrieben, lassen sich Nachrichten über Bluetooth vom Dongle aus über die Arduino Funktion \texttt{Serial.println()} ausgeben und mit Hilfe von \texttt{Serial.read()} einlesen. Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Bluetooth nutzt der Dongle um die Live Daten zu übertragen und um die Daten von der SD-Karte zu übertragen. Die nächsten 2 Kapitel beschreiben wie die zwei Features implementiert sind und wie verwendete Protokolle aussehen.
 \subsubsection{Live Daten Übertragung}
 Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
-\begin{figure}[H]
-\begin{center}
-  \begin{tabular}{ | c | c | c | c | c |}
-    \hline
-    Startzeichen & ID & Trennzeichen & Wert & Endzeichen \\ \hline
-    \# & uint16 & : & uint32 & ; \\
-    \hline
-  \end{tabular}
-  \caption{Format einer Livedaten Nachricht}
-  \label{fig:LiveDataMessage}
-\end{center}
-\end{figure}
-Eine Live Daten Nachricht, wie in Abbildung \ref{fig:LiveDataMessage} zu sehen gliedert sich in folgende Teile:
+
+\begin{table}[htp!]
+	\caption{Format einer Livedaten Nachricht}
+	\label{fig:LiveDataMessage}
+	\begin{center}
+		  \begin{tabular}{ | c | c | c | c | c |}
+			\hline
+			Startzeichen & ID & Trennzeichen & Wert & Endzeichen \\ \hline
+			\# & uint16 & : & uint32 & ; \\
+			\hline
+		\end{tabular}	
+	\end{center}	
+\end{table}
+
+Eine Live Daten Nachricht, wie in Tabelle \ref{fig:LiveDataMessage} zu sehen gliedert sich in folgende Teile:
 \begin{enumerate}
   \item Start der Nachricht\textbf{(\#)}: Eine Raute am Anfang der Nachricht signalisiert, dass es sich bei dieser Nachricht um eine Live-Daten Nachricht handelt. Dieses Markieren verhindert ein versehentliches interpretieren eine anderen Nachricht als Live-Daten Nachricht.
   \item Daten ID: Direkt nach der Raute folgt die ID des Wertes der in der in der Nachricht enthalten ist. Sie richtet sich wieder nach den OBD-IDs aus Abschnitt \ref{sec:systemDesign}

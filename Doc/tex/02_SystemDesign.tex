@@ -123,7 +123,7 @@ Da die App auf HTML basiert und Plattform unabhängig ist, gibt es durch mehrere
 
 \section{Backend}
 
-Für die Aufbereitung und Auswertung der erfassten Fahrzeugdaten wird ein Backend bereitgestellt, in das die Daten hochgeladen werden können. Der folgende angebotene Funktionsumfang deckt dabei die in Kapitel \ref{sec:useCases} definierten Anforderungen ab\todo{Referenz auf Use Cases einfügen}:
+Für die Aufbereitung und Auswertung der erfassten Fahrzeugdaten wird ein Backend bereitgestellt, in das die Daten hochgeladen werden können. Der folgende angebotene Funktionsumfang deckt dabei die in Kapitel \ref{sec:useCases} definierten Anforderungen ab\todo{@andi Referenz auf Use Cases einfügen, bzw. passt text ned ganz weil bei den use cases nicht des alles gefordert ist}:
 
 \begin{itemize}
 \item Manueller Datenupload \\
@@ -204,7 +204,7 @@ Das Datenmodell für die Anwendungsdaten wird in Abbildung \ref{fig:backendDatam
     \label{fig:dongleArch}
   \end{center}
 \end{sidewaysfigure}
-Um die Fahrzeugdaten gemäß den beschriebenen Use-Cases erfassen zu können, wurden mehrere Freematics ONE beschafft. Dieser Dongle bietet im Gegensatz zu manch anderen Adaptern die Möglichkeit Daten auf eine SD-Karte zu schreiben, mit Bluetooth zu kommunizieren und auf möglichst einfache Weise die darauf befindliche Software zu verändern. Wie auf der Produkthomepage beschrieben, nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer \enquote{setup}- und einer \enquote{loop}-Funktion innerhalb einer main-Datei verwendet.
+Um die Fahrzeugdaten gemäß den beschriebenen Use-Cases erfassen zu können, wurden mehrere Freematics ONE beschafft. Dieser Dongle bietet im Gegensatz zu manch anderen Adaptern die Möglichkeit Daten auf eine SD-Karte zu schreiben, mit Bluetooth zu kommunizieren und auf möglichst einfache Weise die darauf befindliche Software zu verändern. Wie auf der Produkthomepage\cite{Ltd2014} beschrieben, nutzt der Dongle als Haupt-Controller einen ATmega328p, wie er auch auf einem Arduino UNO verwendet wird. Bei der Architektur der Dongle-Software wird deshalb für den Programmablauf ein für Arduino-Projekte klassischer Aufbau mit einer \enquote{setup}- und einer \enquote{loop}-Funktion innerhalb einer main-Datei verwendet.
 \paragraph{}
 Um bei der Entwicklung der Software für den Dongle möglichst wenig Inhaltsüber-schneidungen der Teammitglieder zu erreichen und um die Verständlichkeit und Wartbarkeit des Codes zu verbessern wurde entschieden die Schichtenarchitektur wie in Bild \ref{fig:dongleArch} umzusetzen.
 Hierbei wird für die meisten Funktionsmerkmale mindestens eine Klasse auf der Intermediate-Layer sowie der Driver-Layer implementiert. Dies hat zur Folge, dass bei einer Funktionsänderung wie beispielsweise der Verwendung eines anderen GPS-Empfängers nur die entsprechende Treiber-Klasse geändert werden muss. Die Hauptklasse mit der eigentlichen Programmlogik bleibt dabei unangetastet.\\
@@ -272,7 +272,7 @@ Ein erster Test mit der von Freematics bereitgestellten Software zeigte die grun
 		
 
 		
-		Der Tabelle \ref{selectedPIDs} kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und welcher Kategorie sie zugeordnet wurde.
+		Der Tabelle \ref{selectedPIDs} kann zum einen entnommen werden, welche \acp{PID} ausgewählt wurden und welcher Kategorie sie zugeordnet wurden.
 		
 		\begin{table}[htp!]
 			\caption{Ausgewählte \acp{PID}}
@@ -342,26 +342,9 @@ Auf dem ATmega328p Hauptcontroller stehen dem Entwickler 3 Hardware-Timer zur Ve
 Da die Intervalle zum Abrufen der PID-Kategorien B, C und D ein Vielfaches der 500 Millisekunden der Kategorie A sind, müssen für diese keine weiteren Timer verwendet werden. Statt dessen kann ein einfacher Vergleich in Kombination mit dem Modulo-Operator genutzt werden (vgl. Abbildung \ref{fig:loop}).
 \subsection{Beschleunigungssensor}
 Zunächst wurde ermittelt, welcher Sensor im Dongle verbaut wurde. Anhand der Informationen auf der Produkthomepage sowie des Source-Codes des Treibers wurde ersichtlich, dass ein MPU-9250 \ac{MEMS}-Sensor mit jeweils 3 Achsen für Beschleunigungs-, Drehraten- und Magnetfeldmessung verbaut ist. Hierbei ist besonders, dass der Sensor für das Magnetfeld als I²C-Submodul am Sensor ausgeführt ist.
-\subsection{Programmlogik}
-\label{subsec:ProgLogik}
-Die eigentliche Programmlogik kann wie bereits erwähnt in die Teile \enquote{Setup} und \enquote{Loop} getrennt werden.
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\textwidth,height=10cm,keepaspectratio]{./img/Startup}
-    \caption{Programmablauf der Initialisierung}
-    \label{fig:setup}
-  \end{center}
-\end{figure}
-\paragraph{}
-Die Abbildung \ref{fig:setup} beschreibt den Ablauf des Programms beim Einstecken des Adapters in die Schnittstelle des Autos. Hervorzuheben ist, dass die Reihenfolge der Initialisierungen von großer Bedeutung ist. Näheres dazu wird im Kapitel \ref{subsec:intPl} erklärt.
-\begin{figure}
-  \begin{center}
-    \includegraphics[width=\textwidth,height=20cm,keepaspectratio]{./img/ProgLoop}
-    \caption{Programmablauf der Endlosschleife}
-    \label{fig:loop}
-  \end{center}
-\end{figure}
-In Abbildung \ref{fig:loop} ist der Ablauf des Programms ersichtlich, welches die eigentliche Funktionalität enthält. Dies wurde in drei Modi umgesetzt. Während des Logging-Modus werden die Fahrzeug-Daten gesammelt, auf eine SD-Karte geschrieben und per Bluetooth an ein Smartphone gesandt. Der Upload-Modus dient dazu, die gesammelten Daten auf der SD-Karte an die Smartphone-App weiterzugeben. Dies soll ein Entnehmen der Karte zum Auslesen der Daten optional machen. Der Schlafmodus dient letztendlich dazu, bei abgeschalteter Zündung das Bordnetz des Fahrzeugs möglichst wenig zu belasten.
+
+
+
 \subsection{Bluetooth Kommunikation}
 \label{sec:Bluetooth}
 Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über Bluetooth mit einer Smartphone App zu kommunizieren. Hierfür wird der Freematics ONE mit dem Bluetooth Low energy fähigem CC2541 Modul von Texas Instruments ausgeliefert.
@@ -373,3 +356,24 @@ Wie dem Kapitel \ref{sec:useCases} besteht die Möglichkeit mit dem Dongle über
   \end{center}
 \end{figure} 
 Abbildung \ref{fig:BLEChip} zeigt den schematischen Aufbau des Chips und seine PINs. Die zwei UART Pins des Chips(UART\_TXD/UART\_RXD) sind mit den UART Pins des ATmega328p(B\_RXD/M\_TXD) verbunden. Der CC2541 ist so konfiguriert, dass jede Nachricht die von der Mikrocontroller über UART ausgibt direkt über Bluetooth nach Außen gesendet wird. Dadurch entsteht der Effekt, dass für Nachrichten, die der Dongle über die Arudino Funktion \texttt{Serial.println()} ausgibt, automatisch ein Versenden über BLE erfolgt. Analog zu Versenden lassen sich empfangene Botschaften über \texttt{Serial.read()} , oder \texttt{Serial.readBytes()} einlesen.
+
+\subsection{Programmlogik}
+\label{subsec:ProgLogik}
+Die eigentliche Programmlogik kann wie bereits erwähnt in die Teile \enquote{Setup} und \enquote{Loop} getrennt werden.
+\begin{figure}[htp!]
+	\begin{center}
+		\includegraphics[width=\textwidth,height=10cm,keepaspectratio]{./img/Startup}
+		\caption{Programmablauf der Initialisierung}
+		\label{fig:setup}
+	\end{center}
+\end{figure}
+\paragraph{}
+Die Abbildung \ref{fig:setup} beschreibt den Ablauf des Programms beim Einstecken des Adapters in die Schnittstelle des Autos. Hervorzuheben ist, dass die Reihenfolge der Initialisierungen von großer Bedeutung ist. Näheres dazu wird im Kapitel \ref{subsec:intPl} erklärt.
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=\textwidth,height=20cm,keepaspectratio]{./img/ProgLoop}
+		\caption{Programmablauf der Endlosschleife}
+		\label{fig:loop}
+	\end{center}
+\end{figure}
+In Abbildung \ref{fig:loop} ist der Ablauf des Programms ersichtlich, welches die eigentliche Funktionalität enthält. Dies wurde in drei Modi umgesetzt. Während des Logging-Modus werden die Fahrzeug-Daten gesammelt, auf eine SD-Karte geschrieben und per Bluetooth an ein Smartphone gesandt. Der Upload-Modus dient dazu, die gesammelten Daten auf der SD-Karte an die Smartphone-App weiterzugeben. Dies soll ein Entnehmen der Karte zum Auslesen der Daten optional machen. Der Schlafmodus dient letztendlich dazu, bei abgeschalteter Zündung das Bordnetz des Fahrzeugs möglichst wenig zu belasten.

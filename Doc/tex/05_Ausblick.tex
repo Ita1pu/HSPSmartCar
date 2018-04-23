@@ -27,6 +27,7 @@ Die in Kapitel \ref{SecErmittlungVonEngpaessen} vorgestellten Ideen könnten wei
 Wie bereits in Kapitel \ref{sec:dongleTest} aufgezeigt wurde, besteht immer noch Potential, um den Dongle auf Energiesparmöglichkeiten zu untersuchen und diese zu implementieren. Zudem ist die Optimierung des Codes auf RAM-Größe noch empfehlenswert, um die Probleme aus Kapitel \ref{subsec:intPl} zu beheben.
 
 \section{Bluetooth Flashtool}
+\label{sec:appAusblick}
 Um den Atmega328P Chip neu zu programmieren muss bis jetzt auf die USB-UART Schnittstelle zurückgegriffen werden. Dieses Vorgehen ist relativ umständlich, da das Flashen über einen Desktop-PC mit der gesamten Toolchain geschehen muss. Um diesen Prozess zu erleichtern besteht die Möglichkeit die App mit einer Bluetooth Flasher Funktion zu erweitern.
 \paragraph{}
 Wie bereits in Kapitel \ref{sec:Bluetooth} dargestellt, ist der Bluetooth Chip direkt mit dem Seriellen UART-Interface des Atmega328P Chips verbunden. Da der CC2541 unabhängig vom Atmega328P läuft, kann diese Tatsache ausgenutzt werden um den Atmel Chip direkt über Bluetooth zu flashen. Ein solches Feature in der App erleichtert das Ausrollen von neuen Sofware Updates sehr.

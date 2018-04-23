@@ -26,11 +26,11 @@ Der implementierte Ablauf der Authentifizierung erfolgt nach dem in Abbildung \r
 
 \subsection{Datenbank und Zugriff}
 \label{sec:dataAccess}
-Als Datenbank wird MySql eingesetzt da es einfach in der Anwendung und schlank im Betrieb ist. Als alternative wurde ebenfalls Sql Server evaluiert, was den Vorteil der besseren Integration in die Asp.Net Core Umgebung gehabt hätte. Der zugehörige Docker Container (vgl. \ref{sec:backendDeployment}) hat jedoch 4GB Arbeitsspeicher erfordert, was zusätzlich zum normalen Betriebssystem und der Entwicklungsumgebung mehr als die momentan üblicherweise verbauten 8GB \ac{RAM} übertrifft.\todo{Weshalb es auf unseren Systemen nicht getestet werden konnte - vllt ergänzen}
+Als Datenbank wird MySql eingesetzt da es einfach in der Anwendung und schlank im Betrieb ist. Als alternative wurde ebenfalls Sql Server evaluiert, was den Vorteil der besseren Integration in die Asp.Net Core Umgebung gehabt hätte. Der zugehörige Docker Container (vgl. \ref{sec:backendDeployment}) hat jedoch 4GB Arbeitsspeicher erfordert, was zusätzlich zum normalen Betriebssystem und der Entwicklungsumgebung mehr als die in den Entwicklungsrechnern verbauten 8GB RAM erforderlich macht.
 
 Der Zugriff auf die Datenbank erfolgt nicht direkt über SQL-Anfragen sondern über Entity Framework, ein Framework für objektrelationale Abbildung. Dabei werden die Daten im Hintergrund in Collections geladen, sodass es für den Benutzer aussieht, als würden die Daten direkt im RAM liegen. Dieses System bietet - insbesondere in Kombination mit \ac{LINQ} in C\#- den Vorteil, dass der Code wesentlich übersichtlicher und leichter verständlich wird, da das direkte Laden der Daten mittels SQL-Anfragen und anschließendem manuellen Einlesen entfällt.
 
-Für die Integration von Entity Framework für MySql Datenbanken in einer Asp.Net Core Umgebung muss ein Third Party NuGet Paket\cite{Microsoft2018} verwendet werden, da zum Zeitpunkt der Entwicklung keine native Anbindung zur Verfügung steht. Das verwendete Paket hat allerdings Performanceprobleme bei der Verarbeitung größerer Datenmengen. Schon das Speichern und Laden von Fahrten mit einer Rohdatenmenge von ~500kB führen zu Verzögerungen von ca. 30 Sekunden. Die einzig verbleibende Alternative um das Problem zu beheben ist der Austausch der Datenbank, wozu während der Projektlaufzeit keine Ressourcen mehr zur Verfügung stehen.
+Für die Integration von Entity Framework für MySql Datenbanken in einer Asp.Net Core Umgebung muss ein Third Party NuGet Paket\cite{Microsoft2018} verwendet werden, da zum Zeitpunkt der Entwicklung keine native Anbindung zur Verfügung steht.
 
 \subsection{Bereitstellung}
 \label{sec:backendDeployment}

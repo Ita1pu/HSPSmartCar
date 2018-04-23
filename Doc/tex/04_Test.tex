@@ -34,11 +34,7 @@ Da auch Fehler während der Fahrt auftreten können, hier jedoch nicht sofort au
 \section{Backend}
 Nach dem Erreichen des geplanten Standes des Backends wurde dieses getestet. Hierfür wurden Trips unterschiedlicher Länge mehrfach in das Backend geladen. 
 
-Bei diesen Tests wurde festgestellt, dass es eine schlechte Performance beim Interagieren mit den  Tracks gibt.
-Beim Einlesen und erneuten Laden der Tracks, zum Beispiel für die Darstellung, wurde festgestellt, dass die benötigte Dauer fast unabhängig von der Größe des Tracks ist. Bei genauerer Recherche konnte festgestellt werden, dass die langen Zugriffszeiten durch den verwendeten Datenbankzugriff bedingt wurden. Dieser beruht auf \todo{@andi muss hier noch was ergänzen}%todo: sorry andi weis nicht genau was du damals gesagt hattest
-Da es allerdings keine Alternative zu der verwendeten Technik gibt, konnte dieses Problem vorerst nicht gelöst werden.
-	
-
+Bei größeren Trips konnten erhebliche Probleme mit der Performance der Interaktionen mit der Web API festgestellt werden. Insbesondere das Laden und Anzeigen der Detailansicht hat bei Trips mit einer Rohdatenmenge von ca. 500kB zu einer Verzögerung von bis zu 30 Sekunden geführt. Eine genauere Analyse hat gezeigt, dass dieses Problem durch die verwendete Third Party Library bei der Anbindung der MySql Datenbank an das Entity Framework entsteht, die nicht in der Lage ist, größere Datenmengen zwischen der Objektdarstellung und der Datenbank auszutauschen (die reine SQL Anfrage in diesem Szenario benötigt ca. 300ms). Die einzig verbleibende Alternative um das Problem zu beheben ist der Austausch der Datenbank, wozu während der Projektlaufzeit keine Ressourcen mehr zur Verfügung stehen.
 
 \section{Dongle}
 \label{sec:dongleTest}

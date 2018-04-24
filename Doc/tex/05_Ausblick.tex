@@ -3,7 +3,7 @@
 Aufgrund der beschränkten Ressourcen die für dieses Projekt zur Verfügung standen, konnte das Potential des zuvor vorgestellten Systems bei weitem noch nicht ausgeschöpft werden. Aus diesem Grund, soll das folgende Kapitel Ideen vermitteln was beispielsweise mit der Infrastruktur darüber hinaus erreicht werden kann.
 
 \section{Identifikation des Fahrers}
-Mithilfe der aufgezeichneten Beschleunigungsdaten wäre es möglich die Infrastruktur dementsprechend zu erweitern, dass aus den aufgezeichneten Daten personalisierte Fahrtenbücher auch ohne die Notwendigkeit für ID Karten oder sonstige Mittel zur Identifikation des Fahrers erstellt werden können. Dies würde vermutlich funktionieren, da jeder Fahrer seinen eigenen persönlichen Fahrstil besitzt der z.B. das Anfahren und Abbremsen beeinflusst. 
+Mithilfe der aufgezeichneten Beschleunigungsdaten wäre es möglich die Infrastruktur dementsprechend zu erweitern, dass aus den aufgezeichneten Daten personalisierte Fahrtenbücher auch ohne die Notwendigkeit für ID Karten oder sonstige Mittel zur Identifikation des Fahrers erstellt werden können. Dies würde vermutlich funktionieren, da jeder Fahrer seinen eigenen persönlichen Fahrstil besitzt der z.B. das Anfahren und Abbremsen beeinflusst.
 \\
 Diese Möglichkeit der Identifikation hätte den Vorteil, dass auch nachträglich festgestellt werden kann wer der Fahrer war.
 
@@ -14,7 +14,7 @@ Diese Daten wären zum einen z.B. für Versicherungen oder Firmen interessant, k
 
 \section{Ermittlung von Engpässen}
 \label{SecErmittlungVonEngpaessen}
-Alleine mit den aufgezeichneten GPS-Daten ist es möglich Engpässe im Straßennetz zu erkennen und dagegen entsprechende Gegenmaßnahmen in die Wege zu leiten (z.B. Ausbau von Straßen, Ampelanlagen zeitlich anders schalten, ...). 
+Alleine mit den aufgezeichneten GPS-Daten ist es möglich Engpässe im Straßennetz zu erkennen und dagegen entsprechende Gegenmaßnahmen in die Wege zu leiten (z.B. Ausbau von Straßen, Ampelanlagen zeitlich anders schalten, ...).
 \\
 Weiterhin wäre eine solche Analyse z.B. auch für Firmen hilfreich. Dies würde nicht dazu führen, dass das Straßennetz geändert würde, aber die Fahrer könnten alternative Routen vorgeschlagen bekommen welche weniger frequentierte Strecken nutzen.
 \\
@@ -32,9 +32,9 @@ Um den Atmega328P Chip neu zu programmieren muss bis jetzt auf die USB-UART Schn
 \paragraph{}
 Wie bereits in Kapitel \ref{sec:Bluetooth} dargestellt, ist der Bluetooth Chip direkt mit dem Seriellen UART-Interface des Atmega328P Chips verbunden. Da der CC2541 unabhängig vom Atmega328P läuft, kann diese Tatsache ausgenutzt werden um den Atmel Chip direkt über Bluetooth zu flashen. Ein solches Feature in der App erleichtert das Ausrollen von neuen Sofware Updates sehr.
 \paragraph{}
-Der Nutzer müsste hier nur den neuen Programmcode auf sein Smartphone laden und könnte dann den Dongle neu flashen. 
-Daraus enstünden die folgenden Vorteile: 
+Der Nutzer müsste hier nur den neuen Programmcode auf sein Smartphone laden und könnte dann den Dongle neu flashen.
+Daraus entstünden die folgenden Vorteile:
 \begin{enumerate}
 	\item App-Software und Dongle-Software können immer gleichzeitig aktualisiert werden und passen so jeder Zeit zueinander
-	\item Jeder Nutzer kann den Dongle mit einem Smartphone neu flashen. Ein Bugfix kann so schnell ausgerollt werden 
+	\item Jeder Nutzer kann den Dongle mit einem Smartphone neu flashen. Ein Bugfix kann so schnell ausgerollt werden
 \end{enumerate}

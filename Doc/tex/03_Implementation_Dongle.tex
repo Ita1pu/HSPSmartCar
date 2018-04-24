@@ -1,6 +1,6 @@
 \section{Dongle}
 
-\subsection{GPS und Zeit} 
+\subsection{GPS und Zeit}
 \label{ImplGpsUndZeit}
 Um den GPS-Empfänger auch in der in diesem Projekt geschriebenen Dongle-Software zu nutzen, wurde zunächst der Code des von Freematics veröffentlichten Treibers für den Coprozessor übernommen, da dieser den Datenaustausch mit dem Empfänger regelt und die serielle Schnittstelle mit diesem verbunden ist. Um die Kommunikation von der eigentlichen Anwendungslogik abzutrennen, wurde eine weitere LocationTimeService-Klasse auf Ebene der Intermediate-Layer implementiert. Diese bietet nun vereinfachten Zugriff auf die gemessenen Werte des geografischen Längen- und Breitengrads, der Höhe über Normalnull und die Anzahl der verfügbaren Satteliten. Darüber hinaus stellt sie auch Funktionen zum erneuten Abrufen und Speichern der GPS-Daten und zur Initialisierung der Kommunikation mit dem GPS-Chip über UART zur Verfügung. Dabei ist zu beachten, dass die Anzahl der Satelliten für eine möglichst korrekte Positionsbestimmung zwischen 4 und 14 liegen muss \cite{gpsPrecision}.
 
@@ -30,7 +30,7 @@ In diesem Zuge wird Timer 1 mit global sichtbaren Funktionen und einem Interrupt
 	\\
 	Die neue Klasse stellt weiterhin eine Methode zu Verfügung mit der es möglich ist zu erkennen, ob beim Auto die Zündung getätigt wurde. Dies ist wichtig, da die \ac{OBD}-Schnittstelle (bei den meisten Autos) dauerhaft mit Strom versorgt ist. Aus diesem Grund kann nicht auf einen Neustart des Fahrzeugs gewartet werden um zu entscheiden ob es sich um eine neue Strecke handelt.
 	\\
-	Die Funktion überprüft wie viele Timeouts beim Versuch \acp{PID} auszulesen auftreten. Sobald diese Anzahl einen Grenzwert überschreitet, wird davon Ausgegangen, dass die Zündung nicht mehr aktiviert ist. Anschließend kann in Regelmäßigen Abständen geprüft werden ob inzwischen wieder Kommunikation mit dem \ac{OBD}-Steuergerät möglich ist. 
+	Die Funktion überprüft wie viele Timeouts beim Versuch \acp{PID} auszulesen auftreten. Sobald diese Anzahl einen Grenzwert überschreitet, wird davon Ausgegangen, dass die Zündung nicht mehr aktiviert ist. Anschließend kann in Regelmäßigen Abständen geprüft werden ob inzwischen wieder Kommunikation mit dem \ac{OBD}-Steuergerät möglich ist.
 
 \subsection{Beschleunigungssensor}
 Der Treiber für den im Dongle verbauten Beschleunigungs-Sensor wurde nicht von Freematics übernommen sondern in Anlehnung an diesen neu Implementiert. Dies geschah vor allem um die Einheit der aufgezeichneten Sensorwerte selbst zu definieren und verständlicher darzustellen, sowie um Platz auf dem Flash-Speicher zu sparen.
@@ -39,7 +39,7 @@ Die AccReader-Klasse stellt nun Methoden zur Verfügung, welche für eine anzuge
 
 \subsection{Logging}
 \label{sec:Logging}
-Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und Schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen. 
+Für die persistente Speicherung der Daten während der Fahrt bietet der \textit{Freematics ONE} eine SD-Karten Schnittstelle. Der \textit{ATmega328p} kann auf dieses Interface direkt zugreifen und alle Funktionen zum Lesen und Schreiben aufrufen. Die im \textit{SmartCar} verwendete Arduino Bibliothek bietet hierfür vordefinierte Funktionen. Zur Erhöhung der Lesbarkeit des Codes wurde diese Bibliothek noch einmal in eine extra Klasse(\texttt{Persistence}) gekapselt. Die Hierarchie ist als Ausschnitt der Kompletten Architektur in Abbildung \ref{fig:Persistence} zu sehen.
 
 \begin{figure}[htp!]
   \begin{center}
@@ -57,12 +57,12 @@ Des weiteren ist es pro File\_System\_Handler nur möglich eine einzige Datei zu
 \subsubsection*{Persistence Klasse}
 Da die erstellten Log-Dateien immer nach einem bestimmten Schema aufgebaut sind, kapselt die Klasse \texttt{Persistence} den \texttt{File\_System\_Handler} in sich. Um Daten zu schreiben erfolgt der Zugriff also immer über die Persistence Klasse und nicht über den \texttt{File\_System\_Handler} selbst. Dieser Mechanismus stellt sicher, dass die erstellten Logs immer dem selben Format entsprechen. Einheitlich formatierte Dateien stellen sicher, dass eine Verarbeitung der geloggten Daten von den anderen Elementen des Systems, wie Backend und App, immer möglich ist.
 \subsubsection*{Logging Format}
-Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss bei der Erfassung der Daten in einem kompakter Format erfolgen. Dieses Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Für die Umsetzung dieser Anforderungen ist das Datenformat aus Tabelle \ref{fig:LoggingEntry} für das Logging entstanden:
+Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ein einheitliches Format aus. Doch nicht nur eine Formatierung spielt beim SmartCar eine Rolle, sondern auch der Speicherbedarf. So muss die Erfassung der Daten in einem kompakter Format erfolgen. Diese Anforderung folgt schon alleine aus der Tatsache, dass es möglich sein soll, die geloggten Daten von dem Dongle über Bluetooth Low Energy(BLE) zu übertragen. Wären die Daten übermäßig groß, müsste ein Nutzer lange Zeit für den Transfer der Daten warten, was die Nutzbarkeit dieses Features beeinträchtigen würde. Für die Umsetzung dieser Anforderungen ist das Datenformat aus Tabelle \ref{fig:LoggingEntry} für das Logging entstanden:
 
 \begin{table}[htp!]
 	\caption{Format eines Logging Eintrags auf der SD-Karte (15Byte)}
 	\label{fig:LoggingEntry}
-	
+
 	\begin{center}
 		  \begin{tabular}{ | c || c | c | c | c |}
 			\hline
@@ -74,15 +74,15 @@ Wie im obigen Abschnitt bereits erwähnt zeichnen sich gute Log-Dateien durch ei
 \end{table}
 
 \subsubsection*{MVID}
-Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. Die MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten. 
+Das erste Byte des Eintrags beschreibt die gemappte Fahrzeugnummer. Dieser Eintrag ist wichtig um die bei Verwendung des Dongles in mehreren Fahrzeugen die einzelnen Fahrzeuge und die einzelnen Routen auseinander zu halten. Die MVID ist eine fortlaufende Nummer von 0 bis 255 die bei jedem Einschalten des Fahrzeugs um eine Stelle erhöht wird. Die definierten 8 Bit stellen einen ausreichenden Zahlenraum dar, um ein komfortables Fahrtenmanagement zu gewährleisten.
 \subsubsection*{Datum}
 Die nächsten 8 Byte beinhalten den Zeitstempel des Erfassten Wertes. Dieser wird in Millisekunden seit 01. Januar 1970 angegeben. Die Zeit ist einer der wichtigsten Werte für das Loggen, da nur so bei späteren Analysen festgestellt werden kann wann der Wert aufgenommen wurde. Der Zahlenbereich wurde auf 64 Bit festgelegt, da ein 32-Bit Wert nur bis zum Jahr 2038 zählen könnte. Mit 64 Bit lässt sich ein weitaus größerer Zeitraum abdecken und eine genaue Bestimmung für jeden Zeitstempel ermöglichen.
 \subsubsection*{Daten ID}
-Der 3. Wert is die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser Wert richtet sich nach der in Abschnitt \ref{sec:systemDesign} gezeigten OBD-Tabelle. Zusätzlich zu den OBD-IDs kann dieses Feld Werte für die GPS-Koordinaten, den Beschleunigungssensor und das Gyroskop annehmen.  Nur mit der zugehörigem ID kann dem Wert eine Bedeutung zugeteilt werden. 
+Der 3. Wert ist die ID des geloggtem Datums und liegt im 10. und 11. Byte. Dieser Wert richtet sich nach der in Abschnitt \ref{sec:systemDesign} gezeigten OBD-Tabelle(\ref{selectedPIDs}). Zusätzlich zu den OBD-IDs kann dieses Feld Werte für die GPS-Koordinaten, den Beschleunigungssensor und das Gyroskop annehmen.  Nur mit der zugehörigem ID kann dem Wert eine Bedeutung zugeteilt werden.
 \subsubsection*{Wert}
 Die letzten 4 Bytes des Eintrags beinhalten den eigentlichen erfassten Wert. Je nach ID wird dieser Wert anders interpretiert.
 \subsubsection{Bluetooth}
-Wie in Kapitel \ref{sec:Bluetooth} beschrieben, lassen sich Nachrichten über Bluetooth vom Dongle aus über die Arduino Funktion \texttt{Serial.println()} ausgeben und mit Hilfe von \texttt{Serial.read()} einlesen. Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Bluetooth nutzt der Dongle um die Live Daten zu übertragen und um die Daten von der SD-Karte zu übertragen. Die nächsten 2 Kapitel beschreiben wie die zwei Features implementiert sind und wie verwendete Protokolle aussehen.
+Wie in Kapitel \ref{sec:Bluetooth} beschrieben, lassen sich Nachrichten über Bluetooth vom Dongle aus über die Arduino Funktion \texttt{Serial.println()} ausgeben und mit Hilfe von \texttt{Serial.read()} einlesen. Aus diesem Grund gibt es beim SmartCar Code keine eigene Driver Schicht für die Bluetooth Kommunikation, denn diese ist bereits in den Arduino Bibliotheken implementiert. Bluetooth nutzt der Dongle zur Übertragung der Live Daten und um die Daten von der SD-Karte zur App zu senden. Die nächsten 2 Kapitel beschreiben wie die zwei Features implementiert sind und wie verwendete Protokolle aussehen.
 \subsection{Live Daten Übertragung}
 Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren besteht eine Verbindung der APP mit dem Dongle über Bluetooth. Der Dongle sendet bestimmte Daten nach dem Auslesen über Bluetooth zur App.
 
@@ -95,8 +95,8 @@ Um Verschiedene Daten der OBD Schnittstelle während der Fahrt zu visualisieren 
 			Startzeichen & ID & Trennzeichen & Wert & Endzeichen \\ \hline
 			\# & uint16 & : & uint32 & ; \\
 			\hline
-		\end{tabular}	
-	\end{center}	
+		\end{tabular}
+	\end{center}
 \end{table}
 
 Eine Live Daten Nachricht, wie in Tabelle \ref{fig:LiveDataMessage} zu sehen gliedert sich in folgende Teile:
@@ -104,10 +104,10 @@ Eine Live Daten Nachricht, wie in Tabelle \ref{fig:LiveDataMessage} zu sehen gli
   \item Start der Nachricht\textbf{(\#)}: Eine Raute am Anfang der Nachricht signalisiert, dass es sich bei dieser Nachricht um eine Live-Daten Nachricht handelt. Dieses Markieren verhindert ein versehentliches interpretieren eine anderen Nachricht als Live-Daten Nachricht.
   \item Daten ID: Direkt nach der Raute folgt die ID des Wertes der in der in der Nachricht enthalten ist. Sie richtet sich wieder nach den OBD-IDs aus Abschnitt \ref{sec:systemDesign}
   \item Trennzeichen(\textbf{:}): Nach der ID kommt ein Doppelpunkt als Trennzeichen
-  \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch 
+  \item Wert mit \textbf{;} am Ende: Als letztes enthält die Nachricht der Wert zur ID gefolgt von einem Strichpunkt und einem Zeilenumbruch
 \end{enumerate}
 \subsection{Upload der Logdateien}
-Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses Verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle. 
+Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der geloggten Daten zum Smartphone. Der Dongle sendet hier nach einem Signal des Smartphones auf Nutzerwunsch Daten von der SD-Karte zur App. Dieses Verfahren ist ein zweiter Weg um die Daten vom Dongle ins Backend zur Analyse zu befördern. Das Diagramm in Abbildung \ref{fig:DataUpload} zeigt den Ablauf einer solchen Datenübertragung zwischen App und Dongle.
 \begin{figure}[H]
   \begin{center}
     \includegraphics[scale=0.6]{./img/DataUploadSequence.jpg}
@@ -118,10 +118,10 @@ Die zweite Funktion des Dongles, die Bluetooth benötigt ist der Upload der gelo
 
 Der Ablauf lässt sich in 4 Teile unterteilen:
 \begin{enumerate}
-  \item Nutzer Request: Der Vorgang des Datenübertragens erfolgt mit der Interaktion des Nutzers auf dem Smartphone. 
-  \item Übertragen der Puffer Größe: Nach der Anfrage des Nutzers sendet die App eine Puffer Größe an den Dongle. Diese Zahl stellt die Maximale Anzahl an Logeinträgen dar, die gesendet werden sollen. Diese Nachricht beginnt mit zwei Raute Zeichen(ASCII) gefolgt von einem 8-Bit Wert für den Puffer. Der Dongle bestätigt den Empfang des Puffers mit dem Zurücksenden der gleichen Nachricht. So kann die App sicherstellen, dass für die Pufferübertragung kein Fehler passiert ist. Für eine Puffergröße von 55 würde die Nachricht als String folgendermaßen aussehen: \#\#7 (7 $\equiv$ ASCII 55)
-  \item  Mitteilen des Datums: Nach dem Empfang der Antwort des Dongles sendet die App dann das Datum zu dem die Daten übertragen werden sollen. Hier beginnt die Nachricht mit zwei Stichpunkten(ASCII) gefolgt von dem Datum(ASCII) im Format DDMMYYYY. Nach Empfang der Nachricht antwortet der Dongle wie bei der Puffergröße mit der gleichen Nachricht. Für den 01. Januar 2017 wäre die Nachricht ;;01012017
-  \item Datenübertragung: Nach dem Austausch der nötigen Informationen beginnt der Dongle mit dem Senden der Daten bis die in 1. definierte Pufffergröße erreicht wurde, oder keine Logdaten mehr vorhanden sind.
+  \item Nutzer Request: Der Vorgang des Datenübertragens erfolgt mit der Interaktion des Nutzers auf dem Smartphone.
+  \item Übertragen der Puffer Größe: Nach der Anfrage des Nutzers sendet die App eine Puffer Größe an den Dongle. Diese Zahl stellt die Maximale Anzahl an Logeinträgen dar, die gesendet werden sollen. Die Nachricht beginnt mit zwei Raute Zeichen(ASCII) gefolgt von einem 8-Bit Wert für den Puffer. Der Dongle bestätigt den Empfang mit dem Zurücksenden der gleichen Nachricht. So kann die App sicherstellen, dass bei der Übertragung kein Fehler passiert ist. Für eine Puffergröße von 55 würde die Nachricht als String folgendermaßen aussehen: \#\#7 (7 $\equiv$ ASCII 55)
+  \item  Mitteilen des Datums: Nach dem Empfang der Antwort des Dongles sendet die App dann das Datum zu dem die Daten übertragen werden sollen. Hier beginnt die Nachricht mit zwei Strichpunkten(ASCII) gefolgt von dem Datum(ASCII) im Format DDMMYYYY. Nach Empfang der Nachricht antwortet der Dongle wie bei der Puffergröße mit der gleichen Nachricht. Für den 01. Januar 2017 wäre die Nachricht ;;01012017
+  \item Datenübertragung: Nach dem Austausch der nötigen Informationen beginnt der Dongle mit dem Senden der Daten bis die in 1. definierte Puffergröße erreicht wurde, oder keine Logdaten mehr vorhanden sind.
 \end{enumerate}
 
 \subsection{Programmlogik}

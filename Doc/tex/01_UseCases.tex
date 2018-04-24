@@ -2,7 +2,7 @@
 \label{sec:useCases}
 Die Daten aus der OBDII Schnittstelle eines Autos, vereint mit dem GPS-Sensor und den anderen Sensoren des Dongles, bieten für eine Auswertung nahezu unbegrenzte Möglichkeiten. Aus den Analysen entstehen Anwendungsfälle, für die sich das SmartCar System verwenden lässt. Das nachfolgende Kapitel beinhaltet eine Auswahl an Use Cases auf dessen Grundlage das Design und die Implementierung der einzelnen Komponenten entstanden ist.
 \section{Aufzeichnen von Routen}
-\label{uc:routen}
+\label{uc:route}
 Ein Anwendungsbeispiel für SmartCar ist das Aufzeichnen von Routen während der Fahrt. Der Dongle soll mithilfe des zusätzlichen GPS-Moduls nach dem Einstecken in die OBD-Schnittstelle,  Fahrten aufzeichnen und auf einer SD-Karte speichern. Für jede Fahrt soll hier eine separate Datei erstellt werden. Zusätzlich zu den GPS-Koordinaten legt der Dongle noch ausgewählte Daten aus der OBD-Schnittstelle auf der SD-Karte ab. Diese Aufzeichnung erfolgt so, dass eine Darstellung und Abspeicherung in einem externen System(Backend) möglich ist und dort auch einzelne Fahrten unterscheidbar sind.
 \section{Analyse der aufgezeichneten Daten}
 \label{Sec_AnayseDerAufgezeichnetenDaten}

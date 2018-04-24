@@ -56,10 +56,10 @@ Dazu wird im Grunde die Formel \ref{GrundFormelMomentanVerbrauch} verwendet.
 
 \begin{equation}
 \label{GrundFormelMomentanVerbrauch}
-Sprit(\frac{g}{sec}) = \frac{Luftmasse(\frac{g}{sec})}{\lambda*AirFuelRatio_\text{Stöch}}
+\mbox{Sprit}\left(\frac{\mbox{g}}{\mbox{sec}}\right) = \frac{\mbox{Luftmasse}\left(\frac{\mbox{g}}{\mbox{sec}}\right)}{\lambda \cdot \mbox{AirFuelRatio}_\text{\mbox{Stöch}}}
 \end{equation}
 
-Hier gibt die Konstante $AirFuelRatio_\text{Stöch}$ das Verhältnis von Luft und Kraftstoff an, bei der alle
+Hier gibt die Konstante $\mbox{AirFuelRatio}_\text{\mbox{Stöch}}$ das Verhältnis von Luft und Kraftstoff an, bei der alle
 Kohlenwasserstoff-Moleküle mit allen Sauerstoffmolekülen der angesaugten Luft reagieren. Dieses
 Verhältnis ist für den Verbrennungsvorgang optimal, und beträgt bei Ottomotoren 14,7 und bei
 Dieselmotoren 14,5.
@@ -69,19 +69,19 @@ Gramm pro Liter, für Diesel dagegen etwa 832,5 Gramm pro Liter\cite{Aral2018}.
 
 \begin{equation}
 \label{DichteZuVerbrauchInLiter}
-Sprit(\frac{l}{sec}) = \frac{Sprit(\frac{g}{sec})}{\rho}
+\mbox{Sprit}\left(\frac{\mbox{l}}{\mbox{sec}}\right) = \frac{\mbox{Sprit}\left(\frac{\mbox{g}}{\mbox{sec}}\right)}{\rho}
 \end{equation}
  
 Für die Berechnung wird als nächstes $\lambda$ benötigt. Hierbei handelt es sich um das gemessene Luft-Treibstoff-Verhältnis, welches über eine Lambda-Sonde gemessen wurde. Dieser Wert kann laut ISO 15031-5 mit Formel \ref{FormelFuerLambda} berechnet werden.
 
 \begin{equation}
 \label{FormelFuerLambda}
-EQRAT 11_\text{(PID 24)}=DATAab_{(\text{PID 24})}*(\frac{DATAa_{(\text{PID 4F})}}{65535})
+\mbox{EQRAT 11}_\text{\mbox{(PID 24)}}=\mbox{DATAab}_{\mbox{(\text{PID 24})}} \cdot \left(\frac{\mbox{DATAa}_{(\text{\mbox{PID 4F}})}}{65535}\right)
 \end{equation}
 
-$DATAab_{\text{(PID 24)}}$ entspricht hierbei dem Sensorwert, welcher über die ersten beiden Bytes der \ac{PID} 0x24 ausgelesen wird (alternativ können je nach Verfügbarkeit auch die \acp{PID}) 0x25-0x2B oder 0x34-0x3B verwendet werden).
+$\mbox{DATAab}_{\text{\mbox{(PID 24)}}}$ entspricht hierbei dem Sensorwert, welcher über die ersten beiden Bytes der \ac{PID} 0x24 ausgelesen wird (alternativ können je nach Verfügbarkeit auch die \acp{PID}) 0x25-0x2B oder 0x34-0x3B verwendet werden).
 \newline
-$DATAa_{(\text{PID 4F})}$ gibt die Skalierung an.
+$\mbox{DATAa}_{\mbox{(\text{PID 4F})}}$ gibt die Skalierung an.
 \newline
 Sollten die \acp{PID}) 0x24-0x2B oder 0x34-0x3B nicht verfügbar sein, gibt es auch hierfür weitere Möglichkeiten zur Berechnung. Diese benötigen jedoch immer spezifischere Daten für das Verwendete Auto und wurden deshalb mangelns fehlender Messtechnik zur Überprüfung auf Korrektheit nicht weiter implementiert.
 

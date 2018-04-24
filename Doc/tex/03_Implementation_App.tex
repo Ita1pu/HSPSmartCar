@@ -18,7 +18,7 @@ In der Smartphone-App stehen mehrere Sichten für die Anzeige der Live Daten zur
 Zurzeit stehen drei Sichten zur Auswahl. Eine einfache Liste mit allen vom Dongle und Smartphone verfügbaren Werten. Darunter die Geschwindigkeit, gemessen vom Dongle sowohl als auch vom Handy, Drehzahl, Kühlwassertemperatur und die GPS Daten des Dongles und Smartphones.
 \\
 Des weiteren eine Tachoansicht (siehe Abbildung \ref{fig:App_Speedo}), welche die momentan gefahrene Geschwindigkeit, Drehzahl und die Kühlwassertemperatur anzeigt.
-\\ 
+\\
 Die letzte zurzeit implementierte Sicht ist ein Vergleich der gemessenen Geschwindigkeit von der OBD-Schnittstelle und der ermittelten Geschwindigkeit vom GPS-Sensor. Diese sind jeweils als Tacho visualisiert.
 
 \subsubsection{Konfiguration}
@@ -27,7 +27,7 @@ Die letzte zurzeit implementierte Sicht ist ein Vergleich der gemessenen Geschwi
 Die \enquote{Konfiguration View} (siehe Abbildung \ref{fig:APP_Configuration}a) ist eine spezielle Sicht, in der unter anderem die Verbindung zum Dongle hergestellt werden kann. Dazu steht ein Dialog (siehe Abbildung \ref{fig:APP_Configuration}b) zum Suchen aller in der Umgebung befindlichen Bluetooth-Geräte zur Verfügung. Beim Anklicken wird versucht eine Verbindung zu diesem Device aufzubauen. Durch Klicken auf den Button \enquote{Test} kann geprüft werden, ob zurzeit eine Verbindung zu diesem besteht. Das gleiche Prinzip ist auch für die Verbindung zum Backend vorhanden. Hier öffnet sich beim Button \enquote{Connect} eine Liste der Verbindungsparameter, die dazu benötigt werden. Außerdem sind in dieser Sicht noch die App-Einstellungen (z.B Km/H oder Mp/H) änderbar und die Logging-Liste auslesbar.
 
 \begin{figure}[H]
-	\centering 
+	\centering
 	\subfigure[Übersicht]{\includegraphics[width=0.3\textwidth]{./img/APP_Configuration}}
     \label{fig:APP_Configuration_View}
     \hspace{1cm}
@@ -54,17 +54,17 @@ Um einen Vergleich der Genauigkeit des GPS-Sensors im Dongle zu erhalten, wird d
 Um mit den Backend kommunizieren zu können, muss zuerst die Authentifizierung über den Identity Server stattfinden. Dieser bietet dafür mehrere Möglichkeiten (z.B. Authorization Code, Client Credentials). In der App wird die Authentifizierungsmethode \enquote{Password Grand} verwendet. Dabei wird ein JSON-Objekt (siehe nachfolgenden Code) über einen HTTP-Request, mit Hilfe von AJAX, an den Server gesendet. Das Objekt enthält den Namen und das Passwort des Benutzers, sowie eine Client ID, die extra für die APP ausgestellt wurde, und ein dazu passendes Geheimnis. Der Authentifizierungsserver liefert nun ein Token zurück, mit dem nun mit dem Backend für eine gewisse Zeit kommuniziert werden kann. Dieses wird dem Backend bei jedem Request über dem HTTP Header mitgesendet. \cite{RFC6749}\cite{RFC6750}
 
 \noindent
-\begin{minipage}{\linewidth} 
+\begin{minipage}{\linewidth}
 \begin{lstlisting}
 {
-	username: Store.get(username), 
+	username: Store.get(username),
 	password: Store.get(password),
 	scope: "openid",
 	grant_type: "password",
 	client_id: Settings.Backend.clientId,
 	client_secret: Settings.Backend.secret
 }
-\end{lstlisting} 
+\end{lstlisting}
 \end{minipage}
 
 \subsection{Konfiguration}
@@ -103,18 +103,18 @@ load: \{ en: „load“, de: „laden“ \}). Die \enquote{String}-Klasse ermitt
   \end{center}
 \end{wrapfigure}
 
-Für das Anzeigen von speziellen Informationen gibt es mehrere Elemente. Zur Mitteilung von unerwarteten Fehlern gibt es einen Fehler Dialog (siehe Abbildung \ref{fig:App_ErrorPanel}). Dieses zeigt am oberen Rand des Bildschirmes eine Kurzinformation zum Fehler und die Information, dass sie im Logging-Bereich der Konfigurationsansicht komplett eingesehen werden kann an.
+Für das Anzeigen von speziellen Informationen gibt es mehrere Elemente. Zur Mitteilung von unerwarteten Fehlern gibt es einen Fehler Dialog (siehe Abbildung \ref{fig:App_ErrorPanel}). Dieser zeigt am oberen Rand des Bildschirmes eine Kurzinformation zum Fehler und die Information, dass sie im Logging-Bereich der Konfigurationsansicht komplett eingesehen werden kann an.
 \\
 Falls keine Bluetooth Verbindung zum Dongle besteht oder diese abgebrochen oder gestört ist, wird im mittleren Teil des Displays ein Panel (siehe Abbildung \ref{fig:App_NoConnectionPanel}) angezeigt, das dieses Ereignis visualisiert.
 \\
-Für die erste Benutzung der App wird beim Starten der App eine bewegende Anzeige (siehe Abbildung \ref{fig:App_SwipeHelp}) eingeblendet, die den Anwender signalisieren soll, dass durch nach Links und Rechts wischen weitere Ansichten und Optionen zur Verfügung stehen. Diese Funktion kann, falls sie als Störend empfunden wird, in der Konfigurationssicht deaktiviert werden. 
+Für die erste Benutzung der App wird beim Starten der App eine bewegende Anzeige (siehe Abbildung \ref{fig:App_SwipeHelp}) eingeblendet, die den Anwender signalisieren soll, dass durch nach Links und Rechts wischen weitere Ansichten und Optionen zur Verfügung stehen. Diese Funktion kann, falls sie als Störend empfunden wird, in der Konfigurationssicht deaktiviert werden.
 \\
 Um den Benutzer über die gerade angezeigt Sicht zu informieren, sind am unteren Ende der App Kreise (siehe Abbildung \ref{fig:App_ViewCircles}) für jede View symbolisiert. Der Kreis für die zurzeit sichtbare Ansicht ist dabei ausgefüllt.
 \\
 Für manche Funktionen bieten sich Dialoge am besten an. Hier gibt es zum einen kleine Dialoge wie in Abbildung \ref{fig:App_ViewCircles} zu sehen und zum anderen Fullscreen-Dialoge, für zum Beispiel das Suchen der aktuellen Bluetooth Geräte im Umkreis (siehe Kapitel \ref{sec:appSichtKonfiguration}).
 
 
- 
- 
- 
- 
+
+
+
+
